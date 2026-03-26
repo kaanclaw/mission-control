@@ -356,6 +356,24 @@
       font-weight: 600;
     }
 
+    /* SSE Live indicator */
+    .sse-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+    .sse-indicator.connected { background: #22c55e18; color: #22c55e; }
+    .sse-indicator.disconnected { background: #f59e0b18; color: #f59e0b; }
+    .sse-dot {
+      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+    }
+    .sse-dot.green { background: #22c55e; animation: pulse 2s ease-in-out infinite; }
+    .sse-dot.amber { background: #f59e0b; animation: pulse 1s ease-in-out infinite; }
+
     /* System health */
     .health-item {
       display: flex;
@@ -610,6 +628,10 @@
         <span class="breadcrumb">Overview</span>
       </div>
       <div class="header-right">
+        <span class="sse-indicator disconnected" id="sse-indicator">
+          <span class="sse-dot amber" id="sse-dot"></span>
+          <span id="sse-label">Connecting...</span>
+        </span>
         <a class="btn" href="http://localhost:5175" target="_blank" style="text-decoration:none;">Open EasyClaw &rarr;</a>
         <button class="btn" id="refresh-btn">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
@@ -920,7 +942,7 @@
     <div class="log-panel-body" id="log-panel-body">Loading log...</div>
     <div class="log-panel-status">
       <span class="status-dot green"></span>
-      <span>Auto-refreshing every 3s</span>
+      <span>Streaming via SSE</span>
     </div>
   </div>
 
@@ -1058,29 +1080,58 @@
       }
     }
 
-    // ── Fetch Commits ──
-    async function fetchCommits() {
-      try {
-        const res = await fetch('https://api.github.com/repos/kaanclaw/mission-control/commits?per_page=10');
-        const commits = await res.json();
-        const feedEl = document.getElementById('activity-feed');
-        if (!Array.isArray(commits) || commits.length === 0) {
-          feedEl.innerHTML = '<div class="activity-row"><span class="activity-msg" style="color:var(--muted-foreground)">No recent activity</span></div>';
-          return;
-        }
-        feedEl.innerHTML = commits.map(c => {
-          const msg = c.commit.message.split('\n')[0];
-          const truncated = msg.length > 60 ? msg.slice(0, 60) + '...' : msg;
-          const author = (c.author && c.author.login) || (c.commit.author && c.commit.author.name) || 'unknown';
-          return `<div class="activity-row">
-            <span class="activity-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><circle cx="12" cy="12" r="3"/><line x1="3" y1="12" x2="9" y2="12"/><line x1="15" y1="12" x2="21" y2="12"/></svg></span>
-            <span class="activity-msg">${escapeHtml(truncated)}</span>
-            <span class="activity-meta">${escapeHtml(author)} &middot; ${timeAgo(c.commit.author.date)}</span>
-          </div>`;
-        }).join('');
-      } catch (e) {
-        document.getElementById('activity-feed').innerHTML = '<div class="activity-row"><span class="activity-msg" style="color:var(--muted-foreground)">Failed to load activity</span></div>';
+    // ── Render Activity Feed ──
+    function renderActivityFeed(events) {
+      const feedEl = document.getElementById('activity-feed');
+      if (!Array.isArray(events) || events.length === 0) {
+        feedEl.innerHTML = '<div class="activity-row"><span class="activity-msg" style="color:var(--muted-foreground)">No recent activity</span></div>';
+        return;
       }
+      feedEl.innerHTML = events.slice(0, 20).map(ev => {
+        let icon, msg;
+        if (ev.type === 'agent_update') {
+          icon = ev.icon || '\u{1F916}';
+          msg = `<strong>${escapeHtml(ev.agent_name || ev.agent_id || '?')}</strong> ${escapeHtml(ev.status || '')} &mdash; ${escapeHtml(ev.task || '')}`;
+        } else if (ev.type === 'git_commit') {
+          icon = '\u{1F4BB}';
+          const commitMsg = (ev.message || '').length > 60 ? ev.message.slice(0, 60) + '...' : (ev.message || '');
+          msg = `${escapeHtml(commitMsg)} <span style="color:var(--muted-foreground)">${escapeHtml(ev.repo || '')}</span>`;
+        } else {
+          icon = ev.icon || '\u{2139}\u{FE0F}';
+          msg = escapeHtml(ev.message || ev.text || JSON.stringify(ev));
+        }
+        const ts = ev.timestamp ? timeAgo(ev.timestamp) : '';
+        return `<div class="activity-row">
+          <span class="activity-icon" style="font-size:14px;">${icon}</span>
+          <span class="activity-msg">${msg}</span>
+          <span class="activity-meta">${ts}</span>
+        </div>`;
+      }).join('');
+    }
+
+    function prependActivity(ev) {
+      const feedEl = document.getElementById('activity-feed');
+      let icon, msg;
+      if (ev.type === 'agent_update') {
+        icon = ev.icon || '\u{1F916}';
+        msg = `<strong>${escapeHtml(ev.agent_name || ev.agent_id || '?')}</strong> ${escapeHtml(ev.status || '')} &mdash; ${escapeHtml(ev.task || '')}`;
+      } else if (ev.type === 'git_commit') {
+        icon = '\u{1F4BB}';
+        const commitMsg = (ev.message || '').length > 60 ? ev.message.slice(0, 60) + '...' : (ev.message || '');
+        msg = `${escapeHtml(commitMsg)} <span style="color:var(--muted-foreground)">${escapeHtml(ev.repo || '')}</span>`;
+      } else {
+        icon = ev.icon || '\u{2139}\u{FE0F}';
+        msg = escapeHtml(ev.message || ev.text || JSON.stringify(ev));
+      }
+      const ts = ev.timestamp ? timeAgo(ev.timestamp) : 'just now';
+      const row = document.createElement('div');
+      row.className = 'activity-row';
+      row.innerHTML = `<span class="activity-icon" style="font-size:14px;">${icon}</span>
+        <span class="activity-msg">${msg}</span>
+        <span class="activity-meta">${ts}</span>`;
+      feedEl.insertBefore(row, feedEl.firstChild);
+      // Keep max 20 rows
+      while (feedEl.children.length > 20) feedEl.removeChild(feedEl.lastChild);
     }
 
     // ── Helpers ──
@@ -1210,16 +1261,113 @@
       tbody.innerHTML = rows.length ? rows.join('') : '<tr><td colspan="3" style="color:var(--muted-foreground)">No active missions</td></tr>';
     }
 
+    // ── SSE Connection ──
+    let evtSource = null;
+    let sseReconnectTimer = null;
+
+    function setSseStatus(connected) {
+      const indicator = document.getElementById('sse-indicator');
+      const dot = document.getElementById('sse-dot');
+      const label = document.getElementById('sse-label');
+      if (connected) {
+        indicator.className = 'sse-indicator connected';
+        dot.className = 'sse-dot green';
+        label.textContent = 'LIVE';
+      } else {
+        indicator.className = 'sse-indicator disconnected';
+        dot.className = 'sse-dot amber';
+        label.textContent = 'Reconnecting...';
+      }
+    }
+
+    function handleAgentStatusData(data) {
+      const agents = data.agents || [];
+      const active = agents.filter(a => a.status === 'coding' || a.status === 'active' || a.status === 'thinking').length;
+      const total = agents.length;
+      document.getElementById('agents-active').textContent = active;
+      document.getElementById('agents-total-label').textContent = 'of ' + total + ' total';
+      const badge = document.querySelector('#section-agents .card-badge');
+      if (badge) badge.textContent = active + ' active';
+      renderRoster(agents);
+      renderMissions(agents);
+    }
+
+    function connectSSE() {
+      if (evtSource) { evtSource.close(); }
+      evtSource = new EventSource('http://localhost:8090/stream');
+
+      evtSource.onopen = function() {
+        setSseStatus(true);
+        if (sseReconnectTimer) { clearTimeout(sseReconnectTimer); sseReconnectTimer = null; }
+      };
+
+      evtSource.onmessage = function(e) {
+        try {
+          const msg = JSON.parse(e.data);
+          if (msg.type === 'snapshot') {
+            // Full initial state
+            if (msg.status) handleAgentStatusData(msg.status);
+            if (msg.activity && msg.activity.events) renderActivityFeed(msg.activity.events);
+            updateTimestamp();
+          } else if (msg.type === 'status') {
+            // Agent status update
+            if (msg.data) handleAgentStatusData(msg.data);
+            updateTimestamp();
+          } else if (msg.type === 'activity') {
+            // New activity event
+            if (msg.event) prependActivity(msg.event);
+          } else if (msg.type === 'log') {
+            // Log line for an agent
+            if (logPanelAgent && msg.agent_id === logPanelAgent && msg.line) {
+              const body = document.getElementById('log-panel-body');
+              const ts = new Date().toLocaleTimeString('en-US', { hour12: false });
+              body.textContent += '[' + ts + '] ' + msg.line + '\n';
+              body.scrollTop = body.scrollHeight;
+            }
+          }
+        } catch (err) {
+          // ignore parse errors (heartbeats etc)
+        }
+      };
+
+      evtSource.onerror = function() {
+        setSseStatus(false);
+        evtSource.close();
+        // Auto-reconnect after 3s
+        sseReconnectTimer = setTimeout(connectSSE, 3000);
+      };
+    }
+
     // ── Init ──
     async function refresh() {
-      await Promise.all([fetchCosts(), fetchIssues(), fetchCommits(), fetchAgentStatus()]);
+      await Promise.all([fetchCosts(), fetchIssues(), fetchAgentStatus()]);
       updateTimestamp();
     }
 
-    refresh();
-    setInterval(refresh, 60000);
-    document.getElementById('refresh-btn').addEventListener('click', refresh);
+    // Initial load: fetch costs + issues, then connect SSE for live data
+    (async function init() {
+      await Promise.all([fetchCosts(), fetchIssues()]);
+      updateTimestamp();
+      connectSSE();
+    })();
+
+    // Keep costs/issues on a slower poll (they don't come via SSE)
+    setInterval(() => { fetchCosts(); fetchIssues(); }, 120000);
+
+    // Manual refresh button fetches everything + reconnects SSE
+    document.getElementById('refresh-btn').addEventListener('click', () => {
+      refresh();
+      connectSSE();
+    });
     updateTimestamp();
+
+    // Update relative timestamps in activity feed every 30s
+    setInterval(() => {
+      document.querySelectorAll('#activity-feed .activity-meta').forEach(el => {
+        // Timestamps are rendered as text, so we skip re-rendering here
+        // The feed re-renders on new events anyway
+      });
+    }, 30000);
   </script>
 </body>
 </html>

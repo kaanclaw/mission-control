@@ -1,0 +1,34 @@
+{
+  "events": [
+    {
+      "type": "agent_update",
+      "agent_id": "forge",
+      "agent_name": "Forge",
+      "status": "coding",
+      "task": "Testing real-time updates",
+      "icon": "\ud83e\udd16",
+      "timestamp": "2026-03-26T20:13:35.862814+00:00",
+      "id": 1774556015862
+    },
+    {
+      "type": "agent_update",
+      "agent_id": "jamie",
+      "agent_name": "Jamie",
+      "status": "coding",
+      "task": "Wiring SSE to Mission Control dashboard",
+      "icon": "\ud83e\udd16",
+      "timestamp": "2026-03-26T20:12:08.620922+00:00",
+      "id": 1774555928620
+    },
+    {
+      "type": "agent_update",
+      "agent_id": "claw",
+      "agent_name": "Claw",
+      "status": "thinking",
+      "task": "Building real-time Mission Control",
+      "icon": "\ud83e\udd16",
+      "timestamp": "2026-03-26T20:12:08.613380+00:00",
+      "id": 1774555928613
+    }
+  ]
+}

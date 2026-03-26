@@ -1,10 +1,50 @@
 {
-  "last_updated": "2026-03-26T18:12:00Z",
+  "last_updated": "2026-03-26T20:13:35.862391+00:00",
   "agents": [
-    {"id": "claw", "name": "Claw", "role": "Orchestrator", "department": "hub", "status": "thinking", "task": "Coordinating EasyClaw demo prep + knowledge base expansion", "status_since": "2026-03-26T17:00:00Z"},
-    {"id": "forge", "name": "Forge", "role": "Builder", "department": "engineering", "status": "idle", "task": "36 commits shipped overnight \u2713", "status_since": "2026-03-26T10:00:00Z"},
-    {"id": "jamie", "name": "Jamie", "role": "Builder", "department": "engineering", "status": "coding", "task": "Mission Control \u2014 live dev stream + mission tracker", "status_since": "2026-03-26T18:12:00Z"},
-    {"id": "demi", "name": "Demi", "role": "CMO / Creative", "department": "creative", "status": "idle", "task": null, "status_since": null},
-    {"id": "juice", "name": "Juice", "role": "Finance", "department": "ops", "status": "idle", "task": null, "status_since": null}
+    {
+      "id": "claw",
+      "name": "Claw",
+      "role": "Orchestrator",
+      "department": "hub",
+      "status": "thinking",
+      "task": "Building real-time Mission Control",
+      "status_since": "2026-03-26T20:12:08.613142+00:00"
+    },
+    {
+      "id": "forge",
+      "name": "Forge",
+      "role": "Builder",
+      "department": "engineering",
+      "status": "coding",
+      "task": "Testing real-time updates",
+      "status_since": "2026-03-26T20:13:35.862372+00:00"
+    },
+    {
+      "id": "jamie",
+      "name": "Jamie",
+      "role": "Builder",
+      "department": "engineering",
+      "status": "coding",
+      "task": "Wiring SSE to Mission Control dashboard",
+      "status_since": "2026-03-26T20:12:08.620768+00:00"
+    },
+    {
+      "id": "demi",
+      "name": "Demi",
+      "role": "CMO / Creative",
+      "department": "creative",
+      "status": "idle",
+      "task": null,
+      "status_since": null
+    },
+    {
+      "id": "juice",
+      "name": "Juice",
+      "role": "Finance",
+      "department": "ops",
+      "status": "idle",
+      "task": null,
+      "status_since": null
+    }
   ]
 }
