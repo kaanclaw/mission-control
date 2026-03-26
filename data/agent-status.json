@@ -1,32 +1,32 @@
 {
-  "last_updated": "2026-03-26T08:55:00Z",
+  "last_updated": "2026-03-26T09:12:00Z",
   "agents": [
     {
       "id": "claw",
       "name": "Claw",
       "role": "Orchestrator",
       "department": "hub",
-      "status": "idle",
-      "task": "22 commits shipped — awaiting 2AM self-iterate",
-      "status_since": "2026-03-26T08:55:00Z"
+      "status": "thinking",
+      "task": "2AM self-iterate — spawned Forge + Jamie for next wave",
+      "status_since": "2026-03-26T09:12:00Z"
     },
     {
       "id": "forge",
       "name": "Forge",
       "role": "Builder",
       "department": "engineering",
-      "status": "idle",
-      "task": "Last: DEMO_CHECKLIST + TDZ fix + Playwright 21/21 ✓",
-      "status_since": "2026-03-26T08:37:00Z"
+      "status": "coding",
+      "task": "Playwright regression + demo guide content quality",
+      "status_since": "2026-03-26T09:13:00Z"
     },
     {
       "id": "jamie",
       "name": "Jamie",
       "role": "Builder",
       "department": "engineering",
-      "status": "idle",
-      "task": "Last: landing explainer + output polish + coaching card ✓",
-      "status_since": "2026-03-26T08:20:00Z"
+      "status": "coding",
+      "task": "Loading screen time estimate + TOC + reading time",
+      "status_since": "2026-03-26T09:13:00Z"
     },
     {
       "id": "demi",
