@@ -1,32 +1,32 @@
 {
-  "last_updated": "2026-03-26T07:10:00Z",
+  "last_updated": "2026-03-26T07:28:00Z",
   "agents": [
     {
       "id": "claw",
       "name": "Claw",
       "role": "Orchestrator",
       "department": "hub",
-      "status": "coding",
-      "task": "Shipped Demo Golden Path — 20s demo vs 5-10min real generation",
-      "status_since": "2026-03-26T07:05:00Z"
+      "status": "thinking",
+      "task": "Overnight monitoring — E2E tested, all systems green",
+      "status_since": "2026-03-26T07:28:00Z"
     },
     {
       "id": "forge",
       "name": "Forge",
       "role": "Builder",
       "department": "engineering",
-      "status": "coding",
-      "task": "E2E test + visual polish + demo mode (running)",
-      "status_since": "2026-03-26T06:56:00Z"
+      "status": "idle",
+      "task": "Shipped: loading theater + hero card + demo reset (commit 929e743) ✓",
+      "status_since": "2026-03-26T07:23:00Z"
     },
     {
       "id": "jamie",
       "name": "Jamie",
       "role": "Builder",
       "department": "engineering",
-      "status": "coding",
-      "task": "Integration test + Mission Control incremental (running)",
-      "status_since": "2026-03-26T06:56:00Z"
+      "status": "idle",
+      "task": "Integration test complete — full pipeline verified ✓",
+      "status_since": "2026-03-26T07:18:00Z"
     },
     {
       "id": "demi",
