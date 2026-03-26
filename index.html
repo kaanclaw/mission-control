@@ -504,27 +504,27 @@
       <span>&#x1F99E; Mission Control</span>
     </div>
     <nav class="sidebar-nav">
-      <div class="nav-item active">
+      <div class="nav-item active" onclick="navTo('section-overview', this)">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
         Overview
       </div>
-      <div class="nav-item">
+      <div class="nav-item" onclick="navTo('section-agents', this)">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 0 0-16 0"/></svg>
         Agents
       </div>
-      <div class="nav-item">
+      <div class="nav-item" onclick="navTo('section-tasks', this)">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg>
         Tasks
       </div>
-      <div class="nav-item">
+      <div class="nav-item" onclick="navTo('section-costs', this)">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
         Costs
       </div>
-      <div class="nav-item">
+      <div class="nav-item" onclick="navTo('section-research', this)">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-6-6m6 6v-4.8m0 4.8h-4.8"/><path d="M3 16.2V21m0 0h4.8M3 21l6-6"/><path d="M21 7.8V3m0 0h-4.8M21 3l-6 6"/><path d="M3 7.8V3m0 0h4.8M3 3l6 6"/></svg>
         Research
       </div>
-      <div class="nav-item">
+      <div class="nav-item" onclick="navTo('section-settings', this)">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
         Settings
       </div>
@@ -561,7 +561,7 @@
 
     <div class="page-content">
       <!-- 1. Stat Cards Row -->
-      <div class="stats-grid">
+      <div class="stats-grid" id="section-overview">
         <div class="card stat-card">
           <div class="stat-top">
             <span class="stat-label">API Cost Today</span>
@@ -597,7 +597,7 @@
       </div>
 
       <!-- 2. Two columns: Agent Roster + Mission Feed -->
-      <div class="two-col">
+      <div class="two-col" id="section-agents">
         <div class="card">
           <div class="card-header">
             <span class="card-title">Agent Roster</span>
@@ -665,7 +665,7 @@
       </div>
 
       <!-- 3. Three columns: Activity Feed + System Health -->
-      <div class="three-col">
+      <div class="three-col" id="section-tasks">
         <div class="card">
           <div class="card-header">
             <span class="card-title">Recent Activity</span>
@@ -706,7 +706,7 @@
       </div>
 
       <!-- 4. Two columns: Capabilities + Research Library -->
-      <div class="two-col">
+      <div class="two-col" id="section-research">
         <div class="card">
           <div class="card-header">
             <span class="card-title">Active Capabilities</span>
@@ -751,7 +751,7 @@
       </div>
 
       <!-- 5. Scheduled Jobs -->
-      <div class="card full-width">
+      <div class="card full-width" id="section-costs">
         <div class="card-header">
           <span class="card-title">Scheduled Jobs</span>
           <span class="card-badge">3 active</span>
@@ -818,13 +818,20 @@
       </div>
 
       <!-- Footer -->
-      <div class="page-footer">
+      <div class="page-footer" id="section-settings">
         &#x1F99E; Claw Mission Control v5 &middot; Built by Forge &middot; kaanclaw/mission-control &middot; Last updated: <span id="footer-timestamp"></span>
       </div>
     </div>
   </div>
 
   <script>
+    // ── Nav ──
+    function navTo(sectionId, el) {
+      document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+      document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+      el.classList.add('active');
+    }
+
     // ── State ──
     let costData = null;
     let closedIssueCount = 0;
