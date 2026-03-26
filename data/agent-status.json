@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-03-26T08:05:00Z",
+  "last_updated": "2026-03-26T08:14:00Z",
   "agents": [
     {
       "id": "claw",
@@ -7,8 +7,8 @@
       "role": "Orchestrator",
       "department": "hub",
       "status": "thinking",
-      "task": "13 commits shipped — reviewing and queuing next wave",
-      "status_since": "2026-03-26T08:05:00Z"
+      "task": "Reviewing 16 commits, writing feedback loop, next wave planning",
+      "status_since": "2026-03-26T08:10:00Z"
     },
     {
       "id": "forge",
@@ -16,8 +16,8 @@
       "role": "Builder",
       "department": "engineering",
       "status": "coding",
-      "task": "CSS callout verification + Vapi interview guidance + production build check",
-      "status_since": "2026-03-26T08:05:00Z"
+      "task": "Vapi system prompt + demo stream validation (session tidal-harbor)",
+      "status_since": "2026-03-26T08:09:00Z"
     },
     {
       "id": "jamie",
@@ -25,8 +25,8 @@
       "role": "Builder",
       "department": "engineering",
       "status": "idle",
-      "task": "Shipped: demo flow tests + mobile fixes + Gemini E2E test ✓",
-      "status_since": "2026-03-26T08:02:00Z"
+      "task": "Shipped: landing explainer + output audit + coaching card (a2ddc01) ✓",
+      "status_since": "2026-03-26T08:11:00Z"
     },
     {
       "id": "demi",
