@@ -484,124 +484,605 @@
       margin-top: 24px;
     }
 
-    /* ── Office View ── */
-    .office-floor {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      grid-template-rows: auto auto;
-      gap: 16px;
-      margin-bottom: 24px;
+    /* ── 3D Office View ── */
+    /*
+     * PLAN: Mission Control 3D Isometric Office
+     * - Rendering: CSS 3D transforms (perspective + rotateX/rotateZ) for isometric feel
+     * - Layout: Engineering wing (left), Hub center (elevated), Creative wing (right), Meeting room (back)
+     * - Animation states map: idle->dim, thinking->amber pulse, coding->green flicker+keyboard, meeting->slide to room, blocked->red pulse
+     * - Data flow: fetch agent-status.json every 5s, CSS transitions for smooth state changes
+     */
+
+    .office-3d-container {
+      position: relative;
+      width: 100%;
+      min-height: 520px;
+      background: #0d1117;
+      border-radius: 12px;
+      overflow: hidden;
+      perspective: 1200px;
     }
-    .office-zone {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 20px;
-      min-height: 140px;
+    .office-3d-container * { box-sizing: border-box; }
+
+    .office-iso-floor {
+      position: relative;
+      width: 750px;
+      height: 460px;
+      margin: 40px auto 20px;
+      transform-style: preserve-3d;
+      transform: rotateX(55deg) rotateZ(-45deg);
     }
-    .zone-label {
+
+    /* Grid tiles on the floor */
+    .floor-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+
+    /* Desk base */
+    .desk {
+      position: absolute;
+      width: 130px;
+      height: 90px;
+      cursor: pointer;
+      transition: transform 0.6s cubic-bezier(0.4,0,0.2,1), opacity 0.4s ease;
+      transform-style: preserve-3d;
+    }
+    .desk:hover { transform: scale(1.04); z-index: 10; }
+    .desk.at-meeting {
+      opacity: 0.3;
+      pointer-events: none;
+    }
+
+    .desk-surface {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 60px;
+      background: #1e2433;
+      border-radius: 6px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    }
+
+    /* Desk name label */
+    .desk-label {
+      position: absolute;
+      bottom: -18px;
+      left: 50%;
+      transform: translateX(-50%) rotateZ(45deg) rotateX(-55deg);
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.7);
+      white-space: nowrap;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      pointer-events: none;
+    }
+
+    /* Zone labels */
+    .zone-3d-label {
+      position: absolute;
+      font-size: 9px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.2);
+      transform: rotateZ(45deg) rotateX(-55deg);
+      pointer-events: none;
+    }
+
+    /* Monitor */
+    .monitor {
+      position: absolute;
+      width: 28px;
+      height: 20px;
+      background: #111827;
+      border: 1px solid #2d3748;
+      border-radius: 2px;
+      bottom: 42px;
+      transition: box-shadow 0.4s ease, background 0.4s ease;
+    }
+    .monitor::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 6px;
+      height: 4px;
+      background: #2d3748;
+      border-radius: 0 0 1px 1px;
+    }
+
+    /* Monitor glow states */
+    .desk.status-idle .monitor { box-shadow: 0 0 6px rgba(107,114,128,0.15); background: #111827; }
+    .desk.status-thinking .monitor { box-shadow: 0 0 15px rgba(245,158,11,0.4); background: #1a1508; }
+    .desk.status-coding .monitor { box-shadow: 0 0 15px rgba(16,185,129,0.5); background: #0a1a14; animation: codeFlicker 0.3s ease-in-out infinite; }
+    .desk.status-meeting .monitor { box-shadow: 0 0 15px rgba(59,130,246,0.4); background: #0c1425; }
+    .desk.status-blocked .monitor { box-shadow: 0 0 15px rgba(239,68,68,0.5); background: #1a0a0a; }
+
+    @keyframes codeFlicker {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+      92% { opacity: 0.85; }
+    }
+
+    /* Desk lamp */
+    .desk-lamp {
+      position: absolute;
+      bottom: 42px;
+      width: 8px;
+      height: 14px;
+      background: #374151;
+      border-radius: 2px 2px 0 0;
+    }
+    .desk-lamp::before {
+      content: '';
+      position: absolute;
+      top: -6px;
+      left: -4px;
+      width: 16px;
+      height: 6px;
+      background: #4b5563;
+      border-radius: 3px 3px 0 0;
+      transition: box-shadow 0.4s ease, background 0.4s ease;
+    }
+    .desk.status-idle .desk-lamp::before {
+      box-shadow: 0 0 8px rgba(245,158,11,0.15);
+      background: #4b5563;
+    }
+    .desk.status-thinking .desk-lamp::before {
+      box-shadow: 0 0 20px rgba(245,158,11,0.6);
+      background: #f59e0b;
+      animation: lampPulse 2s ease-in-out infinite;
+    }
+    .desk.status-coding .desk-lamp::before {
+      box-shadow: 0 0 16px rgba(245,158,11,0.5);
+      background: #f59e0b;
+    }
+    .desk.status-meeting .desk-lamp::before {
+      box-shadow: 0 0 12px rgba(59,130,246,0.4);
+      background: #60a5fa;
+    }
+    .desk.status-blocked .desk-lamp::before {
+      box-shadow: 0 0 20px rgba(239,68,68,0.6);
+      background: #ef4444;
+      animation: blockedPulse 1s ease-in-out infinite;
+    }
+
+    @keyframes lampPulse {
+      0%, 100% { box-shadow: 0 0 12px rgba(245,158,11,0.3); }
+      50% { box-shadow: 0 0 24px rgba(245,158,11,0.7); }
+    }
+    @keyframes blockedPulse {
+      0%, 100% { box-shadow: 0 0 12px rgba(239,68,68,0.4); opacity: 1; }
+      50% { box-shadow: 0 0 28px rgba(239,68,68,0.8); opacity: 0.7; }
+    }
+
+    /* Coffee mug */
+    .coffee-mug {
+      position: absolute;
+      bottom: 42px;
+      width: 10px;
+      height: 11px;
+      background: #92400e;
+      border-radius: 0 0 3px 3px;
+    }
+    .coffee-mug::before {
+      content: '';
+      position: absolute;
+      top: 2px;
+      right: -4px;
+      width: 5px;
+      height: 6px;
+      border: 1.5px solid #92400e;
+      border-left: none;
+      border-radius: 0 3px 3px 0;
+    }
+    .coffee-mug.full::after {
+      content: '';
+      position: absolute;
+      top: 1px;
+      left: 2px;
+      width: 6px;
+      height: 3px;
+      background: #5c3a1e;
+      border-radius: 50%;
+    }
+
+    /* Steam animation */
+    .steam-wrap {
+      position: absolute;
+      bottom: 53px;
+      width: 12px;
+      display: flex;
+      justify-content: center;
+      gap: 2px;
+      pointer-events: none;
+    }
+    .steam {
+      width: 3px;
+      height: 8px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 50%;
+      animation: steam 1.5s ease-out infinite;
+    }
+    .steam:nth-child(2) { animation-delay: 0.3s; height: 6px; }
+    .steam:nth-child(3) { animation-delay: 0.6s; height: 7px; }
+    .desk.status-idle .steam-wrap { display: none; }
+
+    @keyframes steam {
+      0% { transform: translateY(0) scaleX(1); opacity: 0.4; }
+      100% { transform: translateY(-14px) scaleX(1.8); opacity: 0; }
+    }
+
+    /* Plant */
+    .desk-plant {
+      position: absolute;
+      bottom: 42px;
+    }
+    .plant-pot {
+      width: 10px;
+      height: 8px;
+      background: #78350f;
+      border-radius: 0 0 2px 2px;
+    }
+    .plant-leaf {
+      position: absolute;
+      width: 7px;
+      height: 10px;
+      background: #22c55e;
+      border-radius: 50% 0;
+      bottom: 6px;
+    }
+    .plant-leaf:nth-child(2) {
+      left: 5px;
+      transform: scaleX(-1);
+    }
+    .plant-leaf:nth-child(3) {
+      left: 2px;
+      bottom: 10px;
+      width: 6px;
+      height: 8px;
+      background: #16a34a;
+    }
+
+    /* Keyboard (shown on coding desks) */
+    .desk-keyboard {
+      position: absolute;
+      bottom: 34px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 30px;
+      height: 8px;
+      background: #1f2937;
+      border-radius: 1px;
+      border: 1px solid #374151;
+    }
+    .desk.status-coding .desk-keyboard {
+      animation: keyTap 0.15s ease-in-out infinite alternate;
+    }
+    @keyframes keyTap {
+      0% { transform: translateX(-50%) translateY(0); }
+      100% { transform: translateX(-50%) translateY(0.5px); }
+    }
+
+    /* Thinking dots */
+    .think-dots {
+      position: absolute;
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%) rotateZ(45deg) rotateX(-55deg);
+      display: none;
+      gap: 3px;
+    }
+    .desk.status-thinking .think-dots { display: flex; }
+    .think-dot {
+      width: 5px;
+      height: 5px;
+      background: #f59e0b;
+      border-radius: 50%;
+      animation: thinkDot 1.4s ease-in-out infinite;
+    }
+    .think-dot:nth-child(2) { animation-delay: 0.2s; }
+    .think-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes thinkDot {
+      0%, 80%, 100% { transform: scale(0); opacity: 0; }
+      40% { transform: scale(1); opacity: 1; }
+    }
+
+    /* Blocked X on monitor */
+    .blocked-x {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 12px;
+      font-weight: 900;
+      color: #ef4444;
+      display: none;
+      line-height: 1;
+    }
+    .desk.status-blocked .blocked-x { display: block; }
+
+    /* Agent avatar on desk */
+    .desk-avatar {
+      position: absolute;
+      bottom: 62px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 20px;
+      height: 24px;
+      border-radius: 50% 50% 4px 4px;
+      background: #374151;
+      border: 2px solid #4b5563;
+      transition: transform 0.4s ease, opacity 0.4s ease;
+    }
+    .desk.status-idle .desk-avatar { transform: translateX(-50%) translateY(3px); opacity: 0.5; }
+    .desk.status-thinking .desk-avatar { transform: translateX(-50%) translateY(0); opacity: 0.9; }
+    .desk.status-coding .desk-avatar { transform: translateX(-50%) translateY(-1px); opacity: 1; }
+    .desk.status-blocked .desk-avatar { opacity: 0.6; }
+
+    /* Unique desk decorations */
+    .chess-piece {
+      position: absolute;
+      bottom: 44px;
+      font-size: 12px;
+      opacity: 0.6;
+      transform: rotateZ(45deg) rotateX(-55deg);
+    }
+    .lobster-plush {
+      position: absolute;
+      bottom: 44px;
+      font-size: 14px;
+      transform: rotateZ(45deg) rotateX(-55deg);
+    }
+    .mood-board {
+      position: absolute;
+      bottom: 62px;
+      width: 24px;
+      height: 18px;
+      background: #1e2433;
+      border: 1px solid #374151;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .mood-pin {
+      position: absolute;
+      width: 5px;
+      height: 5px;
+      border-radius: 1px;
+    }
+    .calculator {
+      position: absolute;
+      bottom: 44px;
+      width: 11px;
+      height: 14px;
+      background: #1f2937;
+      border: 1px solid #374151;
+      border-radius: 1px;
+    }
+    .calculator::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 7px;
+      height: 3px;
+      background: #22c55e;
+      opacity: 0.4;
+      border-radius: 1px;
+    }
+    .colored-markers {
+      position: absolute;
+      bottom: 43px;
+      display: flex;
+      gap: 1px;
+    }
+    .marker {
+      width: 2px;
+      height: 10px;
+      border-radius: 1px 1px 0 0;
+    }
+
+    /* ── Meeting Room ── */
+    .meeting-room {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 200px;
+      height: 120px;
+      background: rgba(30,36,51,0.6);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 8px;
+      transition: box-shadow 0.5s ease, border-color 0.5s ease;
+    }
+    .meeting-room.active {
+      border-color: rgba(59,130,246,0.4);
+      box-shadow: 0 0 30px rgba(59,130,246,0.15);
+    }
+    .meeting-room-label {
+      position: absolute;
+      top: 6px;
+      left: 50%;
+      transform: translateX(-50%) rotateZ(45deg) rotateX(-55deg);
+      font-size: 8px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.2);
+      white-space: nowrap;
+      pointer-events: none;
+    }
+    .meeting-room.active .meeting-room-label {
+      color: #3b82f6;
+    }
+    /* Meeting table */
+    .meeting-table {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 80px;
+      height: 30px;
+      background: #2a3040;
+      border-radius: 4px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    /* Meeting chairs */
+    .meeting-chair {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      background: #1e2433;
+      border: 1px solid #374151;
+      border-radius: 50%;
+      transition: background 0.4s ease, box-shadow 0.4s ease;
+    }
+    .meeting-chair.occupied {
+      background: #1e3a5f;
+      box-shadow: 0 0 8px rgba(59,130,246,0.3);
+    }
+    /* Whiteboard */
+    .whiteboard {
+      position: absolute;
+      top: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 16px;
+      background: #e5e7eb;
+      border-radius: 2px;
+      opacity: 0.15;
+    }
+    /* Overhead light */
+    .overhead-light {
+      position: absolute;
+      top: -6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 4px;
+      background: #374151;
+      border-radius: 2px;
+      transition: box-shadow 0.5s ease, background 0.5s ease;
+    }
+    .meeting-room.active .overhead-light {
+      background: #3b82f6;
+      box-shadow: 0 4px 20px rgba(59,130,246,0.4);
+    }
+
+    /* Meeting agent avatars */
+    .meeting-attendees {
+      position: absolute;
+      bottom: 4px;
+      left: 50%;
+      transform: translateX(-50%) rotateZ(45deg) rotateX(-55deg);
+      display: flex;
+      gap: 4px;
+    }
+    .meeting-avatar {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #3b82f6;
+      border: 1.5px solid #60a5fa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 7px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    /* ── Inspect Panel ── */
+    .inspect-panel {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 260px;
+      height: 100%;
+      background: rgba(13,17,23,0.95);
+      border-left: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(12px);
+      transform: translateX(100%);
+      transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+      z-index: 20;
+      padding: 24px 18px;
+      overflow-y: auto;
+    }
+    .inspect-panel.open { transform: translateX(0); }
+    .inspect-panel-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 24px;
+      height: 24px;
+      background: rgba(255,255,255,0.06);
+      border: none;
+      border-radius: 4px;
+      color: rgba(255,255,255,0.5);
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .inspect-panel-close:hover { background: rgba(255,255,255,0.12); color: #fff; }
+    .inspect-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 2px;
+    }
+    .inspect-role {
+      font-size: 12px;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 16px;
+    }
+    .inspect-field-label {
       font-size: 10px;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      color: var(--muted-foreground);
-      opacity: 0.6;
-      margin-bottom: 12px;
+      color: rgba(255,255,255,0.3);
+      margin-bottom: 4px;
+      margin-top: 14px;
     }
-    .zone-engineering { grid-column: 1; grid-row: 1; }
-    .zone-hub { grid-column: 2; grid-row: 1; }
-    .zone-creative { grid-column: 3; grid-row: 1; }
-    .zone-ops { grid-column: 1; grid-row: 2; }
-    .zone-meeting { grid-column: 2 / 4; grid-row: 2; }
-
-    .office-agent-card {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 12px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      margin-bottom: 8px;
-      background: transparent;
-    }
-    .office-agent-card:last-child { margin-bottom: 0; }
-    .office-status-ring {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-    .office-status-ring.idle { background: #6b7280; }
-    .office-status-ring.thinking { background: #f59e0b; animation: office-pulse 1.4s ease-in-out infinite; }
-    .office-status-ring.coding { background: #22c55e; animation: office-pulse 2s ease-in-out infinite; }
-    .office-status-ring.working { background: #22c55e; animation: office-pulse 2s ease-in-out infinite; }
-    .office-status-ring.meeting { background: #3b82f6; }
-    .office-status-ring.blocked { background: #ef4444; }
-    @keyframes office-pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.85)} }
-
-    .office-agent-info { flex: 1; min-width: 0; }
-    .office-agent-name {
+    .inspect-field-value {
       font-size: 13px;
-      font-weight: 600;
-      color: var(--foreground);
+      color: rgba(255,255,255,0.8);
+      line-height: 1.4;
     }
-    .office-agent-role {
-      font-size: 11px;
-      color: var(--muted-foreground);
-      margin-left: 6px;
-      font-weight: 400;
-    }
-    .office-agent-task {
-      font-size: 11px;
-      color: var(--muted-foreground);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      margin-top: 2px;
-    }
-    .office-agent-time {
-      font-size: 10px;
-      color: var(--muted-foreground);
-      opacity: 0.7;
-      white-space: nowrap;
-    }
-
-    /* Meeting room active state */
-    .zone-meeting.active {
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 1px #3b82f640, 0 0 20px #3b82f610;
-    }
-    .meeting-session-label {
-      display: none;
+    .inspect-status-badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 999px;
       font-size: 11px;
       font-weight: 600;
-      color: #3b82f6;
-      margin-bottom: 8px;
-      letter-spacing: 0.05em;
     }
-    .zone-meeting.active .meeting-session-label { display: block; }
-    .meeting-empty {
-      font-size: 12px;
-      color: var(--muted-foreground);
-      opacity: 0.5;
-    }
+    .inspect-status-badge.idle { background: rgba(107,114,128,0.2); color: #9ca3af; }
+    .inspect-status-badge.thinking { background: rgba(245,158,11,0.15); color: #f59e0b; }
+    .inspect-status-badge.coding { background: rgba(34,197,94,0.15); color: #22c55e; }
+    .inspect-status-badge.meeting { background: rgba(59,130,246,0.15); color: #3b82f6; }
+    .inspect-status-badge.blocked { background: rgba(239,68,68,0.15); color: #ef4444; }
 
-    /* Meeting connection line (SVG overlay) */
-    .office-floor-wrapper { position: relative; }
-    .meeting-lines {
+    /* Office updated counter */
+    .office-updated {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      bottom: 10px;
+      right: 14px;
+      font-size: 10px;
+      color: rgba(255,255,255,0.25);
       pointer-events: none;
-      z-index: 2;
-    }
-    .meeting-line {
-      stroke: #3b82f6;
-      stroke-width: 1;
-      stroke-dasharray: 4 3;
-      opacity: 0.4;
     }
 
     /* Full width helper */
@@ -614,10 +1095,8 @@
       .main-wrapper { margin-left: 0; }
       .stats-grid { grid-template-columns: repeat(2, 1fr); }
       .two-col, .three-col { grid-template-columns: 1fr; }
-      .office-floor { grid-template-columns: 1fr; }
-      .zone-engineering, .zone-hub, .zone-creative, .zone-ops, .zone-meeting {
-        grid-column: auto; grid-row: auto;
-      }
+      .office-iso-floor { transform: rotateX(55deg) rotateZ(-45deg) scale(0.7); }
+      .office-3d-container { min-height: 380px; }
     }
   </style>
 </head>
@@ -724,38 +1203,144 @@
         </div>
       </div>
 
-      <!-- 2. Office View -->
-      <div class="card full-width" id="section-office">
-        <div class="card-header">
+      <!-- 2. 3D Isometric Office View -->
+      <div class="card full-width" id="section-office" style="padding:0;overflow:hidden;">
+        <div class="card-header" style="padding:18px 24px;margin-bottom:0;">
           <span class="card-title">Office</span>
           <span class="card-badge" id="office-status-badge">Loading...</span>
         </div>
-        <div class="office-floor-wrapper">
-          <div class="office-floor" id="office-floor">
-            <div class="office-zone zone-engineering" id="zone-engineering">
-              <div class="zone-label">Engineering Wing</div>
-              <div id="zone-engineering-agents"></div>
+        <div class="office-3d-container" id="office-3d">
+          <div class="office-iso-floor" id="office-iso-floor">
+            <div class="floor-grid"></div>
+
+            <!-- Zone labels -->
+            <div class="zone-3d-label" style="left:20px;bottom:10px;">Engineering</div>
+            <div class="zone-3d-label" style="left:50%;bottom:10px;transform:translateX(-50%) rotateZ(45deg) rotateX(-55deg);">Central Hub</div>
+            <div class="zone-3d-label" style="right:20px;bottom:10px;">Creative / Ops</div>
+
+            <!-- Meeting Room (back center) -->
+            <div class="meeting-room" id="meeting-room">
+              <div class="overhead-light"></div>
+              <div class="meeting-room-label">Meeting Room</div>
+              <div class="whiteboard"></div>
+              <div class="meeting-table"></div>
+              <!-- 6 chairs around the table -->
+              <div class="meeting-chair" style="top:28px;left:16px;"></div>
+              <div class="meeting-chair" style="top:28px;left:36px;"></div>
+              <div class="meeting-chair" style="top:28px;right:36px;"></div>
+              <div class="meeting-chair" style="top:28px;right:16px;"></div>
+              <div class="meeting-chair" style="bottom:20px;left:40px;"></div>
+              <div class="meeting-chair" style="bottom:20px;right:40px;"></div>
+              <div class="meeting-attendees" id="meeting-attendees"></div>
             </div>
-            <div class="office-zone zone-hub" id="zone-hub">
-              <div class="zone-label">Central Hub</div>
-              <div id="zone-hub-agents"></div>
+
+            <!-- FORGE desk (engineering wing, left) -->
+            <div class="desk" id="desk-forge" data-agent="forge" style="left:40px;bottom:80px;">
+              <div class="think-dots"><div class="think-dot"></div><div class="think-dot"></div><div class="think-dot"></div></div>
+              <div class="desk-avatar" style="background:#7c3aed;border-color:#a78bfa;"></div>
+              <div class="monitor" style="left:10px;"></div>
+              <div class="monitor" style="left:42px;"></div>
+              <div class="monitor" style="left:74px;"></div>
+              <div class="blocked-x" style="left:52px;">X</div>
+              <div class="desk-lamp" style="right:8px;"></div>
+              <div class="coffee-mug" style="right:24px;"></div>
+              <div class="steam-wrap" style="right:22px;"><div class="steam"></div><div class="steam"></div><div class="steam"></div></div>
+              <div class="desk-keyboard"></div>
+              <div class="desk-surface"></div>
+              <div class="desk-label">Forge</div>
             </div>
-            <div class="office-zone zone-creative" id="zone-creative">
-              <div class="zone-label">Creative Wing</div>
-              <div id="zone-creative-agents"></div>
+
+            <!-- JAMIE desk (engineering wing, left lower) -->
+            <div class="desk" id="desk-jamie" data-agent="jamie" style="left:40px;bottom:200px;">
+              <div class="think-dots"><div class="think-dot"></div><div class="think-dot"></div><div class="think-dot"></div></div>
+              <div class="desk-avatar" style="background:#2563eb;border-color:#60a5fa;"></div>
+              <div class="monitor" style="left:30px;width:40px;height:28px;bottom:40px;"></div>
+              <div class="blocked-x" style="left:44px;">X</div>
+              <div class="chess-piece" style="right:14px;">&#9822;</div>
+              <div class="desk-lamp" style="left:8px;"></div>
+              <div class="coffee-mug full" style="right:8px;"></div>
+              <div class="steam-wrap" style="right:6px;"><div class="steam"></div><div class="steam"></div><div class="steam"></div></div>
+              <div class="desk-keyboard"></div>
+              <div class="desk-surface"></div>
+              <div class="desk-label">Jamie</div>
             </div>
-            <div class="office-zone zone-ops" id="zone-ops">
-              <div class="zone-label">Ops / Finance</div>
-              <div id="zone-ops-agents"></div>
+
+            <!-- CLAW desk (central hub, center elevated) -->
+            <div class="desk" id="desk-claw" data-agent="claw" style="left:50%;bottom:160px;transform:translateX(-50%);">
+              <div class="think-dots"><div class="think-dot"></div><div class="think-dot"></div><div class="think-dot"></div></div>
+              <div class="desk-avatar" style="background:#ea580c;border-color:#fb923c;"></div>
+              <div class="monitor" style="left:4px;"></div>
+              <div class="monitor" style="left:34px;"></div>
+              <div class="monitor" style="left:64px;"></div>
+              <div class="monitor" style="left:94px;"></div>
+              <div class="blocked-x" style="left:55px;">X</div>
+              <div class="lobster-plush" style="right:4px;">&#x1F99E;</div>
+              <div class="desk-lamp" style="left:6px;"></div>
+              <div class="desk-keyboard"></div>
+              <div class="desk-surface" style="border-radius:8px;background:linear-gradient(135deg,#1e2433,#252d3f);"></div>
+              <div class="desk-label">Claw</div>
             </div>
-            <div class="office-zone zone-meeting" id="zone-meeting">
-              <div class="zone-label">Meeting Room</div>
-              <div class="meeting-session-label">IN SESSION</div>
-              <div id="zone-meeting-agents">
-                <div class="meeting-empty">No active meetings</div>
+
+            <!-- DEMI desk (creative wing, right) -->
+            <div class="desk" id="desk-demi" data-agent="demi" style="right:40px;bottom:200px;">
+              <div class="think-dots"><div class="think-dot"></div><div class="think-dot"></div><div class="think-dot"></div></div>
+              <div class="desk-avatar" style="background:#db2777;border-color:#f472b6;"></div>
+              <div class="monitor" style="left:30px;"></div>
+              <div class="blocked-x" style="left:38px;">X</div>
+              <div class="mood-board" style="left:8px;">
+                <div class="mood-pin" style="top:2px;left:2px;background:#f472b6;"></div>
+                <div class="mood-pin" style="top:8px;left:8px;background:#facc15;"></div>
+                <div class="mood-pin" style="top:3px;left:14px;background:#34d399;"></div>
               </div>
+              <div class="colored-markers" style="right:10px;">
+                <div class="marker" style="background:#f472b6;"></div>
+                <div class="marker" style="background:#facc15;"></div>
+                <div class="marker" style="background:#34d399;"></div>
+                <div class="marker" style="background:#60a5fa;"></div>
+                <div class="marker" style="background:#c084fc;"></div>
+              </div>
+              <div class="desk-plant" style="right:4px;">
+                <div class="plant-leaf"></div>
+                <div class="plant-leaf"></div>
+                <div class="plant-leaf"></div>
+                <div class="plant-pot"></div>
+              </div>
+              <div class="desk-lamp" style="right:8px;"></div>
+              <div class="desk-keyboard"></div>
+              <div class="desk-surface"></div>
+              <div class="desk-label">Demi</div>
+            </div>
+
+            <!-- JUICE desk (ops wing, right lower) -->
+            <div class="desk" id="desk-juice" data-agent="juice" style="right:40px;bottom:80px;">
+              <div class="think-dots"><div class="think-dot"></div><div class="think-dot"></div><div class="think-dot"></div></div>
+              <div class="desk-avatar" style="background:#059669;border-color:#34d399;"></div>
+              <div class="monitor" style="left:30px;"></div>
+              <div class="blocked-x" style="left:38px;">X</div>
+              <div class="calculator" style="right:10px;"></div>
+              <div class="desk-plant" style="left:4px;">
+                <div class="plant-leaf"></div>
+                <div class="plant-leaf"></div>
+                <div class="plant-leaf"></div>
+                <div class="plant-pot"></div>
+              </div>
+              <div class="desk-lamp" style="right:28px;"></div>
+              <div class="coffee-mug" style="left:18px;"></div>
+              <div class="steam-wrap" style="left:16px;"><div class="steam"></div><div class="steam"></div><div class="steam"></div></div>
+              <div class="desk-keyboard"></div>
+              <div class="desk-surface"></div>
+              <div class="desk-label">Juice</div>
             </div>
           </div>
+
+          <!-- Inspect panel (slides in from right) -->
+          <div class="inspect-panel" id="inspect-panel">
+            <button class="inspect-panel-close" id="inspect-close">&times;</button>
+            <div id="inspect-content"></div>
+          </div>
+
+          <!-- Last updated counter -->
+          <div class="office-updated" id="office-updated">Updated just now</div>
         </div>
       </div>
 
@@ -1153,11 +1738,9 @@
       return d.innerHTML;
     }
 
-    // ── Office View ──
-    // NOTE: Fetching data/agent-status.json via relative path works when served over HTTP.
-    // When opened via file:// protocol, browsers block fetch() due to CORS/same-origin policy.
-    // To test locally, use a simple HTTP server: python3 -m http.server 8000
-    const DEPT_ZONE_MAP = { engineering: 'zone-engineering-agents', hub: 'zone-hub-agents', creative: 'zone-creative-agents', ops: 'zone-ops-agents' };
+    // ── 3D Office View ──
+    let officeLastFetch = Date.now();
+    let officeAgentData = {};
 
     function durationSince(isoStr) {
       if (!isoStr) return '';
@@ -1170,59 +1753,63 @@
       return hrs + 'h ' + rm + 'm';
     }
 
-    function renderAgentCard(agent) {
-      const task = agent.task ? escapeHtml(agent.task) : 'No active task';
-      const time = agent.status_since ? durationSince(agent.status_since) : '';
-      return `<div class="office-agent-card" data-agent-id="${agent.id}">
-        <span class="office-status-ring ${agent.status}"></span>
-        <div class="office-agent-info">
-          <div><span class="office-agent-name">${escapeHtml(agent.name)}</span><span class="office-agent-role">/ ${escapeHtml(agent.role)}</span></div>
-          <div class="office-agent-task">${task}</div>
-        </div>
-        ${time ? '<span class="office-agent-time">' + time + '</span>' : ''}
-      </div>`;
-    }
-
-    function renderOffice(data) {
-      // Clear zones
-      Object.values(DEPT_ZONE_MAP).forEach(id => { document.getElementById(id).innerHTML = ''; });
-
+    function renderOffice3D(data) {
       const meetingAgents = [];
       let activeCount = 0;
 
       data.agents.forEach(agent => {
+        officeAgentData[agent.id] = agent;
         if (agent.status !== 'idle') activeCount++;
-        const zoneId = DEPT_ZONE_MAP[agent.department];
-        if (zoneId) {
-          document.getElementById(zoneId).insertAdjacentHTML('beforeend', renderAgentCard(agent));
-        }
         if (agent.status === 'meeting') meetingAgents.push(agent);
+
+        const desk = document.getElementById('desk-' + agent.id);
+        if (!desk) return;
+
+        // Remove old status classes, add new one
+        desk.className = desk.className.replace(/status-\w+/g, '').trim();
+        desk.classList.add('status-' + agent.status);
+
+        // If meeting, fade desk and move avatar to meeting room
+        if (agent.status === 'meeting') {
+          desk.classList.add('at-meeting');
+        } else {
+          desk.classList.remove('at-meeting');
+        }
       });
 
       // Meeting room
-      const meetingZone = document.getElementById('zone-meeting');
-      const meetingContainer = document.getElementById('zone-meeting-agents');
+      const meetingRoom = document.getElementById('meeting-room');
+      const attendeesEl = document.getElementById('meeting-attendees');
+      const chairs = meetingRoom.querySelectorAll('.meeting-chair');
+      chairs.forEach(c => c.classList.remove('occupied'));
+
       if (meetingAgents.length >= 2) {
-        meetingZone.classList.add('active');
-        meetingContainer.innerHTML = meetingAgents.map(a => renderAgentCard(a)).join('');
+        meetingRoom.classList.add('active');
+        attendeesEl.innerHTML = meetingAgents.map(a =>
+          '<div class="meeting-avatar">' + a.name.charAt(0) + '</div>'
+        ).join('');
+        meetingAgents.forEach((_, i) => {
+          if (chairs[i]) chairs[i].classList.add('occupied');
+        });
       } else {
-        meetingZone.classList.remove('active');
-        meetingContainer.innerHTML = '<div class="meeting-empty">No active meetings</div>';
+        meetingRoom.classList.remove('active');
+        attendeesEl.innerHTML = '';
       }
 
       // Badge
       document.getElementById('office-status-badge').textContent = activeCount + ' active';
+      officeLastFetch = Date.now();
     }
 
-    function renderOfficeError() {
-      const fallbackAgents = [
-        { id:'claw', name:'Claw', role:'Orchestrator', department:'hub', status:'idle', task:'Status unavailable', status_since:null },
-        { id:'forge', name:'Forge', role:'Builder', department:'engineering', status:'idle', task:'Status unavailable', status_since:null },
-        { id:'jamie', name:'Jamie', role:'Builder', department:'engineering', status:'idle', task:'Status unavailable', status_since:null },
-        { id:'demi', name:'Demi', role:'CMO / Creative', department:'creative', status:'idle', task:'Status unavailable', status_since:null },
-        { id:'juice', name:'Juice', role:'Finance', department:'ops', status:'idle', task:'Status unavailable', status_since:null }
+    function renderOffice3DError() {
+      const fallback = [
+        { id:'claw', name:'Claw', role:'Orchestrator', department:'hub', status:'idle', task:null, status_since:null },
+        { id:'forge', name:'Forge', role:'Builder', department:'engineering', status:'idle', task:null, status_since:null },
+        { id:'jamie', name:'Jamie', role:'Builder', department:'engineering', status:'idle', task:null, status_since:null },
+        { id:'demi', name:'Demi', role:'CMO / Creative', department:'creative', status:'idle', task:null, status_since:null },
+        { id:'juice', name:'Juice', role:'Finance', department:'ops', status:'idle', task:null, status_since:null }
       ];
-      renderOffice({ agents: fallbackAgents });
+      renderOffice3D({ agents: fallback });
       document.getElementById('office-status-badge').textContent = 'offline';
     }
 
@@ -1231,15 +1818,57 @@
         const res = await fetch('data/agent-status.json?t=' + Date.now());
         if (!res.ok) throw new Error('HTTP ' + res.status);
         const data = await res.json();
-        renderOffice(data);
+        renderOffice3D(data);
       } catch (e) {
-        renderOfficeError();
+        renderOffice3DError();
       }
     }
 
-    // Office refreshes every 10s independently
+    // Click-to-inspect
+    document.querySelectorAll('.desk[data-agent]').forEach(desk => {
+      desk.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const agentId = desk.dataset.agent;
+        const agent = officeAgentData[agentId];
+        if (!agent) return;
+        const panel = document.getElementById('inspect-panel');
+        const content = document.getElementById('inspect-content');
+        const timeSince = agent.status_since ? durationSince(agent.status_since) : 'N/A';
+        content.innerHTML = `
+          <div class="inspect-name">${escapeHtml(agent.name)}</div>
+          <div class="inspect-role">${escapeHtml(agent.role)}</div>
+          <div class="inspect-field-label">Status</div>
+          <div class="inspect-field-value"><span class="inspect-status-badge ${agent.status}">${agent.status}</span></div>
+          <div class="inspect-field-label">Current Task</div>
+          <div class="inspect-field-value">${agent.task ? escapeHtml(agent.task) : 'No active task'}</div>
+          <div class="inspect-field-label">Time in Status</div>
+          <div class="inspect-field-value">${timeSince}</div>
+          <div class="inspect-field-label">Department</div>
+          <div class="inspect-field-value">${agent.department}</div>
+        `;
+        panel.classList.add('open');
+      });
+    });
+
+    // Close inspect panel
+    document.getElementById('inspect-close').addEventListener('click', () => {
+      document.getElementById('inspect-panel').classList.remove('open');
+    });
+    document.getElementById('office-3d').addEventListener('click', (e) => {
+      if (!e.target.closest('.desk') && !e.target.closest('.inspect-panel')) {
+        document.getElementById('inspect-panel').classList.remove('open');
+      }
+    });
+
+    // Office updated counter
+    setInterval(() => {
+      const s = Math.round((Date.now() - officeLastFetch) / 1000);
+      document.getElementById('office-updated').textContent = s < 3 ? 'Updated just now' : 'Updated ' + s + 's ago';
+    }, 1000);
+
+    // Office refreshes every 5s
     fetchAgentStatus();
-    setInterval(fetchAgentStatus, 10000);
+    setInterval(fetchAgentStatus, 5000);
 
     // ── Init ──
     async function refresh() {
