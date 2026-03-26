@@ -13,6 +13,62 @@
       color: #e6edf3;
       min-height: 100vh;
       line-height: 1.5;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    body.light-mode {
+      background: #ffffff;
+      color: #1f2328;
+    }
+
+    body.light-mode header {
+      background: #f6f8fa;
+      border-bottom-color: #d1d9e0;
+    }
+
+    body.light-mode .card {
+      background: #f6f8fa;
+      border-color: #d1d9e0;
+    }
+
+    body.light-mode section > h2 {
+      color: #656d76;
+    }
+
+    body.light-mode .metric-label,
+    body.light-mode .stat-label,
+    body.light-mode .feed-time,
+    body.light-mode .agent-traits,
+    body.light-mode #clock,
+    body.light-mode .token-table th,
+    body.light-mode .cron-schedule,
+    body.light-mode .health-status-text,
+    body.light-mode .mission-date,
+    body.light-mode .v3-note {
+      color: #656d76;
+    }
+
+    body.light-mode .feed-item,
+    body.light-mode .agent-name,
+    body.light-mode .token-table td,
+    body.light-mode .cron-name,
+    body.light-mode .mission-title,
+    body.light-mode .health-name {
+      color: #1f2328;
+    }
+
+    body.light-mode .feed-item {
+      border-bottom-color: #d1d9e0;
+    }
+
+    body.light-mode .token-table th,
+    body.light-mode .token-table td {
+      border-bottom-color: #d1d9e0;
+    }
+
+    body.light-mode footer {
+      border-top-color: #d1d9e0;
+      color: #656d76;
     }
 
     header {
@@ -30,29 +86,58 @@
       color: #f78166;
     }
 
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
     #clock {
       font-size: 1rem;
       color: #8b949e;
       font-variant-numeric: tabular-nums;
     }
 
+    #theme-toggle {
+      background: none;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: 0.35rem 0.65rem;
+      font-size: 1.1rem;
+      cursor: pointer;
+      color: #e6edf3;
+      transition: border-color 0.2s;
+    }
+
+    #theme-toggle:hover {
+      border-color: #f78166;
+    }
+
+    body.light-mode #theme-toggle {
+      border-color: #d1d9e0;
+      color: #1f2328;
+    }
+
     main {
-      max-width: 1200px;
+      max-width: 1400px;
       margin: 0 auto;
       padding: 2rem;
-      display: flex;
-      flex-direction: column;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 2rem;
     }
 
+    .full-width {
+      grid-column: 1 / -1;
+    }
+
     section > h2 {
-      font-size: 1.1rem;
+      font-size: 0.85rem;
       font-weight: 600;
       margin-bottom: 1rem;
       color: #8b949e;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      font-size: 0.85rem;
     }
 
     .card {
@@ -60,7 +145,7 @@
       border: 1px solid #30363d;
       border-radius: 8px;
       padding: 1.25rem;
-      transition: border-color 0.2s;
+      transition: border-color 0.2s, background 0.3s;
     }
 
     .card:hover {
@@ -93,7 +178,7 @@
     /* Agent Roster */
     .agent-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 1rem;
     }
 
@@ -195,7 +280,236 @@
       font-weight: 600;
     }
 
-    @media (max-width: 600px) {
+    /* Status Badges */
+    .badge {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .badge-done { background: #23863633; color: #3fb950; }
+    .badge-in-progress { background: #1f6feb33; color: #58a6ff; }
+    .badge-blocked { background: #f8514933; color: #f85149; }
+    .badge-commit { background: #6e40c933; color: #bc8cff; }
+    .badge-issue { background: #d2992233; color: #d29922; }
+
+    /* Mission Feed */
+    .mission-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .mission-item {
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #30363d;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+
+    .mission-item:last-child {
+      border-bottom: none;
+    }
+
+    .mission-info {
+      flex: 1;
+    }
+
+    .mission-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #e6edf3;
+      margin-bottom: 0.25rem;
+    }
+
+    .mission-date {
+      font-size: 0.8rem;
+      color: #8b949e;
+    }
+
+    .mission-labels {
+      display: flex;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+      margin-top: 0.25rem;
+    }
+
+    .label-badge {
+      display: inline-block;
+      padding: 0.1rem 0.45rem;
+      border-radius: 12px;
+      font-size: 0.7rem;
+      font-weight: 500;
+      background: #30363d;
+      color: #c9d1d9;
+    }
+
+    /* Cron Monitor */
+    .cron-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .cron-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      background: #0d1117;
+      border-radius: 6px;
+      border: 1px solid #30363d;
+    }
+
+    body.light-mode .cron-item {
+      background: #ffffff;
+      border-color: #d1d9e0;
+    }
+
+    .cron-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-top: 0.35rem;
+      flex-shrink: 0;
+    }
+
+    .cron-dot-ok { background: #3fb950; }
+    .cron-dot-error { background: #f85149; }
+    .cron-dot-never { background: #d29922; }
+
+    .cron-info { flex: 1; }
+
+    .cron-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #e6edf3;
+    }
+
+    .cron-schedule {
+      font-size: 0.8rem;
+      color: #8b949e;
+    }
+
+    .cron-error {
+      font-size: 0.8rem;
+      color: #f85149;
+      margin-top: 0.15rem;
+    }
+
+    .v3-note {
+      font-size: 0.8rem;
+      color: #8b949e;
+      font-style: italic;
+      margin-top: 0.75rem;
+    }
+
+    /* Health Panel */
+    .health-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .health-item {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .health-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .health-dot-green { background: #3fb950; }
+    .health-dot-red { background: #f85149; }
+    .health-dot-yellow { background: #d29922; }
+
+    .health-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #e6edf3;
+      min-width: 140px;
+    }
+
+    .health-status-text {
+      font-size: 0.85rem;
+      color: #8b949e;
+    }
+
+    /* Task Creation */
+    .task-form {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid #30363d;
+    }
+
+    .task-input {
+      flex: 1;
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      border: 1px solid #30363d;
+      background: #0d1117;
+      color: #e6edf3;
+      font-size: 0.9rem;
+      font-family: inherit;
+    }
+
+    body.light-mode .task-input {
+      background: #ffffff;
+      border-color: #d1d9e0;
+      color: #1f2328;
+    }
+
+    .task-input:focus {
+      outline: none;
+      border-color: #f78166;
+    }
+
+    .task-btn {
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      border: none;
+      background: #f78166;
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .task-btn:hover {
+      background: #e06b50;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 1rem 2rem;
+      border-top: 1px solid #30363d;
+      color: #8b949e;
+      font-size: 0.8rem;
+    }
+
+    @media (max-width: 800px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+      .full-width {
+        grid-column: 1;
+      }
       header { padding: 1rem; flex-direction: column; gap: 0.5rem; }
       main { padding: 1rem; }
       .metric-value { font-size: 1.5rem; }
@@ -205,12 +519,15 @@
 <body>
   <header>
     <h1>🦞 Claw Mission Control</h1>
-    <div id="clock"></div>
+    <div class="header-right">
+      <div id="clock"></div>
+      <button id="theme-toggle" title="Toggle light/dark mode">🌙</button>
+    </div>
   </header>
 
   <main>
     <!-- Cost Tracker -->
-    <section>
+    <section class="full-width">
       <h2>Cost Tracker</h2>
       <div class="cost-grid">
         <div class="card metric-card">
@@ -229,7 +546,7 @@
     </section>
 
     <!-- Agent Roster -->
-    <section>
+    <section class="full-width">
       <h2>Agent Roster</h2>
       <div class="agent-grid">
         <div class="card">
@@ -253,15 +570,70 @@
       <div class="stats-grid">
         <div class="card stat-completed">
           <div class="stat-label">Tasks Completed</div>
-          <div class="stat-value">0</div>
+          <div class="stat-value" id="stat-completed">0</div>
         </div>
         <div class="card stat-progress">
           <div class="stat-label">In Progress</div>
-          <div class="stat-value">0</div>
+          <div class="stat-value" id="stat-progress">0</div>
         </div>
         <div class="card stat-blocked">
           <div class="stat-label">Blocked</div>
-          <div class="stat-value">0</div>
+          <div class="stat-value" id="stat-blocked">0</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cron Monitor -->
+    <section>
+      <h2>⏰ Scheduled Jobs</h2>
+      <div class="card">
+        <div class="cron-list">
+          <div class="cron-item">
+            <div class="cron-dot cron-dot-error"></div>
+            <div class="cron-info">
+              <div class="cron-name">overnight-research</div>
+              <div class="cron-schedule">Daily 1:00 AM PT &middot; Last run: 2026-03-25 01:00</div>
+              <div class="cron-error">Error: Channel config needed</div>
+            </div>
+          </div>
+          <div class="cron-item">
+            <div class="cron-dot cron-dot-error"></div>
+            <div class="cron-info">
+              <div class="cron-name">morning-ping-kaan</div>
+              <div class="cron-schedule">Daily 9:30 AM PT &middot; Last run: 2026-03-25 09:30</div>
+              <div class="cron-error">Error: Telegram target needed</div>
+            </div>
+          </div>
+        </div>
+        <div class="v3-note">Live cron sync coming in v3</div>
+      </div>
+    </section>
+
+    <!-- System Health -->
+    <section>
+      <h2>🟢 System Health</h2>
+      <div class="card">
+        <div class="health-list" id="health-list">
+          <div class="health-item">
+            <div class="health-dot health-dot-yellow" id="health-dot-gateway"></div>
+            <div class="health-name">OpenClaw Gateway</div>
+            <div class="health-status-text" id="health-text-gateway">Checking...</div>
+          </div>
+          <div class="health-item">
+            <div class="health-dot health-dot-green"></div>
+            <div class="health-name">GitHub CLI</div>
+            <div class="health-status-text">Connected</div>
+          </div>
+          <div class="health-item">
+            <div class="health-dot health-dot-green"></div>
+            <div class="health-name">Whisper/Audio</div>
+            <div class="health-status-text">Ready</div>
+          </div>
+          <div class="health-item">
+            <div class="health-dot health-dot-yellow" id="health-dot-chrome"></div>
+            <div class="health-name">Chrome Debug</div>
+            <div class="health-status-text" id="health-text-chrome">Checking...</div>
+          </div>
         </div>
       </div>
     </section>
@@ -294,6 +666,7 @@
             </tr>
           </tbody>
         </table>
+        <div class="v3-note">Live tracking coming in v3</div>
       </div>
     </section>
 
@@ -301,33 +674,33 @@
     <section>
       <h2>Activity Feed</h2>
       <div class="card">
-        <ul class="feed-list">
-          <li class="feed-item">
-            <span class="feed-time">2026-03-25 17:00</span>
-            <span class="feed-agent">Forge:</span> Initialized mission-control repo
-          </li>
-          <li class="feed-item">
-            <span class="feed-time">2026-03-25 16:56</span>
-            <span class="feed-agent">Claw:</span> GitHub auth configured for kaanclaw
-          </li>
-          <li class="feed-item">
-            <span class="feed-time">2026-03-25 16:35</span>
-            <span class="feed-agent">Claw:</span> kaanclaw GitHub account created
-          </li>
-          <li class="feed-item">
-            <span class="feed-time">2026-03-25 09:30</span>
-            <span class="feed-agent">Claw:</span> Morning briefing delivered
-          </li>
-          <li class="feed-item">
-            <span class="feed-time">2026-03-24 23:00</span>
-            <span class="feed-agent">Claw:</span> Dev environment setup complete
-          </li>
+        <ul class="feed-list" id="activity-feed">
+          <li class="feed-item"><span class="feed-time">Loading...</span></li>
         </ul>
+      </div>
+    </section>
+
+    <!-- Mission Feed -->
+    <section>
+      <h2>Mission Feed</h2>
+      <div class="card">
+        <ul class="mission-list" id="mission-feed">
+          <li class="feed-item"><span class="feed-time">Loading...</span></li>
+        </ul>
+        <div class="task-form">
+          <input type="text" class="task-input" id="task-input" placeholder="New mission title...">
+          <button class="task-btn" id="task-btn">Create Mission</button>
+        </div>
       </div>
     </section>
   </main>
 
+  <footer>
+    <span id="last-updated">Last updated: --:--:--</span>
+  </footer>
+
   <script>
+    // ── Clock ──
     function updateClock() {
       var now = new Date();
       var str = now.getFullYear() + '-' +
@@ -340,6 +713,212 @@
     }
     updateClock();
     setInterval(updateClock, 1000);
+
+    // ── Dark/Light Toggle ──
+    var themeBtn = document.getElementById('theme-toggle');
+    function applyTheme(mode) {
+      if (mode === 'light') {
+        document.body.classList.add('light-mode');
+        themeBtn.textContent = '☀️';
+      } else {
+        document.body.classList.remove('light-mode');
+        themeBtn.textContent = '🌙';
+      }
+    }
+    applyTheme(localStorage.getItem('theme') || 'dark');
+    themeBtn.addEventListener('click', function() {
+      var isLight = document.body.classList.contains('light-mode');
+      var next = isLight ? 'dark' : 'light';
+      localStorage.setItem('theme', next);
+      applyTheme(next);
+    });
+
+    // ── Health Checks ──
+    function checkHealth(url, dotId, textId) {
+      var controller = new AbortController();
+      var timeout = setTimeout(function() { controller.abort(); }, 2000);
+      fetch(url, { signal: controller.signal })
+        .then(function(r) {
+          clearTimeout(timeout);
+          if (r.ok) {
+            document.getElementById(dotId).className = 'health-dot health-dot-green';
+            document.getElementById(textId).textContent = 'Online';
+          } else {
+            document.getElementById(dotId).className = 'health-dot health-dot-red';
+            document.getElementById(textId).textContent = 'Error (' + r.status + ')';
+          }
+        })
+        .catch(function() {
+          clearTimeout(timeout);
+          document.getElementById(dotId).className = 'health-dot health-dot-red';
+          document.getElementById(textId).textContent = 'Offline';
+        });
+    }
+    checkHealth('http://127.0.0.1:18789/health', 'health-dot-gateway', 'health-text-gateway');
+    checkHealth('http://127.0.0.1:9222/json/version', 'health-dot-chrome', 'health-text-chrome');
+
+    // ── GitHub Data Fetching ──
+    function timeAgo(dateStr) {
+      var diff = Date.now() - new Date(dateStr).getTime();
+      var mins = Math.floor(diff / 60000);
+      if (mins < 60) return mins + 'm ago';
+      var hrs = Math.floor(mins / 60);
+      if (hrs < 24) return hrs + 'h ago';
+      return Math.floor(hrs / 24) + 'd ago';
+    }
+
+    function formatDate(dateStr) {
+      var d = new Date(dateStr);
+      return d.getFullYear() + '-' +
+        String(d.getMonth() + 1).padStart(2, '0') + '-' +
+        String(d.getDate()).padStart(2, '0');
+    }
+
+    function renderActivityFeed(commits, issues) {
+      var feed = document.getElementById('activity-feed');
+      var items = [];
+
+      // Add commits
+      (commits || []).forEach(function(c) {
+        var msg = c.commit.message.split('\n')[0];
+        var author = (c.commit.author && c.commit.author.name) || 'Unknown';
+        var date = c.commit.author && c.commit.author.date;
+        items.push({
+          date: date,
+          html: '<span class="feed-time">' + timeAgo(date) + '</span>' +
+            '<span class="badge badge-commit">commit</span> ' +
+            '<span class="feed-agent">' + author + ':</span> ' + escapeHtml(msg)
+        });
+      });
+
+      // Add issues
+      (issues || []).forEach(function(iss) {
+        if (iss.pull_request) return;
+        var state = iss.state === 'closed' ? 'done' : 'in-progress';
+        var badgeClass = iss.state === 'closed' ? 'badge-done' : 'badge-in-progress';
+        items.push({
+          date: iss.updated_at || iss.created_at,
+          html: '<span class="feed-time">' + timeAgo(iss.updated_at || iss.created_at) + '</span>' +
+            '<span class="badge ' + badgeClass + '">' + (iss.state === 'closed' ? 'closed' : 'open') + '</span> ' +
+            '<span class="feed-agent">#' + iss.number + ':</span> ' + escapeHtml(iss.title)
+        });
+      });
+
+      // Sort by date descending
+      items.sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
+
+      if (items.length === 0) {
+        feed.innerHTML = '<li class="feed-item"><span class="feed-time">No activity found</span></li>';
+        return;
+      }
+
+      feed.innerHTML = items.map(function(it) {
+        return '<li class="feed-item">' + it.html + '</li>';
+      }).join('');
+    }
+
+    function renderMissionFeed(issues) {
+      var feed = document.getElementById('mission-feed');
+      var filtered = (issues || []).filter(function(iss) { return !iss.pull_request; });
+
+      // Update task stats
+      var completed = 0, inProgress = 0, blocked = 0;
+      filtered.forEach(function(iss) {
+        if (iss.state === 'closed') { completed++; return; }
+        var isBlocked = (iss.labels || []).some(function(l) {
+          return l.name.toLowerCase() === 'blocked';
+        });
+        if (isBlocked) { blocked++; } else { inProgress++; }
+      });
+      document.getElementById('stat-completed').textContent = completed;
+      document.getElementById('stat-progress').textContent = inProgress;
+      document.getElementById('stat-blocked').textContent = blocked;
+
+      if (filtered.length === 0) {
+        feed.innerHTML = '<li class="feed-item"><span class="feed-time">No missions found</span></li>';
+        return;
+      }
+
+      feed.innerHTML = filtered.map(function(iss) {
+        var isBlocked = (iss.labels || []).some(function(l) {
+          return l.name.toLowerCase() === 'blocked';
+        });
+        var badgeClass, badgeText;
+        if (iss.state === 'closed') {
+          badgeClass = 'badge-done'; badgeText = 'done';
+        } else if (isBlocked) {
+          badgeClass = 'badge-blocked'; badgeText = 'blocked';
+        } else {
+          badgeClass = 'badge-in-progress'; badgeText = 'in-progress';
+        }
+
+        var labels = (iss.labels || []).map(function(l) {
+          var style = l.color ? ' style="background:#' + l.color + '33;color:#' + l.color + '"' : '';
+          return '<span class="label-badge"' + style + '>' + escapeHtml(l.name) + '</span>';
+        }).join('');
+
+        return '<li class="mission-item">' +
+          '<div class="mission-info">' +
+            '<div class="mission-title">' + escapeHtml(iss.title) + '</div>' +
+            '<div class="mission-date">#' + iss.number + ' &middot; ' + formatDate(iss.created_at) +
+            ' <span class="badge ' + badgeClass + '">' + badgeText + '</span></div>' +
+            (labels ? '<div class="mission-labels">' + labels + '</div>' : '') +
+          '</div>' +
+        '</li>';
+      }).join('');
+    }
+
+    function escapeHtml(str) {
+      var div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function updateTimestamp() {
+      var now = new Date();
+      document.getElementById('last-updated').textContent = 'Last updated: ' +
+        String(now.getHours()).padStart(2, '0') + ':' +
+        String(now.getMinutes()).padStart(2, '0') + ':' +
+        String(now.getSeconds()).padStart(2, '0');
+    }
+
+    function fetchGitHubData() {
+      var commitsUrl = 'https://api.github.com/repos/kaanclaw/mission-control/commits?per_page=5';
+      var issuesUrl = 'https://api.github.com/repos/kaanclaw/dev-team/issues?state=all&per_page=10';
+
+      Promise.all([
+        fetch(commitsUrl).then(function(r) { return r.ok ? r.json() : []; }).catch(function() { return []; }),
+        fetch(issuesUrl).then(function(r) { return r.ok ? r.json() : []; }).catch(function() { return []; })
+      ]).then(function(results) {
+        renderActivityFeed(results[0], results[1]);
+        renderMissionFeed(results[1]);
+        updateTimestamp();
+      }).catch(function() {
+        document.getElementById('activity-feed').innerHTML =
+          '<li class="feed-item"><span class="feed-time">Failed to load activity — check network</span></li>';
+        document.getElementById('mission-feed').innerHTML =
+          '<li class="feed-item"><span class="feed-time">Failed to load missions — check network</span></li>';
+        updateTimestamp();
+      });
+    }
+
+    // Initial fetch
+    fetchGitHubData();
+
+    // Auto-refresh every 60s
+    setInterval(fetchGitHubData, 60000);
+
+    // ── Task Creation ──
+    document.getElementById('task-btn').addEventListener('click', function() {
+      var input = document.getElementById('task-input');
+      var val = input.value.trim();
+      if (!val) return;
+      alert('To create a mission, tell Claw on Telegram \u2014 direct GitHub API calls require auth token setup in v3');
+      input.value = '';
+    });
+    document.getElementById('task-input').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') document.getElementById('task-btn').click();
+    });
   </script>
 </body>
 </html>
