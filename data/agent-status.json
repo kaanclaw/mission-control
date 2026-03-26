@@ -1,14 +1,14 @@
 {
-  "last_updated": "2026-03-26T08:20:00Z",
+  "last_updated": "2026-03-26T08:55:00Z",
   "agents": [
     {
       "id": "claw",
       "name": "Claw",
       "role": "Orchestrator",
       "department": "hub",
-      "status": "coding",
-      "task": "18 commits shipped — reviewing, planning next wave",
-      "status_since": "2026-03-26T08:18:00Z"
+      "status": "idle",
+      "task": "22 commits shipped — awaiting 2AM self-iterate",
+      "status_since": "2026-03-26T08:55:00Z"
     },
     {
       "id": "forge",
@@ -16,8 +16,8 @@
       "role": "Builder",
       "department": "engineering",
       "status": "idle",
-      "task": "Shipped: Vapi prompt + demo validation + Supabase store ✓",
-      "status_since": "2026-03-26T08:19:00Z"
+      "task": "Last: DEMO_CHECKLIST + TDZ fix + Playwright 21/21 ✓",
+      "status_since": "2026-03-26T08:37:00Z"
     },
     {
       "id": "jamie",
@@ -25,8 +25,8 @@
       "role": "Builder",
       "department": "engineering",
       "status": "idle",
-      "task": "Shipped: landing explainer + coaching card + output audit ✓",
-      "status_since": "2026-03-26T08:15:00Z"
+      "task": "Last: landing explainer + output polish + coaching card ✓",
+      "status_since": "2026-03-26T08:20:00Z"
     },
     {
       "id": "demi",
