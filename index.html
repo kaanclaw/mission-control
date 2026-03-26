@@ -4,986 +4,990 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Claw Mission Control</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
+    :root {
+      --radius: 0.625rem;
+      --background: #ffffff;
+      --foreground: #171717;
+      --card: #ffffff;
+      --card-foreground: #171717;
+      --muted: #f5f5f5;
+      --muted-foreground: #737373;
+      --border: #e5e5e5;
+      --input: #e5e5e5;
+      --primary: #171717;
+      --primary-foreground: #fafafa;
+      --accent: #f5f5f5;
+      --accent-foreground: #171717;
+      --destructive: #ef4444;
+      --ring: #a3a3a3;
+      --chart-1: #f97316;
+      --chart-2: #06b6d4;
+      --chart-3: #3b82f6;
+      --chart-4: #eab308;
+      --chart-5: #f59e0b;
+      --sidebar-bg: #fafafa;
     }
 
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
+    .dark {
+      --background: #0a0a0a;
+      --foreground: #fafafa;
+      --card: #1a1a1a;
+      --card-foreground: #fafafa;
+      --muted: #262626;
+      --muted-foreground: #a3a3a3;
+      --border: rgba(255,255,255,0.1);
+      --input: rgba(255,255,255,0.15);
+      --primary: #fafafa;
+      --primary-foreground: #171717;
+      --accent: #262626;
+      --accent-foreground: #fafafa;
+      --destructive: #f87171;
+      --ring: #525252;
+      --chart-1: #818cf8;
+      --chart-2: #34d399;
+      --chart-3: #fbbf24;
+      --chart-4: #c084fc;
+      --chart-5: #fb7185;
+      --sidebar-bg: #141414;
     }
 
     body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #0d1117;
-      color: #e6edf3;
-      min-height: 100vh;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      background: var(--background);
+      color: var(--foreground);
+      font-size: 14px;
       line-height: 1.5;
-      transition: background 0.3s, color 0.3s;
-      animation: fadeIn 0.6s ease-out;
-    }
-
-    /* Scrollbar */
-    ::-webkit-scrollbar { width: 8px; }
-    ::-webkit-scrollbar-track { background: #0d1117; }
-    ::-webkit-scrollbar-thumb { background: #30363d; border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: #484f58; }
-    body.light-mode ::-webkit-scrollbar-track { background: #ffffff; }
-    body.light-mode ::-webkit-scrollbar-thumb { background: #d1d9e0; }
-
-    /* ── Light Mode ── */
-    body.light-mode { background: #ffffff; color: #1f2328; }
-    body.light-mode header { background: linear-gradient(135deg, #f6f8fa 0%, #eaeef2 100%); border-bottom-color: #d1d9e0; }
-    body.light-mode .header-glow { background: linear-gradient(90deg, #f78166, #e06b50, #f78166); }
-    body.light-mode .card { background: #f6f8fa; border-color: #d1d9e0; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
-    body.light-mode section > h2 { color: #656d76; border-left-color: #f78166; }
-    body.light-mode .metric-label, body.light-mode .stat-label,
-    body.light-mode .feed-time, body.light-mode .agent-traits,
-    body.light-mode #clock, body.light-mode .token-table th,
-    body.light-mode .cron-schedule, body.light-mode .health-status-text,
-    body.light-mode .mission-date, body.light-mode .cost-note,
-    body.light-mode .agent-detail-label { color: #656d76; }
-    body.light-mode .feed-item, body.light-mode .agent-name,
-    body.light-mode .token-table td, body.light-mode .cron-name,
-    body.light-mode .mission-title, body.light-mode .health-name,
-    body.light-mode .agent-detail-value { color: #1f2328; }
-    body.light-mode .feed-item { border-bottom-color: #d1d9e0; }
-    body.light-mode .feed-item:nth-child(even) { background: rgba(0,0,0,0.02); }
-    body.light-mode .token-table th, body.light-mode .token-table td { border-bottom-color: #d1d9e0; }
-    body.light-mode footer { border-top-color: #d1d9e0; color: #656d76; }
-    body.light-mode .cron-item { background: #ffffff; border-color: #d1d9e0; }
-    body.light-mode .task-input { background: #ffffff; border-color: #d1d9e0; color: #1f2328; }
-    body.light-mode #theme-toggle { border-color: #d1d9e0; color: #1f2328; }
-    body.light-mode .agent-details { background: #eaeef2; border-color: #d1d9e0; }
-    body.light-mode .expand-btn { color: #656d76; border-color: #d1d9e0; }
-    body.light-mode .expand-btn:hover { border-color: #f78166; color: #f78166; }
-
-    /* ── Header ── */
-    header {
+      min-height: 100vh;
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1.25rem 2rem;
-      border-bottom: 1px solid #30363d;
-      background: linear-gradient(135deg, #161b22 0%, #0d1117 100%);
-      position: relative;
     }
 
-    .header-glow {
-      position: absolute;
-      bottom: -2px;
+    /* Sidebar */
+    .sidebar {
+      width: 256px;
+      min-height: 100vh;
+      background: var(--sidebar-bg);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
       left: 0;
-      right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, #f78166, #ff9a76, #f78166);
-      opacity: 0.7;
+      z-index: 40;
+      transition: transform 0.2s ease;
     }
-
-    header h1 { font-size: 1.5rem; font-weight: 700; color: #f78166; }
-
-    .header-right { display: flex; align-items: center; gap: 1rem; }
-
-    #clock {
-      font-size: 1rem;
-      color: #8b949e;
-      font-variant-numeric: tabular-nums;
-    }
-
-    #theme-toggle {
-      background: none;
-      border: 1px solid #30363d;
-      border-radius: 6px;
-      padding: 0.35rem 0.65rem;
-      font-size: 1.1rem;
-      cursor: pointer;
-      color: #e6edf3;
-      transition: border-color 0.2s;
-    }
-    #theme-toggle:hover { border-color: #f78166; }
-
-    /* ── Main Layout ── */
-    main {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 2rem;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 2rem;
-    }
-    .full-width { grid-column: 1 / -1; }
-
-    section > h2 {
-      font-size: 0.85rem;
+    .sidebar.collapsed { transform: translateX(-256px); }
+    .sidebar-header {
+      padding: 16px 20px;
+      font-size: 16px;
       font-weight: 600;
-      margin-bottom: 1rem;
-      color: #8b949e;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      border-left: 4px solid #f78166;
-      padding-left: 0.75rem;
+      color: var(--foreground);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      height: 56px;
     }
-
-    .card {
-      background: #161b22;
-      border: 1px solid #30363d;
+    .sidebar-nav { flex: 1; padding: 8px; }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
       border-radius: 8px;
-      padding: 1.25rem;
-      transition: border-color 0.2s, background 0.3s, transform 0.2s, box-shadow 0.2s;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+      color: var(--muted-foreground);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      margin-bottom: 2px;
     }
-    .card:hover {
-      border-color: #f78166;
-      transform: translateY(-2px);
-      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    .nav-item:hover { background: var(--accent); color: var(--foreground); }
+    .nav-item.active { background: var(--accent); color: var(--foreground); font-weight: 600; }
+    .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+    .sidebar-footer {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: var(--primary-foreground);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+    .sidebar-user-name { font-weight: 600; font-size: 14px; color: var(--foreground); }
+    .sidebar-user-handle { font-size: 12px; color: var(--muted-foreground); }
 
-    /* ── Cost Tracker ── */
-    .cost-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
+    /* Main area */
+    .main-wrapper {
+      flex: 1;
+      margin-left: 256px;
+      min-height: 100vh;
+      transition: margin-left 0.2s ease;
     }
-    .metric-card { text-align: center; }
-    .metric-label { font-size: 0.85rem; color: #8b949e; margin-bottom: 0.25rem; }
-    .metric-value {
-      font-size: 2.25rem; font-weight: 700; color: #f78166;
-      transition: opacity 0.4s ease, transform 0.3s ease;
+    .main-wrapper.expanded { margin-left: 0; }
+
+    /* Header */
+    .top-header {
+      height: 56px;
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: color-mix(in srgb, var(--background) 95%, transparent);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
     }
-    .metric-value.loading {
-      opacity: 0.4;
-      animation: pulse 1.5s ease-in-out infinite;
-    }
-    .cost-note {
-      font-size: 0.75rem;
-      color: #8b949e;
-      text-align: center;
-      margin-top: 0.75rem;
-      font-style: italic;
-    }
-    .cost-sync {
-      font-size: 0.7rem;
-      color: #8b949e;
-      text-align: center;
-      margin-top: 0.35rem;
-    }
-    .cost-sync .refresh-btn {
+    .header-left { display: flex; align-items: center; gap: 12px; }
+    .header-right { display: flex; align-items: center; gap: 12px; }
+    .sidebar-toggle {
       background: none;
       border: none;
-      color: #8b949e;
       cursor: pointer;
-      font-size: 0.8rem;
-      padding: 0 0.25rem;
-      transition: color 0.2s;
+      color: var(--muted-foreground);
+      padding: 4px;
+      display: flex;
+      align-items: center;
     }
-    .cost-sync .refresh-btn:hover { color: #f78166; }
-
-    /* ── Agent Status Badge ── */
-    .agent-status {
+    .sidebar-toggle svg { width: 20px; height: 20px; }
+    .breadcrumb { font-size: 14px; font-weight: 600; color: var(--foreground); }
+    .btn {
       display: inline-flex;
       align-items: center;
-      gap: 0.35rem;
-      font-size: 0.75rem;
-      font-weight: 600;
-      margin-left: 0.5rem;
-      vertical-align: middle;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--foreground);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.15s;
     }
+    .btn:hover { background: var(--accent); }
+    .btn svg { width: 14px; height: 14px; }
+    .theme-toggle {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 6px 10px;
+      cursor: pointer;
+      color: var(--foreground);
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+    }
+    .theme-toggle:hover { background: var(--accent); }
+    .last-updated { font-size: 12px; color: var(--muted-foreground); white-space: nowrap; }
+
+    /* Content */
+    .page-content { padding: 24px; max-width: 1400px; }
+
+    /* Cards */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .card-title { font-size: 18px; font-weight: 600; color: var(--foreground); }
+    .card-badge {
+      font-size: 12px;
+      padding: 2px 10px;
+      border-radius: 999px;
+      background: var(--muted);
+      color: var(--muted-foreground);
+      font-weight: 500;
+    }
+    .card-link {
+      font-size: 13px;
+      color: var(--muted-foreground);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .card-link:hover { color: var(--foreground); }
+
+    /* Stat cards grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .stat-card .stat-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .stat-label { font-size: 14px; color: var(--muted-foreground); font-weight: 500; }
+    .stat-icon { color: var(--muted-foreground); }
+    .stat-icon svg { width: 16px; height: 16px; }
+    .stat-value { font-size: 30px; font-weight: 700; color: var(--foreground); line-height: 1.2; }
+    .stat-delta { font-size: 13px; color: #22c55e; margin-top: 4px; font-weight: 500; }
+    .stat-delta.neutral { color: var(--muted-foreground); }
+
+    /* Two-col sections */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+    .three-col { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 24px; }
+
+    /* Agent roster */
+    .agent-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .agent-row:last-child { border-bottom: none; }
+    .agent-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .agent-avatar.coral { background: #fb923c20; }
+    .agent-avatar.blue { background: #3b82f620; }
+    .agent-avatar.purple { background: #a855f720; }
+    .dark .agent-avatar.coral { background: #fb923c30; }
+    .dark .agent-avatar.blue { background: #3b82f630; }
+    .dark .agent-avatar.purple { background: #a855f730; }
+    .agent-info { flex: 1; }
+    .agent-name-row { display: flex; align-items: center; gap: 8px; }
+    .agent-name { font-weight: 600; font-size: 14px; color: var(--foreground); }
+    .agent-role-text { font-size: 13px; color: var(--muted-foreground); }
+    .status-indicator { display: flex; align-items: center; gap: 6px; }
     .status-dot {
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      display: inline-block;
+      flex-shrink: 0;
     }
-    .status-dot-green { background: #3fb950; animation: pulse 2s ease-in-out infinite; }
-    .status-dot-orange { background: #d29922; animation: pulse 1.5s ease-in-out infinite; }
-    .status-dot-grey { background: #484f58; }
-    .agent-status-text { color: #8b949e; }
-    .agent-working-issue {
-      display: block;
-      font-size: 0.7rem;
-      color: #8b949e;
-      font-weight: 400;
-      margin-top: 0.15rem;
-      font-style: italic;
-    }
-    .model-tag {
-      display: inline-block;
-      padding: 0.1rem 0.5rem;
-      border-radius: 12px;
-      font-size: 0.7rem;
-      font-weight: 600;
-      background: #f7816633;
-      color: #f78166;
-      margin-left: 0.25rem;
-    }
+    .status-dot.green { background: #22c55e; }
+    .status-dot.orange { background: #f59e0b; }
+    .status-dot.grey { background: #a3a3a3; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+    .status-dot.green { animation: pulse 2s ease-in-out infinite; }
+    .status-dot.orange { animation: pulse 1.5s ease-in-out infinite; }
+    .status-text { font-size: 12px; color: var(--muted-foreground); }
+    .agent-context { font-size: 12px; color: var(--muted-foreground); text-align: right; white-space: nowrap; }
+    .powered-by { font-size: 12px; color: var(--muted-foreground); margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
 
-    /* ── Agent Roster ── */
-    .agent-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1rem;
-    }
-    .agent-header { display: flex; align-items: center; justify-content: space-between; }
-    .agent-emoji { font-size: 2.5rem; margin-bottom: 0.5rem; }
-    .agent-name { font-size: 1.25rem; font-weight: 700; color: #e6edf3; }
-    .agent-role { font-size: 0.9rem; color: #f78166; margin-bottom: 0.75rem; }
-    .agent-traits { font-size: 0.85rem; color: #8b949e; font-style: italic; }
-
-    .expand-btn {
-      background: none;
-      border: 1px solid #30363d;
-      border-radius: 4px;
-      color: #8b949e;
-      cursor: pointer;
-      font-size: 0.85rem;
-      padding: 0.2rem 0.5rem;
-      transition: border-color 0.2s, color 0.2s;
-    }
-    .expand-btn:hover { border-color: #f78166; color: #f78166; }
-
-    .agent-details {
-      display: none;
-      margin-top: 1rem;
-      padding-top: 1rem;
-      border-top: 1px solid #30363d;
-      background: #0d111766;
-      border-radius: 6px;
-      padding: 1rem;
-    }
-    .agent-details.open { display: block; }
-    .agent-detail-row { margin-bottom: 0.6rem; }
-    .agent-detail-row:last-child { margin-bottom: 0; }
-    .agent-detail-label {
-      font-size: 0.75rem;
-      color: #8b949e;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      font-weight: 600;
-    }
-    .agent-detail-value { font-size: 0.85rem; color: #c9d1d9; margin-top: 0.15rem; }
-    .agent-detail-value a { color: #f78166; text-decoration: none; }
-    .agent-detail-value a:hover { text-decoration: underline; }
-
-    /* ── Task Stats ── */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 1rem;
-    }
-    .stat-label { font-size: 0.85rem; color: #8b949e; }
-    .stat-value { font-size: 2rem; font-weight: 700; }
-    .stat-completed .stat-value { color: #3fb950; }
-    .stat-progress .stat-value { color: #d29922; }
-    .stat-blocked .stat-value { color: #f85149; }
-
-    /* ── Token Usage ── */
-    .token-table { width: 100%; border-collapse: collapse; }
-    .token-table th, .token-table td {
-      padding: 0.75rem 1rem;
-      text-align: left;
-      border-bottom: 1px solid #30363d;
-    }
-    .token-table th {
-      color: #8b949e;
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      font-weight: 600;
-    }
-    .token-table td { font-variant-numeric: tabular-nums; }
-    .token-table td.token-number { font-weight: 700; color: #f78166; font-size: 1.05rem; }
-
-    /* ── Activity Feed ── */
-    .feed-list { list-style: none; display: flex; flex-direction: column; gap: 0; }
-    .feed-item {
-      padding: 0.65rem 0.75rem;
-      border-bottom: 1px solid #30363d;
-      font-size: 0.9rem;
-      color: #c9d1d9;
-    }
-    .feed-item:nth-child(even) { background: rgba(255,255,255,0.015); }
-    .feed-item:last-child { border-bottom: none; }
-    .feed-time {
-      color: #8b949e;
-      margin-right: 0.5rem;
-      font-family: 'SF Mono', 'Consolas', 'Liberation Mono', Menlo, monospace;
-      font-size: 0.8rem;
-    }
-    .feed-agent { color: #f78166; font-weight: 600; }
-
-    /* ── Status Badges ── */
-    .badge {
-      display: inline-block;
-      padding: 0.15rem 0.5rem;
-      border-radius: 12px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
-    }
-    .badge-done { background: #23863633; color: #3fb950; }
-    .badge-in-progress { background: #1f6feb33; color: #58a6ff; }
-    .badge-blocked { background: #f8514933; color: #f85149; }
-    .badge-commit { background: #6e40c933; color: #bc8cff; }
-    .badge-issue { background: #d2992233; color: #d29922; }
-
-    /* ── Mission Feed ── */
-    .mission-list { list-style: none; display: flex; flex-direction: column; gap: 0; }
+    /* Mission feed */
     .mission-item {
-      padding: 0.75rem 0;
-      border-bottom: 1px solid #30363d;
       display: flex;
-      justify-content: space-between;
       align-items: flex-start;
-      gap: 0.75rem;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
     }
     .mission-item:last-child { border-bottom: none; }
+    .mission-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-top: 5px;
+      flex-shrink: 0;
+    }
+    .mission-dot.open { background: #3b82f6; }
+    .mission-dot.closed { background: #22c55e; }
+    .mission-dot.blocked { background: #ef4444; }
     .mission-info { flex: 1; }
-    .mission-title { font-size: 0.9rem; font-weight: 600; color: #e6edf3; margin-bottom: 0.25rem; }
-    .mission-date { font-size: 0.8rem; color: #8b949e; }
-    .mission-labels { display: flex; gap: 0.35rem; flex-wrap: wrap; margin-top: 0.25rem; }
-    .label-badge {
-      display: inline-block;
-      padding: 0.1rem 0.45rem;
-      border-radius: 12px;
-      font-size: 0.7rem;
-      font-weight: 500;
-      background: #30363d;
-      color: #c9d1d9;
+    .mission-title { font-size: 14px; font-weight: 500; color: var(--foreground); }
+    .mission-meta { font-size: 12px; color: var(--muted-foreground); margin-top: 2px; }
+    .mission-empty {
+      text-align: center;
+      padding: 32px;
+      color: var(--muted-foreground);
+    }
+    .mission-empty svg { width: 32px; height: 32px; margin-bottom: 8px; opacity: 0.5; }
+
+    /* Activity feed */
+    .activity-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 6px;
+    }
+    .activity-row:nth-child(even) { background: color-mix(in srgb, var(--muted) 50%, transparent); }
+    .activity-icon { color: var(--muted-foreground); flex-shrink: 0; }
+    .activity-icon svg { width: 14px; height: 14px; }
+    .activity-msg { flex: 1; font-size: 14px; color: var(--foreground); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .activity-meta { font-size: 12px; color: var(--muted-foreground); white-space: nowrap; }
+    .live-badge {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #22c55e18;
+      color: #22c55e;
+      font-weight: 600;
     }
 
-    /* ── Cron Monitor ── */
-    .cron-list { display: flex; flex-direction: column; gap: 0.75rem; }
-    .cron-item {
+    /* System health */
+    .health-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .health-item:last-child { border-bottom: none; }
+    .health-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .health-dot.green { background: #22c55e; }
+    .health-dot.yellow { background: #eab308; }
+    .health-name { font-size: 14px; font-weight: 500; color: var(--foreground); flex: 1; }
+    .health-status { font-size: 13px; color: var(--muted-foreground); }
+
+    /* Capabilities */
+    .cap-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .cap-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: var(--muted);
+      border-radius: 999px;
+      font-size: 12px;
+      color: var(--foreground);
+      font-weight: 500;
+    }
+    .cap-pill svg { width: 12px; height: 12px; color: #22c55e; flex-shrink: 0; }
+
+    /* Research library */
+    .research-row {
       display: flex;
       align-items: flex-start;
-      gap: 0.75rem;
-      padding: 0.75rem;
-      background: #0d1117;
-      border-radius: 6px;
-      border: 1px solid #30363d;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
     }
-    .cron-dot {
-      width: 10px;
-      height: 10px;
+    .research-row:last-child { border-bottom: none; }
+    .research-icon {
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
-      margin-top: 0.35rem;
-      flex-shrink: 0;
-    }
-    .cron-dot-ok { background: #3fb950; animation: pulse 2s ease-in-out infinite; }
-    .cron-dot-error { background: #f85149; }
-    .cron-dot-never { background: #d29922; }
-    .cron-info { flex: 1; }
-    .cron-name { font-weight: 600; font-size: 0.9rem; color: #e6edf3; }
-    .cron-schedule { font-size: 0.8rem; color: #8b949e; }
-    .cron-status { font-size: 0.8rem; color: #3fb950; margin-top: 0.15rem; }
-
-    /* ── Health Panel ── */
-    .health-list { display: flex; flex-direction: column; gap: 0.6rem; }
-    .health-item { display: flex; align-items: center; gap: 0.65rem; }
-    .health-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-    .health-dot-green { background: #3fb950; animation: pulse 2s ease-in-out infinite; }
-    .health-dot-red { background: #f85149; }
-    .health-dot-yellow { background: #d29922; }
-    .health-name { font-weight: 600; font-size: 0.9rem; color: #e6edf3; min-width: 140px; }
-    .health-status-text { font-size: 0.85rem; color: #8b949e; }
-
-    /* ── Task Creation ── */
-    .task-form {
+      background: var(--muted);
       display: flex;
-      gap: 0.5rem;
-      margin-top: 1rem;
-      padding-top: 1rem;
-      border-top: 1px solid #30363d;
-    }
-    .task-input {
-      flex: 1;
-      padding: 0.5rem 0.75rem;
-      border-radius: 6px;
-      border: 1px solid #30363d;
-      background: #0d1117;
-      color: #e6edf3;
-      font-size: 0.9rem;
-      font-family: inherit;
-    }
-    .task-input:focus { outline: none; border-color: #f78166; }
-    .task-btn {
-      padding: 0.5rem 1rem;
-      border-radius: 6px;
-      border: none;
-      background: #f78166;
-      color: #ffffff;
-      font-weight: 600;
-      font-size: 0.85rem;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-    .task-btn:hover { background: #e06b50; }
-
-    /* ── Footer ── */
-    footer {
-      text-align: center;
-      padding: 1.25rem 2rem;
-      border-top: 1px solid #30363d;
-      color: #8b949e;
-      font-size: 0.8rem;
-      display: flex;
-      justify-content: space-between;
       align-items: center;
-      max-width: 1400px;
-      margin: 0 auto;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
     }
-    footer .footer-brand { color: #f78166; font-weight: 600; }
+    .research-info { flex: 1; }
+    .research-name { font-weight: 600; font-size: 14px; color: var(--foreground); }
+    .research-insight { font-size: 13px; color: var(--muted-foreground); margin-top: 2px; }
+    .research-date { font-size: 12px; color: var(--muted-foreground); opacity: 0.7; white-space: nowrap; margin-top: 4px; }
+    .research-footer { font-size: 12px; color: var(--muted-foreground); margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
 
-    @media (max-width: 800px) {
-      main { grid-template-columns: 1fr; }
-      .full-width { grid-column: 1; }
-      header { padding: 1rem; flex-direction: column; gap: 0.5rem; }
-      main { padding: 1rem; }
-      .metric-value { font-size: 1.5rem; }
-      footer { flex-direction: column; gap: 0.5rem; }
+    /* Scheduled jobs */
+    .jobs-table { width: 100%; }
+    .jobs-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr 120px 120px;
+      gap: 16px;
+      padding: 8px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted-foreground);
+    }
+    .jobs-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 120px 120px;
+      gap: 16px;
+      padding: 12px;
+      border-top: 1px solid var(--border);
+      align-items: center;
+    }
+    .job-name { font-weight: 500; color: var(--foreground); font-size: 14px; }
+    .job-schedule { font-size: 13px; color: var(--muted-foreground); }
+    .job-status { display: flex; align-items: center; gap: 6px; font-size: 13px; }
+    .job-next { font-size: 13px; color: var(--muted-foreground); }
+
+    /* Changelog */
+    .changelog-list { position: relative; padding-left: 20px; }
+    .changelog-list::before {
+      content: '';
+      position: absolute;
+      left: 3px;
+      top: 4px;
+      bottom: 4px;
+      width: 2px;
+      background: var(--border);
+    }
+    .changelog-item {
+      position: relative;
+      padding: 8px 0;
+      display: flex;
+      gap: 12px;
+    }
+    .changelog-item::before {
+      content: '';
+      position: absolute;
+      left: -20px;
+      top: 14px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--primary);
+      z-index: 1;
+    }
+    .changelog-date { font-size: 12px; color: var(--muted-foreground); white-space: nowrap; min-width: 80px; font-weight: 500; }
+    .changelog-text { font-size: 14px; color: var(--foreground); }
+
+    /* Footer */
+    .page-footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 12px;
+      color: var(--muted-foreground);
+      border-top: 1px solid var(--border);
+      margin-top: 24px;
+    }
+
+    /* Full width helper */
+    .full-width { margin-bottom: 24px; }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .sidebar { transform: translateX(-256px); }
+      .sidebar.open { transform: translateX(0); }
+      .main-wrapper { margin-left: 0; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .two-col, .three-col { grid-template-columns: 1fr; }
     }
   </style>
 </head>
-<body>
-  <header>
-    <h1>🦞 Claw Mission Control</h1>
-    <div class="header-right">
-      <div id="clock"></div>
-      <button id="theme-toggle" title="Toggle light/dark mode">🌙</button>
+<body class="dark">
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <span>&#x1F99E; Mission Control</span>
     </div>
-    <div class="header-glow"></div>
-  </header>
-
-  <main>
-    <!-- 1. System Health -->
-    <section>
-      <h2>System Health</h2>
-      <div class="card">
-        <div class="health-list">
-          <div class="health-item">
-            <div class="health-dot health-dot-green"></div>
-            <div class="health-name">OpenClaw Gateway</div>
-            <div class="health-status-text">Active <span style="opacity:0.7">(local — verified)</span></div>
-          </div>
-          <div class="health-item">
-            <div class="health-dot health-dot-green"></div>
-            <div class="health-name">GitHub CLI</div>
-            <div class="health-status-text">Connected</div>
-          </div>
-          <div class="health-item">
-            <div class="health-dot health-dot-green"></div>
-            <div class="health-name">Whisper/Audio</div>
-            <div class="health-status-text">Ready</div>
-          </div>
-          <div class="health-item">
-            <div class="health-dot health-dot-yellow"></div>
-            <div class="health-name">Chrome Debug</div>
-            <div class="health-status-text">On-demand <span style="opacity:0.7">(launched when needed)</span></div>
-          </div>
-        </div>
+    <nav class="sidebar-nav">
+      <div class="nav-item active">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Overview
       </div>
-    </section>
-
-    <!-- 2. Cost Tracker -->
-    <section>
-      <h2>Cost Tracker</h2>
-      <div class="cost-grid">
-        <div class="card metric-card">
-          <div class="metric-label">Today</div>
-          <div class="metric-value loading" id="cost-today">Syncing...</div>
-          <span class="model-tag">claude-sonnet-4-6</span>
-        </div>
-        <div class="card metric-card">
-          <div class="metric-label">This Month</div>
-          <div class="metric-value loading" id="cost-month">Syncing...</div>
-        </div>
-        <div class="card metric-card">
-          <div class="metric-label">Per Task</div>
-          <div class="metric-value loading" id="cost-task">Syncing...</div>
-        </div>
+      <div class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 0 0-16 0"/></svg>
+        Agents
       </div>
-      <div class="cost-note">Live sync via OpenClaw session data</div>
-      <div class="cost-sync">Last synced: <span id="cost-sync-time">--:--</span> <button class="refresh-btn" id="cost-refresh" title="Refresh cost data">↻</button></div>
-    </section>
-
-    <!-- 3. Token Usage -->
-    <section>
-      <h2>Token Usage</h2>
-      <div class="card">
-        <table class="token-table">
-          <thead>
-            <tr>
-              <th>Agent</th>
-              <th>Input</th>
-              <th>Output</th>
-              <th>Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>🗺️ Atlas (Claw)</td>
-              <td class="token-number" id="token-claw-input">—</td>
-              <td class="token-number" id="token-claw-output">—</td>
-              <td class="token-number" id="token-claw-total">Syncing...</td>
-            </tr>
-            <tr>
-              <td>⚒️ Forge</td>
-              <td class="token-number" id="token-forge-input">—</td>
-              <td class="token-number" id="token-forge-output">—</td>
-              <td class="token-number" id="token-forge-total">Syncing...</td>
-            </tr>
-            <tr style="font-weight:700">
-              <td>Total</td>
-              <td class="token-number" id="token-total-input">—</td>
-              <td class="token-number" id="token-total-output">—</td>
-              <td class="token-number" id="token-total-total">Syncing...</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg>
+        Tasks
       </div>
-    </section>
+      <div class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        Costs
+      </div>
+      <div class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-6-6m6 6v-4.8m0 4.8h-4.8"/><path d="M3 16.2V21m0 0h4.8M3 21l6-6"/><path d="M21 7.8V3m0 0h-4.8M21 3l-6 6"/><path d="M3 7.8V3m0 0h4.8M3 3l6 6"/></svg>
+        Research
+      </div>
+      <div class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+        Settings
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="avatar">K</div>
+      <div>
+        <div class="sidebar-user-name">Kaan Taskent</div>
+        <div class="sidebar-user-handle">kaanclaw</div>
+      </div>
+    </div>
+  </aside>
 
-    <!-- 4. Task Stats -->
-    <section>
-      <h2>Task Stats</h2>
+  <!-- Main content -->
+  <div class="main-wrapper" id="main-wrapper">
+    <header class="top-header">
+      <div class="header-left">
+        <button class="sidebar-toggle" id="sidebar-toggle" title="Toggle sidebar">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <span class="breadcrumb">Overview</span>
+      </div>
+      <div class="header-right">
+        <button class="btn" id="refresh-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
+          Refresh
+        </button>
+        <button class="theme-toggle" id="theme-toggle" title="Toggle theme">
+          <span id="theme-icon">&#9790;</span>
+        </button>
+        <span class="last-updated" id="last-updated">Updated just now</span>
+      </div>
+    </header>
+
+    <div class="page-content">
+      <!-- 1. Stat Cards Row -->
       <div class="stats-grid">
-        <div class="card stat-completed">
-          <div class="stat-label">Completed</div>
-          <div class="stat-value" id="stat-completed">0</div>
+        <div class="card stat-card">
+          <div class="stat-top">
+            <span class="stat-label">API Cost Today</span>
+            <span class="stat-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
+          </div>
+          <div class="stat-value" id="cost-today">$0.00</div>
+          <div class="stat-delta" id="cost-delta">Loading...</div>
         </div>
-        <div class="card stat-progress">
-          <div class="stat-label">In Progress</div>
-          <div class="stat-value" id="stat-progress">0</div>
+        <div class="card stat-card">
+          <div class="stat-top">
+            <span class="stat-label">Total Tokens</span>
+            <span class="stat-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
+          </div>
+          <div class="stat-value" id="total-tokens">0</div>
+          <div class="stat-delta neutral" id="tokens-context">This session</div>
         </div>
-        <div class="card stat-blocked">
-          <div class="stat-label">Blocked</div>
-          <div class="stat-value" id="stat-blocked">0</div>
+        <div class="card stat-card">
+          <div class="stat-top">
+            <span class="stat-label">Tasks Completed</span>
+            <span class="stat-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+          </div>
+          <div class="stat-value" id="tasks-completed">0</div>
+          <div class="stat-delta neutral">All time</div>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-top">
+            <span class="stat-label">Cost Per Task</span>
+            <span class="stat-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg></span>
+          </div>
+          <div class="stat-value" id="cost-per-task">$0.00</div>
+          <div class="stat-delta neutral">Average</div>
         </div>
       </div>
-    </section>
 
-    <!-- 5. Agent Roster -->
-    <section class="full-width">
-      <h2>Agent Roster</h2>
-      <div class="agent-grid">
+      <!-- 2. Two columns: Agent Roster + Mission Feed -->
+      <div class="two-col">
         <div class="card">
-          <div class="agent-header">
-            <div>
-              <div class="agent-emoji">🗺️</div>
-              <div class="agent-name">ATLAS <span class="agent-status"><span class="status-dot status-dot-green"></span><span class="agent-status-text">Active</span></span></div>
-            </div>
-            <button class="expand-btn" onclick="toggleAgent('atlas')">▼ Details</button>
+          <div class="card-header">
+            <span class="card-title">Agent Roster</span>
+            <span class="card-badge">3 active</span>
           </div>
-          <div class="agent-role">Architect / Engineering Lead</div>
-          <div class="agent-traits">Direct. Plans before acting. Never hides uncertainty. Routes to Forge for all coding.</div>
-          <div class="agent-details" id="agent-atlas">
-            <div class="agent-detail-row">
-              <div class="agent-detail-label">Full Role</div>
-              <div class="agent-detail-value">Architect / Engineering Lead</div>
+          <div id="agent-roster">
+            <div class="agent-row">
+              <div class="agent-avatar coral">&#x1F99E;</div>
+              <div class="agent-info">
+                <div class="agent-name-row">
+                  <span class="agent-name">Claw</span>
+                  <span class="agent-role-text">Orchestrator</span>
+                </div>
+              </div>
+              <div class="status-indicator">
+                <span class="status-dot green"></span>
+                <span class="status-text">Active</span>
+              </div>
+              <div class="agent-context">Main session</div>
             </div>
-            <div class="agent-detail-row">
-              <div class="agent-detail-label">Responsibilities</div>
-              <div class="agent-detail-value">Breaks tasks into sub-tasks with acceptance criteria. Routes to Forge. Never writes code. Escalates blockers immediately.</div>
+            <div class="agent-row">
+              <div class="agent-avatar blue">&#x1F5FA;&#xFE0F;</div>
+              <div class="agent-info">
+                <div class="agent-name-row">
+                  <span class="agent-name">Atlas</span>
+                  <span class="agent-role-text">Architect</span>
+                </div>
+              </div>
+              <div class="status-indicator">
+                <span class="status-dot green"></span>
+                <span class="status-text">Active</span>
+              </div>
+              <div class="agent-context">Planning mode</div>
             </div>
-            <div class="agent-detail-row">
-              <div class="agent-detail-label">Communication</div>
-              <div class="agent-detail-value">Direct. Confirms scope before delegating. Reports: done / in progress / blocked.</div>
-            </div>
-            <div class="agent-detail-row">
-              <div class="agent-detail-label">Current Status</div>
-              <div class="agent-detail-value"><span style="color:#3fb950">●</span> Active — manages Forge</div>
+            <div class="agent-row" id="forge-row">
+              <div class="agent-avatar purple">&#x2692;&#xFE0F;</div>
+              <div class="agent-info">
+                <div class="agent-name-row">
+                  <span class="agent-name">Forge</span>
+                  <span class="agent-role-text">Builder</span>
+                </div>
+              </div>
+              <div class="status-indicator" id="forge-status">
+                <span class="status-dot grey"></span>
+                <span class="status-text">Idle</span>
+              </div>
+              <div class="agent-context">Claude Code</div>
             </div>
           </div>
+          <div class="powered-by">Powered by Claude Sonnet 4.6</div>
         </div>
+
         <div class="card">
-          <div class="agent-header">
-            <div>
-              <div class="agent-emoji">⚒️</div>
-              <div class="agent-name">FORGE <span class="agent-status" id="forge-status"><span class="status-dot status-dot-grey"></span><span class="agent-status-text">Checking...</span></span></div>
-            </div>
-            <button class="expand-btn" onclick="toggleAgent('forge')">▼ Details</button>
+          <div class="card-header">
+            <span class="card-title">Active Missions</span>
+            <a class="card-link" href="https://github.com/kaanclaw/dev-team/issues" target="_blank">View all &rarr;</a>
           </div>
-          <div class="agent-role">Builder / Full-Stack Developer</div>
-          <div class="agent-traits">Moves fast. Clean code. Tests before marking done. Commits with clear messages.</div>
-          <div class="agent-details" id="agent-forge">
-            <div class="agent-detail-row">
-              <div class="agent-detail-label">Full Role</div>
-              <div class="agent-detail-value">Builder / Full-Stack Developer</div>
-            </div>
-            <div class="agent-detail-row">
-              <div class="agent-detail-label">Workflow</div>
-              <div class="agent-detail-value">Understand → Research → Plan → Build → Test → Commit → Report</div>
-            </div>
-            <div class="agent-detail-row">
-              <div class="agent-detail-label">Tools</div>
-              <div class="agent-detail-value">Claude Code, gh CLI, git, web search</div>
-            </div>
-            <div class="agent-detail-row">
-              <div class="agent-detail-label">Standards</div>
-              <div class="agent-detail-value">Production-ready code. Descriptive commits. No TODOs. Tests before marking done.</div>
-            </div>
-            <div class="agent-detail-row">
-              <div class="agent-detail-label">Missions Completed</div>
-              <div class="agent-detail-value"><a href="https://github.com/kaanclaw/dev-team/issues?q=is%3Aissue+is%3Aclosed" target="_blank">3 missions →</a></div>
+          <div id="mission-feed">
+            <div class="mission-empty">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+              <div>Loading missions...</div>
             </div>
           </div>
         </div>
       </div>
-    </section>
 
-    <!-- 6. Scheduled Jobs -->
-    <section>
-      <h2>Scheduled Jobs</h2>
-      <div class="card">
-        <div class="cron-list">
-          <div class="cron-item">
-            <div class="cron-dot cron-dot-ok"></div>
-            <div class="cron-info">
-              <div class="cron-name">overnight-research</div>
-              <div class="cron-schedule">Daily 1:00 AM PT</div>
-              <div class="cron-status">Scheduled</div>
-            </div>
+      <!-- 3. Three columns: Activity Feed + System Health -->
+      <div class="three-col">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Recent Activity</span>
+            <span class="live-badge">Live</span>
           </div>
-          <div class="cron-item">
-            <div class="cron-dot cron-dot-ok"></div>
-            <div class="cron-info">
-              <div class="cron-name">morning-ping-kaan</div>
-              <div class="cron-schedule">Daily 9:30 AM PT</div>
-              <div class="cron-status">Scheduled</div>
+          <div id="activity-feed">
+            <div class="activity-row"><span class="activity-msg" style="color:var(--muted-foreground)">Loading activity...</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">System Health</span>
+          </div>
+          <div>
+            <div class="health-item">
+              <span class="health-dot green"></span>
+              <span class="health-name">OpenClaw Gateway</span>
+              <span class="health-status">Active</span>
+            </div>
+            <div class="health-item">
+              <span class="health-dot green"></span>
+              <span class="health-name">GitHub CLI</span>
+              <span class="health-status">Connected</span>
+            </div>
+            <div class="health-item">
+              <span class="health-dot green"></span>
+              <span class="health-name">Whisper Audio</span>
+              <span class="health-status">Ready</span>
+            </div>
+            <div class="health-item">
+              <span class="health-dot yellow"></span>
+              <span class="health-name">Chrome Debug</span>
+              <span class="health-status">On-demand</span>
             </div>
           </div>
         </div>
       </div>
-    </section>
 
-    <!-- 7. Mission Feed -->
-    <section>
-      <h2>Mission Feed</h2>
-      <div class="card">
-        <ul class="mission-list" id="mission-feed">
-          <li class="feed-item"><span class="feed-time">Loading...</span></li>
-        </ul>
-        <div class="task-form">
-          <input type="text" class="task-input" id="task-input" placeholder="New mission title...">
-          <button class="task-btn" id="task-btn">Create Mission</button>
+      <!-- 4. Two columns: Capabilities + Research Library -->
+      <div class="two-col">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Active Capabilities</span>
+          </div>
+          <div class="cap-grid">
+            <div class="cap-pill"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/></svg> Voice Transcription</div>
+            <div class="cap-pill"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/></svg> Browser Automation</div>
+            <div class="cap-pill"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/></svg> Diagram Generation</div>
+            <div class="cap-pill"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/></svg> GitHub Operations</div>
+            <div class="cap-pill"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/></svg> Email (Gmail)</div>
+            <div class="cap-pill"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/></svg> Code Execution</div>
+            <div class="cap-pill"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/></svg> Web Search</div>
+            <div class="cap-pill"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/></svg> File System</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Research Library</span>
+            <span class="card-badge">2 repos studied</span>
+          </div>
+          <div>
+            <div class="research-row">
+              <div class="research-icon">&#x1F4E6;</div>
+              <div class="research-info">
+                <div class="research-name">claude-mem</div>
+                <div class="research-insight">Index-first memory &rarr; 10x token savings</div>
+                <div class="research-date">2026-03-25</div>
+              </div>
+            </div>
+            <div class="research-row">
+              <div class="research-icon">&#x1F916;</div>
+              <div class="research-info">
+                <div class="research-name">hermes-agent</div>
+                <div class="research-insight">Frozen prompts + conditional skills</div>
+                <div class="research-date">2026-03-25</div>
+              </div>
+            </div>
+          </div>
+          <div class="research-footer">We study repos as co-founders, extract principles, upgrade.</div>
         </div>
       </div>
-    </section>
 
-    <!-- 8. Activity Feed -->
-    <section>
-      <h2>Activity Feed</h2>
-      <div class="card">
-        <ul class="feed-list" id="activity-feed">
-          <li class="feed-item"><span class="feed-time">Loading...</span></li>
-        </ul>
+      <!-- 5. Scheduled Jobs -->
+      <div class="card full-width">
+        <div class="card-header">
+          <span class="card-title">Scheduled Jobs</span>
+          <span class="card-badge">3 active</span>
+        </div>
+        <div class="jobs-table">
+          <div class="jobs-header">
+            <span>Job</span>
+            <span>Schedule</span>
+            <span>Status</span>
+            <span>Next Run</span>
+          </div>
+          <div class="jobs-row">
+            <span class="job-name">overnight-research</span>
+            <span class="job-schedule">Daily 1:00 AM PT</span>
+            <span class="job-status"><span class="status-dot green"></span> Scheduled</span>
+            <span class="job-next">Next: tonight</span>
+          </div>
+          <div class="jobs-row">
+            <span class="job-name">morning-ping-kaan</span>
+            <span class="job-schedule">Daily 9:30 AM PT</span>
+            <span class="job-status"><span class="status-dot green"></span> Scheduled</span>
+            <span class="job-next">Next: 9:30 AM</span>
+          </div>
+          <div class="jobs-row">
+            <span class="job-name">cost-sync</span>
+            <span class="job-schedule">Every 30 min</span>
+            <span class="job-status"><span class="status-dot green" style="animation:none;background:#22c55e"></span> Active</span>
+            <span class="job-next">Next: ~15 min</span>
+          </div>
+        </div>
       </div>
-    </section>
-  </main>
 
-  <footer>
-    <span id="last-updated">Last updated: --:--:--</span>
-    <span class="footer-brand">🦞 Claw Mission Control v4 · Built by Forge · kaanclaw/mission-control</span>
-  </footer>
+      <!-- 6. System Changelog -->
+      <div class="card full-width">
+        <div class="card-header">
+          <span class="card-title">System Changelog</span>
+        </div>
+        <div class="changelog-list">
+          <div class="changelog-item">
+            <span class="changelog-date">2026-03-25</span>
+            <span class="changelog-text">Mission Control v1-v5: Live costs, agent status, professional redesign</span>
+          </div>
+          <div class="changelog-item">
+            <span class="changelog-date">2026-03-25</span>
+            <span class="changelog-text">Diagram generation: Kie.ai integration, visual workflows</span>
+          </div>
+          <div class="changelog-item">
+            <span class="changelog-date">2026-03-25</span>
+            <span class="changelog-text">Hermes Agent research: Frozen prompts, memory patterns adopted</span>
+          </div>
+          <div class="changelog-item">
+            <span class="changelog-date">2026-03-25</span>
+            <span class="changelog-text">claude-mem research: Index-first memory, 10x token savings applied</span>
+          </div>
+          <div class="changelog-item">
+            <span class="changelog-date">2026-03-25</span>
+            <span class="changelog-text">Dev team initialized: Atlas + Forge + GitHub Issues task board</span>
+          </div>
+          <div class="changelog-item">
+            <span class="changelog-date">2026-03-24</span>
+            <span class="changelog-text">Day 1: Browser automation, voice transcription, dev environment</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="page-footer">
+        &#x1F99E; Claw Mission Control v5 &middot; Built by Forge &middot; kaanclaw/mission-control &middot; Last updated: <span id="footer-timestamp"></span>
+      </div>
+    </div>
+  </div>
 
   <script>
-    // ── Clock ──
-    function updateClock() {
-      var now = new Date();
-      var str = now.getFullYear() + '-' +
-        String(now.getMonth() + 1).padStart(2, '0') + '-' +
-        String(now.getDate()).padStart(2, '0') + ' ' +
-        String(now.getHours()).padStart(2, '0') + ':' +
-        String(now.getMinutes()).padStart(2, '0') + ':' +
-        String(now.getSeconds()).padStart(2, '0');
-      document.getElementById('clock').textContent = str;
-    }
-    updateClock();
-    setInterval(updateClock, 1000);
+    // ── State ──
+    let costData = null;
+    let closedIssueCount = 0;
+    let lastUpdated = new Date();
 
-    // ── Dark/Light Toggle ──
-    var themeBtn = document.getElementById('theme-toggle');
-    function applyTheme(mode) {
-      if (mode === 'light') {
-        document.body.classList.add('light-mode');
-        themeBtn.textContent = '☀️';
-      } else {
-        document.body.classList.remove('light-mode');
-        themeBtn.textContent = '🌙';
-      }
+    // ── Theme ──
+    const savedTheme = localStorage.getItem('mc-theme');
+    if (savedTheme === 'light') document.body.classList.remove('dark');
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+      document.body.classList.toggle('dark');
+      const isDark = document.body.classList.contains('dark');
+      document.getElementById('theme-icon').textContent = isDark ? '\u263E' : '\u2600';
+      localStorage.setItem('mc-theme', isDark ? 'dark' : 'light');
+    });
+    if (!document.body.classList.contains('dark')) {
+      document.getElementById('theme-icon').textContent = '\u2600';
     }
-    applyTheme(localStorage.getItem('theme') || 'dark');
-    themeBtn.addEventListener('click', function() {
-      var isLight = document.body.classList.contains('light-mode');
-      var next = isLight ? 'dark' : 'light';
-      localStorage.setItem('theme', next);
-      applyTheme(next);
+
+    // ── Sidebar toggle ──
+    document.getElementById('sidebar-toggle').addEventListener('click', () => {
+      document.getElementById('sidebar').classList.toggle('collapsed');
+      document.getElementById('main-wrapper').classList.toggle('expanded');
     });
 
-    // ── Agent Expand/Collapse ──
-    function toggleAgent(id) {
-      var el = document.getElementById('agent-' + id);
-      var btn = el.previousElementSibling ?
-        el.closest('.card').querySelector('.expand-btn') : null;
-      if (!btn) btn = el.parentElement.querySelector('.expand-btn');
-      if (el.classList.contains('open')) {
-        el.classList.remove('open');
-        btn.textContent = '▼ Details';
-      } else {
-        el.classList.add('open');
-        btn.textContent = '▲ Details';
-      }
-    }
-
-    // ── GitHub Data Fetching ──
+    // ── Time helpers ──
     function timeAgo(dateStr) {
-      var diff = Date.now() - new Date(dateStr).getTime();
-      var mins = Math.floor(diff / 60000);
+      const diff = Date.now() - new Date(dateStr).getTime();
+      const mins = Math.floor(diff / 60000);
+      if (mins < 1) return 'just now';
       if (mins < 60) return mins + 'm ago';
-      var hrs = Math.floor(mins / 60);
+      const hrs = Math.floor(mins / 60);
       if (hrs < 24) return hrs + 'h ago';
-      return Math.floor(hrs / 24) + 'd ago';
-    }
-
-    function formatDate(dateStr) {
-      var d = new Date(dateStr);
-      return d.getFullYear() + '-' +
-        String(d.getMonth() + 1).padStart(2, '0') + '-' +
-        String(d.getDate()).padStart(2, '0');
-    }
-
-    function escapeHtml(str) {
-      var div = document.createElement('div');
-      div.textContent = str;
-      return div.innerHTML;
-    }
-
-    function renderActivityFeed(commits, issues) {
-      var feed = document.getElementById('activity-feed');
-      var items = [];
-
-      (commits || []).forEach(function(c) {
-        var msg = c.commit.message.split('\n')[0];
-        var author = (c.commit.author && c.commit.author.name) || 'Unknown';
-        var date = c.commit.author && c.commit.author.date;
-        items.push({
-          date: date,
-          html: '<span class="feed-time">' + timeAgo(date) + '</span>' +
-            '<span class="badge badge-commit">commit</span> ' +
-            '<span class="feed-agent">' + escapeHtml(author) + ':</span> ' + escapeHtml(msg)
-        });
-      });
-
-      (issues || []).forEach(function(iss) {
-        if (iss.pull_request) return;
-        var badgeClass = iss.state === 'closed' ? 'badge-done' : 'badge-in-progress';
-        items.push({
-          date: iss.updated_at || iss.created_at,
-          html: '<span class="feed-time">' + timeAgo(iss.updated_at || iss.created_at) + '</span>' +
-            '<span class="badge ' + badgeClass + '">' + (iss.state === 'closed' ? 'closed' : 'open') + '</span> ' +
-            '<span class="feed-agent">#' + iss.number + ':</span> ' + escapeHtml(iss.title)
-        });
-      });
-
-      items.sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
-
-      if (items.length === 0) {
-        feed.innerHTML = '<li class="feed-item"><span class="feed-time">No activity found</span></li>';
-        return;
-      }
-
-      feed.innerHTML = items.map(function(it) {
-        return '<li class="feed-item">' + it.html + '</li>';
-      }).join('');
-    }
-
-    function renderMissionFeed(issues) {
-      var feed = document.getElementById('mission-feed');
-      var filtered = (issues || []).filter(function(iss) { return !iss.pull_request; });
-
-      var completed = 0, inProgress = 0, blocked = 0;
-      filtered.forEach(function(iss) {
-        if (iss.state === 'closed') { completed++; return; }
-        var isBlocked = (iss.labels || []).some(function(l) {
-          return l.name.toLowerCase() === 'blocked';
-        });
-        if (isBlocked) { blocked++; } else { inProgress++; }
-      });
-      document.getElementById('stat-completed').textContent = completed;
-      document.getElementById('stat-progress').textContent = inProgress;
-      document.getElementById('stat-blocked').textContent = blocked;
-
-      if (filtered.length === 0) {
-        feed.innerHTML = '<li class="feed-item"><span class="feed-time">No missions found</span></li>';
-        return;
-      }
-
-      feed.innerHTML = filtered.map(function(iss) {
-        var isBlocked = (iss.labels || []).some(function(l) {
-          return l.name.toLowerCase() === 'blocked';
-        });
-        var badgeClass, badgeText;
-        if (iss.state === 'closed') {
-          badgeClass = 'badge-done'; badgeText = 'done';
-        } else if (isBlocked) {
-          badgeClass = 'badge-blocked'; badgeText = 'blocked';
-        } else {
-          badgeClass = 'badge-in-progress'; badgeText = 'in-progress';
-        }
-
-        var labels = (iss.labels || []).map(function(l) {
-          var style = l.color ? ' style="background:#' + l.color + '33;color:#' + l.color + '"' : '';
-          return '<span class="label-badge"' + style + '>' + escapeHtml(l.name) + '</span>';
-        }).join('');
-
-        return '<li class="mission-item">' +
-          '<div class="mission-info">' +
-            '<div class="mission-title">' + escapeHtml(iss.title) + '</div>' +
-            '<div class="mission-date">#' + iss.number + ' &middot; ' + formatDate(iss.created_at) +
-            ' <span class="badge ' + badgeClass + '">' + badgeText + '</span></div>' +
-            (labels ? '<div class="mission-labels">' + labels + '</div>' : '') +
-          '</div>' +
-        '</li>';
-      }).join('');
+      const days = Math.floor(hrs / 24);
+      return days + 'd ago';
     }
 
     function updateTimestamp() {
-      var now = new Date();
-      document.getElementById('last-updated').textContent = 'Last updated: ' +
-        String(now.getHours()).padStart(2, '0') + ':' +
-        String(now.getMinutes()).padStart(2, '0') + ':' +
-        String(now.getSeconds()).padStart(2, '0');
+      const ts = new Date().toLocaleString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      document.getElementById('last-updated').textContent = 'Updated ' + ts;
+      document.getElementById('footer-timestamp').textContent = new Date().toISOString();
     }
 
-    function fetchGitHubData() {
-      var commitsUrl = 'https://api.github.com/repos/kaanclaw/mission-control/commits?per_page=10';
-      var issuesUrl = 'https://api.github.com/repos/kaanclaw/dev-team/issues?state=all&per_page=50';
+    // ── Fetch costs ──
+    async function fetchCosts() {
+      try {
+        const res = await fetch('data/costs.json?t=' + Date.now());
+        costData = await res.json();
+        const cost = costData.today.costUsd;
+        document.getElementById('cost-today').textContent = '$' + cost.toFixed(2);
+        document.getElementById('total-tokens').textContent = costData.today.totalTokens.toLocaleString();
+        document.getElementById('cost-delta').innerHTML = '&#8593; $' + cost.toFixed(2) + ' today';
 
-      Promise.all([
-        fetch(commitsUrl).then(function(r) { return r.ok ? r.json() : []; }).catch(function() { return []; }),
-        fetch(issuesUrl).then(function(r) { return r.ok ? r.json() : []; }).catch(function() { return []; })
-      ]).then(function(results) {
-        renderActivityFeed(results[0], results[1]);
-        renderMissionFeed(results[1]);
-        updateTimestamp();
-      }).catch(function() {
-        document.getElementById('activity-feed').innerHTML =
-          '<li class="feed-item"><span class="feed-time">Failed to load activity — check network</span></li>';
-        document.getElementById('mission-feed').innerHTML =
-          '<li class="feed-item"><span class="feed-time">Failed to load missions — check network</span></li>';
-        updateTimestamp();
-      });
+        const tasks = Math.max(closedIssueCount, 1);
+        document.getElementById('cost-per-task').textContent = '$' + (cost / tasks).toFixed(2);
+      } catch (e) {
+        document.getElementById('cost-today').textContent = '$—';
+        document.getElementById('cost-delta').textContent = 'Failed to load';
+        document.getElementById('cost-delta').classList.add('neutral');
+      }
     }
 
-    fetchGitHubData();
-    setInterval(fetchGitHubData, 60000);
+    // ── Fetch GitHub Issues ──
+    async function fetchIssues() {
+      try {
+        const [openRes, closedRes] = await Promise.all([
+          fetch('https://api.github.com/repos/kaanclaw/dev-team/issues?state=open&per_page=50'),
+          fetch('https://api.github.com/repos/kaanclaw/dev-team/issues?state=closed&per_page=50')
+        ]);
+        const openIssues = await openRes.json();
+        const closedIssues = await closedRes.json();
 
-    // ── Cost Data Fetching ──
-    function formatUsd(n) { return '$' + n.toFixed(2); }
-    function formatTokens(n) { return n.toLocaleString(); }
+        // Filter out pull requests
+        const open = (Array.isArray(openIssues) ? openIssues : []).filter(i => !i.pull_request);
+        const closed = (Array.isArray(closedIssues) ? closedIssues : []).filter(i => !i.pull_request);
 
-    function fetchCostData() {
-      fetch('data/costs.json')
-        .then(function(r) { if (!r.ok) throw new Error('fetch failed'); return r.json(); })
-        .then(function(costs) {
-          var closedEl = document.getElementById('stat-completed');
-          var closed = parseInt(closedEl.textContent) || 1;
+        closedIssueCount = closed.length;
+        document.getElementById('tasks-completed').textContent = closedIssueCount.toLocaleString();
 
-          var todayEl = document.getElementById('cost-today');
-          var monthEl = document.getElementById('cost-month');
-          var taskEl = document.getElementById('cost-task');
+        // Update cost per task
+        if (costData) {
+          const tasks = Math.max(closedIssueCount, 1);
+          document.getElementById('cost-per-task').textContent = '$' + (costData.today.costUsd / tasks).toFixed(2);
+        }
 
-          todayEl.textContent = formatUsd(costs.today.costUsd);
-          todayEl.classList.remove('loading');
-          monthEl.textContent = formatUsd(costs.thisMonth.costUsd);
-          monthEl.classList.remove('loading');
-          taskEl.textContent = '~' + formatUsd(costs.today.costUsd / Math.max(closed, 1));
-          taskEl.classList.remove('loading');
+        // Forge status: working if open forge issues
+        const forgeWorking = open.some(i =>
+          (i.title && i.title.toLowerCase().includes('forge')) ||
+          (i.labels && i.labels.some(l => l.name && l.name.toLowerCase().includes('forge')))
+        );
+        const forgeStatus = document.getElementById('forge-status');
+        if (forgeWorking) {
+          forgeStatus.innerHTML = '<span class="status-dot orange"></span><span class="status-text">Working</span>';
+        } else {
+          forgeStatus.innerHTML = '<span class="status-dot grey"></span><span class="status-text">Idle</span>';
+        }
 
-          // Token table
-          var clawTokens = costs.agents.claw.totalTokens;
-          var forgeTokens = costs.agents.forge.totalTokens;
-          document.getElementById('token-claw-total').textContent = formatTokens(clawTokens);
-          document.getElementById('token-forge-total').textContent = formatTokens(forgeTokens);
-          document.getElementById('token-total-total').textContent = formatTokens(clawTokens + forgeTokens);
-
-          // Sync timestamp
-          var syncDate = new Date(costs.updatedAt);
-          document.getElementById('cost-sync-time').textContent =
-            String(syncDate.getHours()).padStart(2, '0') + ':' +
-            String(syncDate.getMinutes()).padStart(2, '0');
-        })
-        .catch(function() {
-          ['cost-today', 'cost-month', 'cost-task'].forEach(function(id) {
-            var el = document.getElementById(id);
-            el.textContent = 'Syncing...';
-            el.classList.add('loading');
-          });
-        });
+        // Mission feed (max 5, open first then closed)
+        const all = [...open, ...closed].sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at)).slice(0, 5);
+        const feedEl = document.getElementById('mission-feed');
+        if (all.length === 0) {
+          feedEl.innerHTML = '<div class="mission-empty"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg><div>No active missions</div></div>';
+        } else {
+          feedEl.innerHTML = all.map(issue => {
+            const state = issue.state;
+            const isBlocked = issue.labels && issue.labels.some(l => l.name && l.name.toLowerCase().includes('blocked'));
+            const dotClass = isBlocked ? 'blocked' : (state === 'closed' ? 'closed' : 'open');
+            const stateText = isBlocked ? 'blocked' : state;
+            return `<div class="mission-item">
+              <span class="mission-dot ${dotClass}"></span>
+              <div class="mission-info">
+                <div class="mission-title">${escapeHtml(issue.title)}</div>
+                <div class="mission-meta">#${issue.number} &middot; ${stateText} &middot; ${timeAgo(issue.updated_at)}</div>
+              </div>
+            </div>`;
+          }).join('');
+        }
+      } catch (e) {
+        document.getElementById('mission-feed').innerHTML = '<div class="mission-empty"><div>Failed to load missions</div></div>';
+      }
     }
 
-    // Fetch costs after GitHub data loads (so closed count is available)
-    setTimeout(fetchCostData, 1500);
-    setInterval(fetchCostData, 60000);
-
-    document.getElementById('cost-refresh').addEventListener('click', function() {
-      fetchCostData();
-      fetchGitHubData();
-    });
-
-    // ── Forge Agent Status ──
-    function fetchForgeStatus() {
-      fetch('https://api.github.com/repos/kaanclaw/dev-team/issues?state=open&labels=in-progress')
-        .then(function(r) { return r.ok ? r.json() : []; })
-        .then(function(issues) {
-          var statusEl = document.getElementById('forge-status');
-          var forgeIssues = (issues || []).filter(function(iss) {
-            return (iss.labels || []).some(function(l) {
-              return l.name.toLowerCase() === 'forge' || l.name.toLowerCase() === 'in-progress';
-            }) && !iss.pull_request;
-          });
-
-          if (forgeIssues.length > 0) {
-            var title = forgeIssues[0].title;
-            if (title.length > 40) title = title.substring(0, 40) + '…';
-            statusEl.innerHTML = '<span class="status-dot status-dot-orange"></span>' +
-              '<span class="agent-status-text">Working</span>' +
-              '<span class="agent-working-issue">' + escapeHtml(title) + '</span>';
-          } else {
-            statusEl.innerHTML = '<span class="status-dot status-dot-grey"></span>' +
-              '<span class="agent-status-text">Idle</span>';
-          }
-        })
-        .catch(function() {
-          var statusEl = document.getElementById('forge-status');
-          statusEl.innerHTML = '<span class="status-dot status-dot-grey"></span>' +
-            '<span class="agent-status-text">Idle</span>';
-        });
+    // ── Fetch Commits ──
+    async function fetchCommits() {
+      try {
+        const res = await fetch('https://api.github.com/repos/kaanclaw/mission-control/commits?per_page=10');
+        const commits = await res.json();
+        const feedEl = document.getElementById('activity-feed');
+        if (!Array.isArray(commits) || commits.length === 0) {
+          feedEl.innerHTML = '<div class="activity-row"><span class="activity-msg" style="color:var(--muted-foreground)">No recent activity</span></div>';
+          return;
+        }
+        feedEl.innerHTML = commits.map(c => {
+          const msg = c.commit.message.split('\n')[0];
+          const truncated = msg.length > 60 ? msg.slice(0, 60) + '...' : msg;
+          const author = (c.author && c.author.login) || (c.commit.author && c.commit.author.name) || 'unknown';
+          return `<div class="activity-row">
+            <span class="activity-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><circle cx="12" cy="12" r="3"/><line x1="3" y1="12" x2="9" y2="12"/><line x1="15" y1="12" x2="21" y2="12"/></svg></span>
+            <span class="activity-msg">${escapeHtml(truncated)}</span>
+            <span class="activity-meta">${escapeHtml(author)} &middot; ${timeAgo(c.commit.author.date)}</span>
+          </div>`;
+        }).join('');
+      } catch (e) {
+        document.getElementById('activity-feed').innerHTML = '<div class="activity-row"><span class="activity-msg" style="color:var(--muted-foreground)">Failed to load activity</span></div>';
+      }
     }
 
-    fetchForgeStatus();
-    setInterval(fetchForgeStatus, 60000);
+    // ── Helpers ──
+    function escapeHtml(str) {
+      const d = document.createElement('div');
+      d.textContent = str;
+      return d.innerHTML;
+    }
 
-    // ── Task Creation ──
-    document.getElementById('task-btn').addEventListener('click', function() {
-      var input = document.getElementById('task-input');
-      var val = input.value.trim();
-      if (!val) return;
-      alert('To create a mission, tell Claw on Telegram \u2014 direct GitHub API calls require auth token setup');
-      input.value = '';
-    });
-    document.getElementById('task-input').addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') document.getElementById('task-btn').click();
-    });
+    // ── Init ──
+    async function refresh() {
+      await Promise.all([fetchCosts(), fetchIssues(), fetchCommits()]);
+      updateTimestamp();
+    }
+
+    refresh();
+    setInterval(refresh, 60000);
+    document.getElementById('refresh-btn').addEventListener('click', refresh);
+    updateTimestamp();
   </script>
 </body>
 </html>
