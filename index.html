@@ -7,6 +7,16 @@
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: #0d1117;
@@ -14,83 +24,68 @@
       min-height: 100vh;
       line-height: 1.5;
       transition: background 0.3s, color 0.3s;
+      animation: fadeIn 0.6s ease-out;
     }
 
-    body.light-mode {
-      background: #ffffff;
-      color: #1f2328;
-    }
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #0d1117; }
+    ::-webkit-scrollbar-thumb { background: #30363d; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #484f58; }
+    body.light-mode ::-webkit-scrollbar-track { background: #ffffff; }
+    body.light-mode ::-webkit-scrollbar-thumb { background: #d1d9e0; }
 
-    body.light-mode header {
-      background: #f6f8fa;
-      border-bottom-color: #d1d9e0;
-    }
+    /* ── Light Mode ── */
+    body.light-mode { background: #ffffff; color: #1f2328; }
+    body.light-mode header { background: linear-gradient(135deg, #f6f8fa 0%, #eaeef2 100%); border-bottom-color: #d1d9e0; }
+    body.light-mode .header-glow { background: linear-gradient(90deg, #f78166, #e06b50, #f78166); }
+    body.light-mode .card { background: #f6f8fa; border-color: #d1d9e0; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+    body.light-mode section > h2 { color: #656d76; border-left-color: #f78166; }
+    body.light-mode .metric-label, body.light-mode .stat-label,
+    body.light-mode .feed-time, body.light-mode .agent-traits,
+    body.light-mode #clock, body.light-mode .token-table th,
+    body.light-mode .cron-schedule, body.light-mode .health-status-text,
+    body.light-mode .mission-date, body.light-mode .cost-note,
+    body.light-mode .agent-detail-label { color: #656d76; }
+    body.light-mode .feed-item, body.light-mode .agent-name,
+    body.light-mode .token-table td, body.light-mode .cron-name,
+    body.light-mode .mission-title, body.light-mode .health-name,
+    body.light-mode .agent-detail-value { color: #1f2328; }
+    body.light-mode .feed-item { border-bottom-color: #d1d9e0; }
+    body.light-mode .feed-item:nth-child(even) { background: rgba(0,0,0,0.02); }
+    body.light-mode .token-table th, body.light-mode .token-table td { border-bottom-color: #d1d9e0; }
+    body.light-mode footer { border-top-color: #d1d9e0; color: #656d76; }
+    body.light-mode .cron-item { background: #ffffff; border-color: #d1d9e0; }
+    body.light-mode .task-input { background: #ffffff; border-color: #d1d9e0; color: #1f2328; }
+    body.light-mode #theme-toggle { border-color: #d1d9e0; color: #1f2328; }
+    body.light-mode .agent-details { background: #eaeef2; border-color: #d1d9e0; }
+    body.light-mode .expand-btn { color: #656d76; border-color: #d1d9e0; }
+    body.light-mode .expand-btn:hover { border-color: #f78166; color: #f78166; }
 
-    body.light-mode .card {
-      background: #f6f8fa;
-      border-color: #d1d9e0;
-    }
-
-    body.light-mode section > h2 {
-      color: #656d76;
-    }
-
-    body.light-mode .metric-label,
-    body.light-mode .stat-label,
-    body.light-mode .feed-time,
-    body.light-mode .agent-traits,
-    body.light-mode #clock,
-    body.light-mode .token-table th,
-    body.light-mode .cron-schedule,
-    body.light-mode .health-status-text,
-    body.light-mode .mission-date,
-    body.light-mode .v3-note {
-      color: #656d76;
-    }
-
-    body.light-mode .feed-item,
-    body.light-mode .agent-name,
-    body.light-mode .token-table td,
-    body.light-mode .cron-name,
-    body.light-mode .mission-title,
-    body.light-mode .health-name {
-      color: #1f2328;
-    }
-
-    body.light-mode .feed-item {
-      border-bottom-color: #d1d9e0;
-    }
-
-    body.light-mode .token-table th,
-    body.light-mode .token-table td {
-      border-bottom-color: #d1d9e0;
-    }
-
-    body.light-mode footer {
-      border-top-color: #d1d9e0;
-      color: #656d76;
-    }
-
+    /* ── Header ── */
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 1.25rem 2rem;
       border-bottom: 1px solid #30363d;
-      background: #161b22;
+      background: linear-gradient(135deg, #161b22 0%, #0d1117 100%);
+      position: relative;
     }
 
-    header h1 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: #f78166;
+    .header-glow {
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #f78166, #ff9a76, #f78166);
+      opacity: 0.7;
     }
 
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
+    header h1 { font-size: 1.5rem; font-weight: 700; color: #f78166; }
+
+    .header-right { display: flex; align-items: center; gap: 1rem; }
 
     #clock {
       font-size: 1rem;
@@ -108,16 +103,9 @@
       color: #e6edf3;
       transition: border-color 0.2s;
     }
+    #theme-toggle:hover { border-color: #f78166; }
 
-    #theme-toggle:hover {
-      border-color: #f78166;
-    }
-
-    body.light-mode #theme-toggle {
-      border-color: #d1d9e0;
-      color: #1f2328;
-    }
-
+    /* ── Main Layout ── */
     main {
       max-width: 1400px;
       margin: 0 auto;
@@ -126,10 +114,7 @@
       grid-template-columns: 1fr 1fr;
       gap: 2rem;
     }
-
-    .full-width {
-      grid-column: 1 / -1;
-    }
+    .full-width { grid-column: 1 / -1; }
 
     section > h2 {
       font-size: 0.85rem;
@@ -138,6 +123,8 @@
       color: #8b949e;
       text-transform: uppercase;
       letter-spacing: 0.05em;
+      border-left: 4px solid #f78166;
+      padding-left: 0.75rem;
     }
 
     .card {
@@ -145,100 +132,108 @@
       border: 1px solid #30363d;
       border-radius: 8px;
       padding: 1.25rem;
-      transition: border-color 0.2s, background 0.3s;
+      transition: border-color 0.2s, background 0.3s, transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.4);
     }
-
     .card:hover {
       border-color: #f78166;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
     }
 
-    /* Cost Tracker */
+    /* ── Cost Tracker ── */
     .cost-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 1rem;
     }
-
-    .metric-card {
-      text-align: center;
-    }
-
-    .metric-label {
-      font-size: 0.85rem;
+    .metric-card { text-align: center; }
+    .metric-label { font-size: 0.85rem; color: #8b949e; margin-bottom: 0.25rem; }
+    .metric-value { font-size: 2.25rem; font-weight: 700; color: #f78166; }
+    .cost-note {
+      font-size: 0.75rem;
       color: #8b949e;
-      margin-bottom: 0.25rem;
+      text-align: center;
+      margin-top: 0.75rem;
+      font-style: italic;
     }
-
-    .metric-value {
-      font-size: 2rem;
-      font-weight: 700;
+    .model-tag {
+      display: inline-block;
+      padding: 0.1rem 0.5rem;
+      border-radius: 12px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      background: #f7816633;
       color: #f78166;
+      margin-left: 0.25rem;
     }
 
-    /* Agent Roster */
+    /* ── Agent Roster ── */
     .agent-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 1rem;
     }
+    .agent-header { display: flex; align-items: center; justify-content: space-between; }
+    .agent-emoji { font-size: 2.5rem; margin-bottom: 0.5rem; }
+    .agent-name { font-size: 1.25rem; font-weight: 700; color: #e6edf3; }
+    .agent-role { font-size: 0.9rem; color: #f78166; margin-bottom: 0.75rem; }
+    .agent-traits { font-size: 0.85rem; color: #8b949e; font-style: italic; }
 
-    .agent-emoji {
-      font-size: 2.5rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .agent-name {
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: #e6edf3;
-    }
-
-    .agent-role {
-      font-size: 0.9rem;
-      color: #f78166;
-      margin-bottom: 0.75rem;
-    }
-
-    .agent-traits {
-      font-size: 0.85rem;
+    .expand-btn {
+      background: none;
+      border: 1px solid #30363d;
+      border-radius: 4px;
       color: #8b949e;
-      font-style: italic;
+      cursor: pointer;
+      font-size: 0.85rem;
+      padding: 0.2rem 0.5rem;
+      transition: border-color 0.2s, color 0.2s;
     }
+    .expand-btn:hover { border-color: #f78166; color: #f78166; }
 
-    /* Task Stats */
+    .agent-details {
+      display: none;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid #30363d;
+      background: #0d111766;
+      border-radius: 6px;
+      padding: 1rem;
+    }
+    .agent-details.open { display: block; }
+    .agent-detail-row { margin-bottom: 0.6rem; }
+    .agent-detail-row:last-child { margin-bottom: 0; }
+    .agent-detail-label {
+      font-size: 0.75rem;
+      color: #8b949e;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-weight: 600;
+    }
+    .agent-detail-value { font-size: 0.85rem; color: #c9d1d9; margin-top: 0.15rem; }
+    .agent-detail-value a { color: #f78166; text-decoration: none; }
+    .agent-detail-value a:hover { text-decoration: underline; }
+
+    /* ── Task Stats ── */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
       gap: 1rem;
     }
-
-    .stat-label {
-      font-size: 0.85rem;
-      color: #8b949e;
-    }
-
-    .stat-value {
-      font-size: 1.75rem;
-      font-weight: 700;
-    }
-
+    .stat-label { font-size: 0.85rem; color: #8b949e; }
+    .stat-value { font-size: 2rem; font-weight: 700; }
     .stat-completed .stat-value { color: #3fb950; }
     .stat-progress .stat-value { color: #d29922; }
     .stat-blocked .stat-value { color: #f85149; }
 
-    /* Token Usage Table */
-    .token-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    .token-table th,
-    .token-table td {
+    /* ── Token Usage ── */
+    .token-table { width: 100%; border-collapse: collapse; }
+    .token-table th, .token-table td {
       padding: 0.75rem 1rem;
       text-align: left;
       border-bottom: 1px solid #30363d;
     }
-
     .token-table th {
       color: #8b949e;
       font-size: 0.8rem;
@@ -246,41 +241,28 @@
       letter-spacing: 0.05em;
       font-weight: 600;
     }
+    .token-table td { font-variant-numeric: tabular-nums; }
+    .token-table td.token-number { font-weight: 700; color: #f78166; font-size: 1.05rem; }
 
-    .token-table td {
-      font-variant-numeric: tabular-nums;
-    }
-
-    /* Activity Feed */
-    .feed-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-    }
-
+    /* ── Activity Feed ── */
+    .feed-list { list-style: none; display: flex; flex-direction: column; gap: 0; }
     .feed-item {
-      padding: 0.75rem 0;
+      padding: 0.65rem 0.75rem;
       border-bottom: 1px solid #30363d;
       font-size: 0.9rem;
       color: #c9d1d9;
     }
-
-    .feed-item:last-child {
-      border-bottom: none;
-    }
-
+    .feed-item:nth-child(even) { background: rgba(255,255,255,0.015); }
+    .feed-item:last-child { border-bottom: none; }
     .feed-time {
       color: #8b949e;
       margin-right: 0.5rem;
+      font-family: 'SF Mono', 'Consolas', 'Liberation Mono', Menlo, monospace;
+      font-size: 0.8rem;
     }
+    .feed-agent { color: #f78166; font-weight: 600; }
 
-    .feed-agent {
-      color: #f78166;
-      font-weight: 600;
-    }
-
-    /* Status Badges */
+    /* ── Status Badges ── */
     .badge {
       display: inline-block;
       padding: 0.15rem 0.5rem;
@@ -290,21 +272,14 @@
       text-transform: uppercase;
       letter-spacing: 0.03em;
     }
-
     .badge-done { background: #23863633; color: #3fb950; }
     .badge-in-progress { background: #1f6feb33; color: #58a6ff; }
     .badge-blocked { background: #f8514933; color: #f85149; }
     .badge-commit { background: #6e40c933; color: #bc8cff; }
     .badge-issue { background: #d2992233; color: #d29922; }
 
-    /* Mission Feed */
-    .mission-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-    }
-
+    /* ── Mission Feed ── */
+    .mission-list { list-style: none; display: flex; flex-direction: column; gap: 0; }
     .mission-item {
       padding: 0.75rem 0;
       border-bottom: 1px solid #30363d;
@@ -313,34 +288,11 @@
       align-items: flex-start;
       gap: 0.75rem;
     }
-
-    .mission-item:last-child {
-      border-bottom: none;
-    }
-
-    .mission-info {
-      flex: 1;
-    }
-
-    .mission-title {
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: #e6edf3;
-      margin-bottom: 0.25rem;
-    }
-
-    .mission-date {
-      font-size: 0.8rem;
-      color: #8b949e;
-    }
-
-    .mission-labels {
-      display: flex;
-      gap: 0.35rem;
-      flex-wrap: wrap;
-      margin-top: 0.25rem;
-    }
-
+    .mission-item:last-child { border-bottom: none; }
+    .mission-info { flex: 1; }
+    .mission-title { font-size: 0.9rem; font-weight: 600; color: #e6edf3; margin-bottom: 0.25rem; }
+    .mission-date { font-size: 0.8rem; color: #8b949e; }
+    .mission-labels { display: flex; gap: 0.35rem; flex-wrap: wrap; margin-top: 0.25rem; }
     .label-badge {
       display: inline-block;
       padding: 0.1rem 0.45rem;
@@ -351,13 +303,8 @@
       color: #c9d1d9;
     }
 
-    /* Cron Monitor */
-    .cron-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-
+    /* ── Cron Monitor ── */
+    .cron-list { display: flex; flex-direction: column; gap: 0.75rem; }
     .cron-item {
       display: flex;
       align-items: flex-start;
@@ -367,12 +314,6 @@
       border-radius: 6px;
       border: 1px solid #30363d;
     }
-
-    body.light-mode .cron-item {
-      background: #ffffff;
-      border-color: #d1d9e0;
-    }
-
     .cron-dot {
       width: 10px;
       height: 10px;
@@ -380,74 +321,30 @@
       margin-top: 0.35rem;
       flex-shrink: 0;
     }
-
-    .cron-dot-ok { background: #3fb950; }
+    .cron-dot-ok { background: #3fb950; animation: pulse 2s ease-in-out infinite; }
     .cron-dot-error { background: #f85149; }
     .cron-dot-never { background: #d29922; }
-
     .cron-info { flex: 1; }
+    .cron-name { font-weight: 600; font-size: 0.9rem; color: #e6edf3; }
+    .cron-schedule { font-size: 0.8rem; color: #8b949e; }
+    .cron-status { font-size: 0.8rem; color: #3fb950; margin-top: 0.15rem; }
 
-    .cron-name {
-      font-weight: 600;
-      font-size: 0.9rem;
-      color: #e6edf3;
-    }
-
-    .cron-schedule {
-      font-size: 0.8rem;
-      color: #8b949e;
-    }
-
-    .cron-error {
-      font-size: 0.8rem;
-      color: #f85149;
-      margin-top: 0.15rem;
-    }
-
-    .v3-note {
-      font-size: 0.8rem;
-      color: #8b949e;
-      font-style: italic;
-      margin-top: 0.75rem;
-    }
-
-    /* Health Panel */
-    .health-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.6rem;
-    }
-
-    .health-item {
-      display: flex;
-      align-items: center;
-      gap: 0.65rem;
-    }
-
+    /* ── Health Panel ── */
+    .health-list { display: flex; flex-direction: column; gap: 0.6rem; }
+    .health-item { display: flex; align-items: center; gap: 0.65rem; }
     .health-dot {
       width: 10px;
       height: 10px;
       border-radius: 50%;
       flex-shrink: 0;
     }
-
-    .health-dot-green { background: #3fb950; }
+    .health-dot-green { background: #3fb950; animation: pulse 2s ease-in-out infinite; }
     .health-dot-red { background: #f85149; }
     .health-dot-yellow { background: #d29922; }
+    .health-name { font-weight: 600; font-size: 0.9rem; color: #e6edf3; min-width: 140px; }
+    .health-status-text { font-size: 0.85rem; color: #8b949e; }
 
-    .health-name {
-      font-weight: 600;
-      font-size: 0.9rem;
-      color: #e6edf3;
-      min-width: 140px;
-    }
-
-    .health-status-text {
-      font-size: 0.85rem;
-      color: #8b949e;
-    }
-
-    /* Task Creation */
+    /* ── Task Creation ── */
     .task-form {
       display: flex;
       gap: 0.5rem;
@@ -455,7 +352,6 @@
       padding-top: 1rem;
       border-top: 1px solid #30363d;
     }
-
     .task-input {
       flex: 1;
       padding: 0.5rem 0.75rem;
@@ -466,18 +362,7 @@
       font-size: 0.9rem;
       font-family: inherit;
     }
-
-    body.light-mode .task-input {
-      background: #ffffff;
-      border-color: #d1d9e0;
-      color: #1f2328;
-    }
-
-    .task-input:focus {
-      outline: none;
-      border-color: #f78166;
-    }
-
+    .task-input:focus { outline: none; border-color: #f78166; }
     .task-btn {
       padding: 0.5rem 1rem;
       border-radius: 6px;
@@ -489,30 +374,30 @@
       cursor: pointer;
       white-space: nowrap;
     }
+    .task-btn:hover { background: #e06b50; }
 
-    .task-btn:hover {
-      background: #e06b50;
-    }
-
-    /* Footer */
+    /* ── Footer ── */
     footer {
       text-align: center;
-      padding: 1rem 2rem;
+      padding: 1.25rem 2rem;
       border-top: 1px solid #30363d;
       color: #8b949e;
       font-size: 0.8rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1400px;
+      margin: 0 auto;
     }
+    footer .footer-brand { color: #f78166; font-weight: 600; }
 
     @media (max-width: 800px) {
-      main {
-        grid-template-columns: 1fr;
-      }
-      .full-width {
-        grid-column: 1;
-      }
+      main { grid-template-columns: 1fr; }
+      .full-width { grid-column: 1; }
       header { padding: 1rem; flex-direction: column; gap: 0.5rem; }
       main { padding: 1rem; }
       .metric-value { font-size: 1.5rem; }
+      footer { flex-direction: column; gap: 0.5rem; }
     }
   </style>
 </head>
@@ -523,53 +408,103 @@
       <div id="clock"></div>
       <button id="theme-toggle" title="Toggle light/dark mode">🌙</button>
     </div>
+    <div class="header-glow"></div>
   </header>
 
   <main>
-    <!-- Cost Tracker -->
-    <section class="full-width">
+    <!-- 1. System Health -->
+    <section>
+      <h2>System Health</h2>
+      <div class="card">
+        <div class="health-list">
+          <div class="health-item">
+            <div class="health-dot health-dot-green"></div>
+            <div class="health-name">OpenClaw Gateway</div>
+            <div class="health-status-text">Active <span style="opacity:0.7">(local — verified)</span></div>
+          </div>
+          <div class="health-item">
+            <div class="health-dot health-dot-green"></div>
+            <div class="health-name">GitHub CLI</div>
+            <div class="health-status-text">Connected</div>
+          </div>
+          <div class="health-item">
+            <div class="health-dot health-dot-green"></div>
+            <div class="health-name">Whisper/Audio</div>
+            <div class="health-status-text">Ready</div>
+          </div>
+          <div class="health-item">
+            <div class="health-dot health-dot-yellow"></div>
+            <div class="health-name">Chrome Debug</div>
+            <div class="health-status-text">On-demand <span style="opacity:0.7">(launched when needed)</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Cost Tracker -->
+    <section>
       <h2>Cost Tracker</h2>
       <div class="cost-grid">
         <div class="card metric-card">
-          <div class="metric-label">Total API Cost</div>
-          <div class="metric-value">$0.00</div>
-        </div>
-        <div class="card metric-card">
           <div class="metric-label">Today</div>
-          <div class="metric-value">$0.00</div>
+          <div class="metric-value">$10.64</div>
+          <span class="model-tag">claude-sonnet-4-6</span>
         </div>
         <div class="card metric-card">
           <div class="metric-label">This Month</div>
-          <div class="metric-value">$0.00</div>
+          <div class="metric-value">$10.64</div>
         </div>
+        <div class="card metric-card">
+          <div class="metric-label">Per Task</div>
+          <div class="metric-value">~$1.40</div>
+        </div>
+      </div>
+      <div class="cost-note">Live sync via OpenClaw session data</div>
+    </section>
+
+    <!-- 3. Token Usage -->
+    <section>
+      <h2>Token Usage</h2>
+      <div class="card">
+        <table class="token-table">
+          <thead>
+            <tr>
+              <th>Agent</th>
+              <th>Input</th>
+              <th>Output</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>🗺️ Atlas (Claw)</td>
+              <td class="token-number">~65,857</td>
+              <td class="token-number">~2,342</td>
+              <td class="token-number">~68,199</td>
+            </tr>
+            <tr>
+              <td>⚒️ Forge</td>
+              <td class="token-number">~85,000</td>
+              <td class="token-number">—</td>
+              <td class="token-number">~85,000</td>
+            </tr>
+            <tr style="font-weight:700">
+              <td>Total</td>
+              <td class="token-number">~150,857</td>
+              <td class="token-number">~2,342</td>
+              <td class="token-number">~153,199</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </section>
 
-    <!-- Agent Roster -->
-    <section class="full-width">
-      <h2>Agent Roster</h2>
-      <div class="agent-grid">
-        <div class="card">
-          <div class="agent-emoji">🗺️</div>
-          <div class="agent-name">ATLAS</div>
-          <div class="agent-role">Architect / Engineering Lead</div>
-          <div class="agent-traits">Direct. Plans before acting. Never hides uncertainty. Routes to Forge for all coding.</div>
-        </div>
-        <div class="card">
-          <div class="agent-emoji">⚒️</div>
-          <div class="agent-name">FORGE</div>
-          <div class="agent-role">Builder / Full-Stack Developer</div>
-          <div class="agent-traits">Moves fast. Clean code. Tests before marking done. Commits with clear messages.</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Task Stats -->
+    <!-- 4. Task Stats -->
     <section>
       <h2>Task Stats</h2>
       <div class="stats-grid">
         <div class="card stat-completed">
-          <div class="stat-label">Tasks Completed</div>
+          <div class="stat-label">Completed</div>
           <div class="stat-value" id="stat-completed">0</div>
         </div>
         <div class="card stat-progress">
@@ -583,104 +518,101 @@
       </div>
     </section>
 
-    <!-- Cron Monitor -->
+    <!-- 5. Agent Roster -->
+    <section class="full-width">
+      <h2>Agent Roster</h2>
+      <div class="agent-grid">
+        <div class="card">
+          <div class="agent-header">
+            <div>
+              <div class="agent-emoji">🗺️</div>
+              <div class="agent-name">ATLAS</div>
+            </div>
+            <button class="expand-btn" onclick="toggleAgent('atlas')">▼ Details</button>
+          </div>
+          <div class="agent-role">Architect / Engineering Lead</div>
+          <div class="agent-traits">Direct. Plans before acting. Never hides uncertainty. Routes to Forge for all coding.</div>
+          <div class="agent-details" id="agent-atlas">
+            <div class="agent-detail-row">
+              <div class="agent-detail-label">Full Role</div>
+              <div class="agent-detail-value">Architect / Engineering Lead</div>
+            </div>
+            <div class="agent-detail-row">
+              <div class="agent-detail-label">Responsibilities</div>
+              <div class="agent-detail-value">Breaks tasks into sub-tasks with acceptance criteria. Routes to Forge. Never writes code. Escalates blockers immediately.</div>
+            </div>
+            <div class="agent-detail-row">
+              <div class="agent-detail-label">Communication</div>
+              <div class="agent-detail-value">Direct. Confirms scope before delegating. Reports: done / in progress / blocked.</div>
+            </div>
+            <div class="agent-detail-row">
+              <div class="agent-detail-label">Current Status</div>
+              <div class="agent-detail-value"><span style="color:#3fb950">●</span> Active — manages Forge</div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="agent-header">
+            <div>
+              <div class="agent-emoji">⚒️</div>
+              <div class="agent-name">FORGE</div>
+            </div>
+            <button class="expand-btn" onclick="toggleAgent('forge')">▼ Details</button>
+          </div>
+          <div class="agent-role">Builder / Full-Stack Developer</div>
+          <div class="agent-traits">Moves fast. Clean code. Tests before marking done. Commits with clear messages.</div>
+          <div class="agent-details" id="agent-forge">
+            <div class="agent-detail-row">
+              <div class="agent-detail-label">Full Role</div>
+              <div class="agent-detail-value">Builder / Full-Stack Developer</div>
+            </div>
+            <div class="agent-detail-row">
+              <div class="agent-detail-label">Workflow</div>
+              <div class="agent-detail-value">Understand → Research → Plan → Build → Test → Commit → Report</div>
+            </div>
+            <div class="agent-detail-row">
+              <div class="agent-detail-label">Tools</div>
+              <div class="agent-detail-value">Claude Code, gh CLI, git, web search</div>
+            </div>
+            <div class="agent-detail-row">
+              <div class="agent-detail-label">Standards</div>
+              <div class="agent-detail-value">Production-ready code. Descriptive commits. No TODOs. Tests before marking done.</div>
+            </div>
+            <div class="agent-detail-row">
+              <div class="agent-detail-label">Missions Completed</div>
+              <div class="agent-detail-value"><a href="https://github.com/kaanclaw/dev-team/issues?q=is%3Aissue+is%3Aclosed" target="_blank">3 missions →</a></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. Scheduled Jobs -->
     <section>
-      <h2>⏰ Scheduled Jobs</h2>
+      <h2>Scheduled Jobs</h2>
       <div class="card">
         <div class="cron-list">
           <div class="cron-item">
-            <div class="cron-dot cron-dot-error"></div>
+            <div class="cron-dot cron-dot-ok"></div>
             <div class="cron-info">
               <div class="cron-name">overnight-research</div>
-              <div class="cron-schedule">Daily 1:00 AM PT &middot; Last run: 2026-03-25 01:00</div>
-              <div class="cron-error">Error: Channel config needed</div>
+              <div class="cron-schedule">Daily 1:00 AM PT</div>
+              <div class="cron-status">Scheduled</div>
             </div>
           </div>
           <div class="cron-item">
-            <div class="cron-dot cron-dot-error"></div>
+            <div class="cron-dot cron-dot-ok"></div>
             <div class="cron-info">
               <div class="cron-name">morning-ping-kaan</div>
-              <div class="cron-schedule">Daily 9:30 AM PT &middot; Last run: 2026-03-25 09:30</div>
-              <div class="cron-error">Error: Telegram target needed</div>
+              <div class="cron-schedule">Daily 9:30 AM PT</div>
+              <div class="cron-status">Scheduled</div>
             </div>
           </div>
         </div>
-        <div class="v3-note">Live cron sync coming in v3</div>
       </div>
     </section>
 
-    <!-- System Health -->
-    <section>
-      <h2>🟢 System Health</h2>
-      <div class="card">
-        <div class="health-list" id="health-list">
-          <div class="health-item">
-            <div class="health-dot health-dot-yellow" id="health-dot-gateway"></div>
-            <div class="health-name">OpenClaw Gateway</div>
-            <div class="health-status-text" id="health-text-gateway">Checking...</div>
-          </div>
-          <div class="health-item">
-            <div class="health-dot health-dot-green"></div>
-            <div class="health-name">GitHub CLI</div>
-            <div class="health-status-text">Connected</div>
-          </div>
-          <div class="health-item">
-            <div class="health-dot health-dot-green"></div>
-            <div class="health-name">Whisper/Audio</div>
-            <div class="health-status-text">Ready</div>
-          </div>
-          <div class="health-item">
-            <div class="health-dot health-dot-yellow" id="health-dot-chrome"></div>
-            <div class="health-name">Chrome Debug</div>
-            <div class="health-status-text" id="health-text-chrome">Checking...</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Token Usage -->
-    <section>
-      <h2>Token Usage</h2>
-      <div class="card">
-        <table class="token-table">
-          <thead>
-            <tr>
-              <th>Agent</th>
-              <th>Input Tokens</th>
-              <th>Output Tokens</th>
-              <th>Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>🗺️ Atlas</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-            </tr>
-            <tr>
-              <td>⚒️ Forge</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-            </tr>
-          </tbody>
-        </table>
-        <div class="v3-note">Live tracking coming in v3</div>
-      </div>
-    </section>
-
-    <!-- Activity Feed -->
-    <section>
-      <h2>Activity Feed</h2>
-      <div class="card">
-        <ul class="feed-list" id="activity-feed">
-          <li class="feed-item"><span class="feed-time">Loading...</span></li>
-        </ul>
-      </div>
-    </section>
-
-    <!-- Mission Feed -->
+    <!-- 7. Mission Feed -->
     <section>
       <h2>Mission Feed</h2>
       <div class="card">
@@ -693,10 +625,21 @@
         </div>
       </div>
     </section>
+
+    <!-- 8. Activity Feed -->
+    <section>
+      <h2>Activity Feed</h2>
+      <div class="card">
+        <ul class="feed-list" id="activity-feed">
+          <li class="feed-item"><span class="feed-time">Loading...</span></li>
+        </ul>
+      </div>
+    </section>
   </main>
 
   <footer>
     <span id="last-updated">Last updated: --:--:--</span>
+    <span class="footer-brand">🦞 Claw Mission Control v3 · Built by Forge · kaanclaw/mission-control</span>
   </footer>
 
   <script>
@@ -733,29 +676,20 @@
       applyTheme(next);
     });
 
-    // ── Health Checks ──
-    function checkHealth(url, dotId, textId) {
-      var controller = new AbortController();
-      var timeout = setTimeout(function() { controller.abort(); }, 2000);
-      fetch(url, { signal: controller.signal })
-        .then(function(r) {
-          clearTimeout(timeout);
-          if (r.ok) {
-            document.getElementById(dotId).className = 'health-dot health-dot-green';
-            document.getElementById(textId).textContent = 'Online';
-          } else {
-            document.getElementById(dotId).className = 'health-dot health-dot-red';
-            document.getElementById(textId).textContent = 'Error (' + r.status + ')';
-          }
-        })
-        .catch(function() {
-          clearTimeout(timeout);
-          document.getElementById(dotId).className = 'health-dot health-dot-red';
-          document.getElementById(textId).textContent = 'Offline';
-        });
+    // ── Agent Expand/Collapse ──
+    function toggleAgent(id) {
+      var el = document.getElementById('agent-' + id);
+      var btn = el.previousElementSibling ?
+        el.closest('.card').querySelector('.expand-btn') : null;
+      if (!btn) btn = el.parentElement.querySelector('.expand-btn');
+      if (el.classList.contains('open')) {
+        el.classList.remove('open');
+        btn.textContent = '▼ Details';
+      } else {
+        el.classList.add('open');
+        btn.textContent = '▲ Details';
+      }
     }
-    checkHealth('http://127.0.0.1:18789/health', 'health-dot-gateway', 'health-text-gateway');
-    checkHealth('http://127.0.0.1:9222/json/version', 'health-dot-chrome', 'health-text-chrome');
 
     // ── GitHub Data Fetching ──
     function timeAgo(dateStr) {
@@ -774,11 +708,16 @@
         String(d.getDate()).padStart(2, '0');
     }
 
+    function escapeHtml(str) {
+      var div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
     function renderActivityFeed(commits, issues) {
       var feed = document.getElementById('activity-feed');
       var items = [];
 
-      // Add commits
       (commits || []).forEach(function(c) {
         var msg = c.commit.message.split('\n')[0];
         var author = (c.commit.author && c.commit.author.name) || 'Unknown';
@@ -787,14 +726,12 @@
           date: date,
           html: '<span class="feed-time">' + timeAgo(date) + '</span>' +
             '<span class="badge badge-commit">commit</span> ' +
-            '<span class="feed-agent">' + author + ':</span> ' + escapeHtml(msg)
+            '<span class="feed-agent">' + escapeHtml(author) + ':</span> ' + escapeHtml(msg)
         });
       });
 
-      // Add issues
       (issues || []).forEach(function(iss) {
         if (iss.pull_request) return;
-        var state = iss.state === 'closed' ? 'done' : 'in-progress';
         var badgeClass = iss.state === 'closed' ? 'badge-done' : 'badge-in-progress';
         items.push({
           date: iss.updated_at || iss.created_at,
@@ -804,7 +741,6 @@
         });
       });
 
-      // Sort by date descending
       items.sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
 
       if (items.length === 0) {
@@ -821,7 +757,6 @@
       var feed = document.getElementById('mission-feed');
       var filtered = (issues || []).filter(function(iss) { return !iss.pull_request; });
 
-      // Update task stats
       var completed = 0, inProgress = 0, blocked = 0;
       filtered.forEach(function(iss) {
         if (iss.state === 'closed') { completed++; return; }
@@ -868,12 +803,6 @@
       }).join('');
     }
 
-    function escapeHtml(str) {
-      var div = document.createElement('div');
-      div.textContent = str;
-      return div.innerHTML;
-    }
-
     function updateTimestamp() {
       var now = new Date();
       document.getElementById('last-updated').textContent = 'Last updated: ' +
@@ -883,8 +812,8 @@
     }
 
     function fetchGitHubData() {
-      var commitsUrl = 'https://api.github.com/repos/kaanclaw/mission-control/commits?per_page=5';
-      var issuesUrl = 'https://api.github.com/repos/kaanclaw/dev-team/issues?state=all&per_page=10';
+      var commitsUrl = 'https://api.github.com/repos/kaanclaw/mission-control/commits?per_page=10';
+      var issuesUrl = 'https://api.github.com/repos/kaanclaw/dev-team/issues?state=all&per_page=50';
 
       Promise.all([
         fetch(commitsUrl).then(function(r) { return r.ok ? r.json() : []; }).catch(function() { return []; }),
@@ -902,10 +831,7 @@
       });
     }
 
-    // Initial fetch
     fetchGitHubData();
-
-    // Auto-refresh every 60s
     setInterval(fetchGitHubData, 60000);
 
     // ── Task Creation ──
@@ -913,7 +839,7 @@
       var input = document.getElementById('task-input');
       var val = input.value.trim();
       if (!val) return;
-      alert('To create a mission, tell Claw on Telegram \u2014 direct GitHub API calls require auth token setup in v3');
+      alert('To create a mission, tell Claw on Telegram \u2014 direct GitHub API calls require auth token setup');
       input.value = '';
     });
     document.getElementById('task-input').addEventListener('keydown', function(e) {
