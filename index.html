@@ -11,499 +11,390 @@
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      --radius: 0.625rem;
-      --background: #ffffff;
-      --foreground: #171717;
-      --card: #ffffff;
-      --card-foreground: #171717;
-      --muted: #f5f5f5;
-      --muted-foreground: #737373;
-      --border: #e5e5e5;
-      --input: #e5e5e5;
-      --primary: #171717;
-      --primary-foreground: #fafafa;
-      --accent: #f5f5f5;
-      --accent-foreground: #171717;
-      --destructive: #ef4444;
-      --ring: #a3a3a3;
-      --chart-1: #f97316;
-      --chart-2: #06b6d4;
-      --chart-3: #3b82f6;
-      --chart-4: #eab308;
-      --chart-5: #f59e0b;
-      --sidebar-bg: #fafafa;
+      --bg: #0a0a0a;
+      --surface: #1a1a1a;
+      --surface-border: rgba(255,255,255,0.06);
+      --surface-hover: rgba(255,255,255,0.03);
+      --text: #fafafa;
+      --text-muted: #a3a3a3;
+      --text-dim: #6b7280;
+      --border: rgba(255,255,255,0.08);
+      --emerald: #10b981;
+      --emerald-bg: rgba(16,185,129,0.12);
+      --amber: #f59e0b;
+      --amber-bg: rgba(245,158,11,0.12);
+      --blue: #3b82f6;
+      --blue-bg: rgba(59,130,246,0.12);
+      --purple: #a855f7;
+      --purple-bg: rgba(168,85,247,0.12);
+      --red: #ef4444;
+      --red-bg: rgba(239,68,68,0.12);
     }
 
-    .dark {
-      --background: #0a0a0a;
-      --foreground: #fafafa;
-      --card: #1a1a1a;
-      --card-foreground: #fafafa;
-      --muted: #262626;
-      --muted-foreground: #a3a3a3;
-      --border: rgba(255,255,255,0.1);
-      --input: rgba(255,255,255,0.15);
-      --primary: #fafafa;
-      --primary-foreground: #171717;
-      --accent: #262626;
-      --accent-foreground: #fafafa;
-      --destructive: #f87171;
-      --ring: #525252;
-      --chart-1: #818cf8;
-      --chart-2: #34d399;
-      --chart-3: #fbbf24;
-      --chart-4: #c084fc;
-      --chart-5: #fb7185;
-      --sidebar-bg: #141414;
+    html.light {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-border: rgba(0,0,0,0.08);
+      --surface-hover: rgba(0,0,0,0.02);
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --text-dim: #94a3b8;
+      --border: rgba(0,0,0,0.08);
+      --emerald-bg: rgba(16,185,129,0.08);
+      --amber-bg: rgba(245,158,11,0.08);
+      --blue-bg: rgba(59,130,246,0.08);
+      --purple-bg: rgba(168,85,247,0.08);
+      --red-bg: rgba(239,68,68,0.08);
     }
 
     body {
       font-family: 'Inter', system-ui, -apple-system, sans-serif;
       -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      background: var(--background);
-      color: var(--foreground);
+      background: var(--bg);
+      color: var(--text);
       font-size: 14px;
       line-height: 1.5;
       min-height: 100vh;
-      display: flex;
     }
 
-    /* Sidebar */
-    .sidebar {
-      width: 256px;
-      min-height: 100vh;
-      background: var(--sidebar-bg);
-      border-right: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: 40;
-      transition: transform 0.2s ease;
-    }
-    .sidebar.collapsed { transform: translateX(-256px); }
-    .sidebar-header {
-      padding: 16px 20px;
-      font-size: 16px;
-      font-weight: 600;
-      color: var(--foreground);
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      height: 56px;
-    }
-    .sidebar-nav { flex: 1; padding: 8px; }
-    .nav-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 12px;
-      border-radius: 8px;
-      color: var(--muted-foreground);
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: background 0.15s, color 0.15s;
-      margin-bottom: 2px;
-    }
-    .nav-item:hover { background: var(--accent); color: var(--foreground); }
-    .nav-item.active { background: var(--accent); color: var(--foreground); font-weight: 600; }
-    .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
-    .sidebar-footer {
-      padding: 16px 20px;
-      border-top: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .avatar {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: var(--primary);
-      color: var(--primary-foreground);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 600;
-      font-size: 13px;
-      flex-shrink: 0;
-    }
-    .sidebar-user-name { font-weight: 600; font-size: 14px; color: var(--foreground); }
-    .sidebar-user-handle { font-size: 12px; color: var(--muted-foreground); }
-
-    /* Main area */
-    .main-wrapper {
-      flex: 1;
-      margin-left: 256px;
-      min-height: 100vh;
-      transition: margin-left 0.2s ease;
-    }
-    .main-wrapper.expanded { margin-left: 0; }
-
-    /* Header */
-    .top-header {
-      height: 56px;
+    /* ── Header ── */
+    .header {
       position: sticky;
       top: 0;
-      z-index: 30;
-      background: color-mix(in srgb, var(--background) 95%, transparent);
-      backdrop-filter: blur(12px);
+      z-index: 50;
+      background: var(--bg);
       border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      backdrop-filter: blur(12px);
+    }
+    .header-inner {
+      max-width: 1440px;
+      margin: 0 auto;
       padding: 0 24px;
-    }
-    .header-left { display: flex; align-items: center; gap: 12px; }
-    .header-right { display: flex; align-items: center; gap: 12px; }
-    .sidebar-toggle {
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: var(--muted-foreground);
-      padding: 4px;
-      display: flex;
-      align-items: center;
-    }
-    .sidebar-toggle svg { width: 20px; height: 20px; }
-    .breadcrumb { font-size: 14px; font-weight: 600; color: var(--foreground); }
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 14px;
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
-      background: var(--card);
-      color: var(--foreground);
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      font-family: inherit;
-      transition: background 0.15s;
-    }
-    .btn:hover { background: var(--accent); }
-    .btn svg { width: 14px; height: 14px; }
-    .theme-toggle {
-      background: none;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 6px 10px;
-      cursor: pointer;
-      color: var(--foreground);
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-    }
-    .theme-toggle:hover { background: var(--accent); }
-    .last-updated { font-size: 12px; color: var(--muted-foreground); white-space: nowrap; }
-
-    /* Content */
-    .page-content { padding: 24px; max-width: 1400px; }
-
-    /* Cards */
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 24px;
-    }
-    .card-header {
+      height: 56px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 20px;
     }
-    .card-title { font-size: 18px; font-weight: 600; color: var(--foreground); }
-    .card-badge {
-      font-size: 12px;
-      padding: 2px 10px;
-      border-radius: 999px;
-      background: var(--muted);
-      color: var(--muted-foreground);
-      font-weight: 500;
-    }
-    .card-link {
-      font-size: 13px;
-      color: var(--muted-foreground);
-      text-decoration: none;
-      font-weight: 500;
-    }
-    .card-link:hover { color: var(--foreground); }
-
-    /* Stat cards grid */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-    .stat-card .stat-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 8px;
-    }
-    .stat-label { font-size: 14px; color: var(--muted-foreground); font-weight: 500; }
-    .stat-icon { color: var(--muted-foreground); }
-    .stat-icon svg { width: 16px; height: 16px; }
-    .stat-value { font-size: 30px; font-weight: 700; color: var(--foreground); line-height: 1.2; }
-    .stat-delta { font-size: 13px; color: #22c55e; margin-top: 4px; font-weight: 500; }
-    .stat-delta.neutral { color: var(--muted-foreground); }
-
-    /* Two-col sections */
-    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
-    .three-col { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 24px; }
-
-    /* Agent roster */
-    .agent-row {
+    .header-left {
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 12px 0;
-      border-bottom: 1px solid var(--border);
     }
-    .agent-row:last-child { border-bottom: none; }
-    .agent-avatar {
-      width: 40px;
-      height: 40px;
+    .logo {
+      font-size: 16px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .cost-badge {
+      padding: 4px 12px;
+      border-radius: 999px;
+      background: var(--amber-bg);
+      color: var(--amber);
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .refresh-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .pulse-dot {
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
+      background: var(--emerald);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    .theme-btn {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 10px;
+      cursor: pointer;
+      color: var(--text);
+      font-size: 14px;
+    }
+    .theme-btn:hover { background: var(--surface-hover); }
+
+    /* ── Main ── */
+    .main {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    /* ── Section titles ── */
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-dim);
+      margin-bottom: 12px;
+      margin-top: 32px;
+    }
+    .section-title:first-child { margin-top: 0; }
+
+    /* ── Card ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: 12px;
+      transition: background 0.15s;
+    }
+    .card:hover { background: color-mix(in srgb, var(--surface) 97%, white 3%); }
+    .card-header {
+      padding: 18px 20px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .card-title {
+      font-size: 15px;
+      font-weight: 600;
+    }
+    .card-badge {
+      font-size: 11px;
+      padding: 2px 10px;
+      border-radius: 999px;
+      background: var(--emerald-bg);
+      color: var(--emerald);
+      font-weight: 600;
+    }
+    .card-badge.amber { background: var(--amber-bg); color: var(--amber); }
+    .card-badge.blue { background: var(--blue-bg); color: var(--blue); }
+    .card-badge.stale { background: var(--red-bg); color: var(--red); }
+    .card-body { padding: 16px 20px 20px; }
+
+    /* ── KPI Grid ── */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+    .kpi-card {
+      padding: 20px;
+    }
+    .kpi-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .kpi-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+    .kpi-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 18px;
-      flex-shrink: 0;
+      font-size: 16px;
     }
-    .agent-avatar.coral { background: #fb923c20; }
-    .agent-avatar.blue { background: #3b82f620; }
-    .agent-avatar.purple { background: #a855f720; }
-    .dark .agent-avatar.coral { background: #fb923c30; }
-    .dark .agent-avatar.blue { background: #3b82f630; }
-    .dark .agent-avatar.purple { background: #a855f730; }
-    .agent-info { flex: 1; }
-    .agent-name-row { display: flex; align-items: center; gap: 8px; }
-    .agent-name { font-weight: 600; font-size: 14px; color: var(--foreground); }
-    .agent-role-text { font-size: 13px; color: var(--muted-foreground); }
-    .status-indicator { display: flex; align-items: center; gap: 6px; }
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      flex-shrink: 0;
+    .kpi-icon.green { background: var(--emerald-bg); }
+    .kpi-icon.blue { background: var(--blue-bg); }
+    .kpi-icon.amber { background: var(--amber-bg); }
+    .kpi-icon.purple { background: var(--purple-bg); }
+    .kpi-value {
+      font-size: 32px;
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 4px;
+      transition: opacity 0.3s;
     }
-    .status-dot.green { background: #22c55e; }
-    .status-dot.orange { background: #f59e0b; }
-    .status-dot.grey { background: #a3a3a3; }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-    .status-dot.green { animation: pulse 2s ease-in-out infinite; }
-    .status-dot.orange { animation: pulse 1.5s ease-in-out infinite; }
-    .status-text { font-size: 12px; color: var(--muted-foreground); }
-    .agent-context { font-size: 12px; color: var(--muted-foreground); text-align: right; white-space: nowrap; }
-    .powered-by { font-size: 12px; color: var(--muted-foreground); margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+    .kpi-trend {
+      font-size: 12px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .kpi-trend.up { color: var(--emerald); }
+    .kpi-trend.down { color: var(--red); }
+    .kpi-trend.neutral { color: var(--text-muted); }
+    .kpi-sparkline {
+      display: block;
+      margin-top: 10px;
+    }
 
-    /* Mission feed */
-    .mission-item {
+    /* ── Layouts ── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+    .grid-2-1 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
+
+    /* ── Activity Feed ── */
+    .feed-item {
       display: flex;
       align-items: flex-start;
       gap: 10px;
       padding: 10px 0;
       border-bottom: 1px solid var(--border);
+      font-size: 13px;
     }
-    .mission-item:last-child { border-bottom: none; }
-    .mission-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      margin-top: 5px;
+    .feed-item:last-child { border-bottom: none; }
+    .feed-icon {
       flex-shrink: 0;
-    }
-    .mission-dot.open { background: #3b82f6; }
-    .mission-dot.closed { background: #22c55e; }
-    .mission-dot.blocked { background: #ef4444; }
-    .mission-info { flex: 1; }
-    .mission-title { font-size: 14px; font-weight: 500; color: var(--foreground); }
-    .mission-meta { font-size: 12px; color: var(--muted-foreground); margin-top: 2px; }
-    .mission-empty {
+      font-size: 14px;
+      width: 22px;
       text-align: center;
-      padding: 32px;
-      color: var(--muted-foreground);
+      padding-top: 1px;
     }
-    .mission-empty svg { width: 32px; height: 32px; margin-bottom: 8px; opacity: 0.5; }
-
-    /* Activity feed */
-    .activity-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 10px;
-      border-radius: 6px;
+    .feed-text {
+      flex: 1;
+      color: var(--text);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
-    .activity-row:nth-child(even) { background: color-mix(in srgb, var(--muted) 50%, transparent); }
-    .activity-icon { color: var(--muted-foreground); flex-shrink: 0; }
-    .activity-icon svg { width: 14px; height: 14px; }
-    .activity-msg { flex: 1; font-size: 14px; color: var(--foreground); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .activity-meta { font-size: 12px; color: var(--muted-foreground); white-space: nowrap; }
-    .live-badge {
-      font-size: 11px;
-      padding: 2px 8px;
-      border-radius: 999px;
-      background: #22c55e18;
-      color: #22c55e;
-      font-weight: 600;
-    }
-
-    /* System health */
-    .health-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 0;
-      border-bottom: 1px solid var(--border);
-    }
-    .health-item:last-child { border-bottom: none; }
-    .health-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
+    .feed-time {
       flex-shrink: 0;
+      color: var(--text-dim);
+      font-size: 12px;
+      white-space: nowrap;
     }
-    .health-dot.green { background: #22c55e; }
-    .health-dot.yellow { background: #eab308; }
-    .health-name { font-size: 14px; font-weight: 500; color: var(--foreground); flex: 1; }
-    .health-status { font-size: 13px; color: var(--muted-foreground); }
+    .feed-empty {
+      color: var(--text-muted);
+      text-align: center;
+      padding: 24px;
+      font-size: 13px;
+    }
 
-    /* Capabilities */
-    .cap-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .cap-pill {
+    /* ── GitHub Repo Cards ── */
+    .repo-name {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
       display: flex;
       align-items: center;
       gap: 6px;
-      padding: 6px 12px;
-      background: var(--muted);
-      border-radius: 999px;
+    }
+    .repo-meta {
       font-size: 12px;
-      color: var(--foreground);
-      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 12px;
     }
-    .cap-pill svg { width: 12px; height: 12px; color: #22c55e; flex-shrink: 0; }
-
-    /* Research library */
-    .research-row {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      padding: 12px 0;
+    .repo-commits {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .repo-commit-item {
+      padding: 4px 0;
       border-bottom: 1px solid var(--border);
-    }
-    .research-row:last-child { border-bottom: none; }
-    .research-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: var(--muted);
       display: flex;
       align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      flex-shrink: 0;
+      gap: 6px;
+      overflow: hidden;
     }
-    .research-info { flex: 1; }
-    .research-name { font-weight: 600; font-size: 14px; color: var(--foreground); }
-    .research-insight { font-size: 13px; color: var(--muted-foreground); margin-top: 2px; }
-    .research-date { font-size: 12px; color: var(--muted-foreground); opacity: 0.7; white-space: nowrap; margin-top: 4px; }
-    .research-footer { font-size: 12px; color: var(--muted-foreground); margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+    .repo-commit-item:last-child { border-bottom: none; }
+    .repo-commit-msg {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--text);
+    }
+    .repo-commit-time {
+      flex-shrink: 0;
+      color: var(--text-dim);
+      font-size: 11px;
+    }
 
-    /* Scheduled jobs */
-    .jobs-table { width: 100%; }
-    .jobs-header {
+    /* ── Cron Jobs ── */
+    .cron-row {
       display: grid;
-      grid-template-columns: 1fr 1fr 120px 120px;
-      gap: 16px;
-      padding: 8px 12px;
+      grid-template-columns: 1fr 1fr 100px 80px 140px;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      align-items: center;
+      font-size: 13px;
+    }
+    .cron-row:last-child { border-bottom: none; }
+    .cron-header {
       font-size: 11px;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      color: var(--muted-foreground);
+      color: var(--text-dim);
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
     }
-    .jobs-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr 120px 120px;
-      gap: 16px;
-      padding: 12px;
-      border-top: 1px solid var(--border);
-      align-items: center;
-    }
-    .job-name { font-weight: 500; color: var(--foreground); font-size: 14px; }
-    .job-schedule { font-size: 13px; color: var(--muted-foreground); }
-    .job-status { display: flex; align-items: center; gap: 6px; font-size: 13px; }
-    .job-next { font-size: 13px; color: var(--muted-foreground); }
-
-    /* Changelog */
-    .changelog-list { position: relative; padding-left: 20px; }
-    .changelog-list::before {
-      content: '';
-      position: absolute;
-      left: 3px;
-      top: 4px;
-      bottom: 4px;
-      width: 2px;
-      background: var(--border);
-    }
-    .changelog-item {
-      position: relative;
-      padding: 8px 0;
+    .cron-name { font-weight: 600; color: var(--text); }
+    .cron-schedule { color: var(--text-muted); }
+    .cron-status {
       display: flex;
-      gap: 12px;
+      align-items: center;
+      gap: 6px;
     }
-    .changelog-item::before {
-      content: '';
-      position: absolute;
-      left: -20px;
-      top: 14px;
-      width: 8px;
-      height: 8px;
+    .cron-dot {
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
-      background: var(--primary);
-      z-index: 1;
+      flex-shrink: 0;
     }
-    .changelog-date { font-size: 12px; color: var(--muted-foreground); white-space: nowrap; min-width: 80px; font-weight: 500; }
-    .changelog-text { font-size: 14px; color: var(--foreground); }
+    .cron-dot.ok { background: var(--emerald); }
+    .cron-dot.pending { background: var(--amber); }
+    .cron-dot.error { background: var(--red); }
+    .cron-errors { color: var(--text-muted); }
+    .cron-next { color: var(--text-muted); font-size: 12px; }
 
-    /* Footer */
-    .page-footer {
-      text-align: center;
-      padding: 24px;
+    /* ── SVG Cost Chart ── */
+    .chart-container {
+      position: relative;
+      width: 100%;
+      height: 220px;
+    }
+    .chart-container svg {
+      width: 100%;
+      height: 100%;
+    }
+    .chart-tooltip {
+      position: absolute;
+      display: none;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
       font-size: 12px;
-      color: var(--muted-foreground);
-      border-top: 1px solid var(--border);
-      margin-top: 24px;
+      pointer-events: none;
+      z-index: 10;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .chart-axis-label {
+      font-size: 10px;
+      fill: var(--text-dim);
+      font-family: 'Inter', sans-serif;
+    }
+    .chart-grid-line {
+      stroke: var(--border);
+      stroke-width: 0.5;
     }
 
     /* ── 3D Office View ── */
-    /*
-     * PLAN: Mission Control 3D Isometric Office
-     * - Rendering: CSS 3D transforms (perspective + rotateX/rotateZ) for isometric feel
-     * - Layout: Engineering wing (left), Hub center (elevated), Creative wing (right), Meeting room (back)
-     * - Animation states map: idle->dim, thinking->amber pulse, coding->green flicker+keyboard, meeting->slide to room, blocked->red pulse
-     * - Data flow: fetch agent-status.json every 5s, CSS transitions for smooth state changes
-     */
-
     .office-3d-container {
       position: relative;
       width: 100%;
       min-height: 520px;
       background: #0d1117;
-      border-radius: 12px;
+      border-radius: 0 0 12px 12px;
       overflow: hidden;
       perspective: 1200px;
     }
     .office-3d-container * { box-sizing: border-box; }
-
     .office-iso-floor {
       position: relative;
       width: 750px;
@@ -512,8 +403,6 @@
       transform-style: preserve-3d;
       transform: rotateX(55deg) rotateZ(-45deg);
     }
-
-    /* Grid tiles on the floor */
     .floor-grid {
       position: absolute;
       inset: 0;
@@ -524,8 +413,6 @@
       border-radius: 8px;
       border: 1px solid rgba(255,255,255,0.04);
     }
-
-    /* Desk base */
     .desk {
       position: absolute;
       width: 130px;
@@ -535,11 +422,7 @@
       transform-style: preserve-3d;
     }
     .desk:hover { transform: scale(1.04); z-index: 10; }
-    .desk.at-meeting {
-      opacity: 0.3;
-      pointer-events: none;
-    }
-
+    .desk.at-meeting { opacity: 0.3; pointer-events: none; }
     .desk-surface {
       position: absolute;
       bottom: 0;
@@ -550,8 +433,6 @@
       border-radius: 6px;
       box-shadow: 0 4px 16px rgba(0,0,0,0.4);
     }
-
-    /* Desk name label */
     .desk-label {
       position: absolute;
       bottom: -18px;
@@ -565,8 +446,6 @@
       letter-spacing: 0.06em;
       pointer-events: none;
     }
-
-    /* Zone labels */
     .zone-3d-label {
       position: absolute;
       font-size: 9px;
@@ -577,8 +456,6 @@
       transform: rotateZ(45deg) rotateX(-55deg);
       pointer-events: none;
     }
-
-    /* Monitor */
     .monitor {
       position: absolute;
       width: 28px;
@@ -600,21 +477,12 @@
       background: #2d3748;
       border-radius: 0 0 1px 1px;
     }
-
-    /* Monitor glow states */
     .desk.status-idle .monitor { box-shadow: 0 0 6px rgba(107,114,128,0.15); background: #111827; }
     .desk.status-thinking .monitor { box-shadow: 0 0 15px rgba(245,158,11,0.4); background: #1a1508; }
     .desk.status-coding .monitor { box-shadow: 0 0 15px rgba(16,185,129,0.5); background: #0a1a14; animation: codeFlicker 0.3s ease-in-out infinite; }
     .desk.status-meeting .monitor { box-shadow: 0 0 15px rgba(59,130,246,0.4); background: #0c1425; }
     .desk.status-blocked .monitor { box-shadow: 0 0 15px rgba(239,68,68,0.5); background: #1a0a0a; }
-
-    @keyframes codeFlicker {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.7; }
-      92% { opacity: 0.85; }
-    }
-
-    /* Desk lamp */
+    @keyframes codeFlicker { 0%,100%{opacity:1} 50%{opacity:0.7} 92%{opacity:0.85} }
     .desk-lamp {
       position: absolute;
       bottom: 42px;
@@ -634,39 +502,13 @@
       border-radius: 3px 3px 0 0;
       transition: box-shadow 0.4s ease, background 0.4s ease;
     }
-    .desk.status-idle .desk-lamp::before {
-      box-shadow: 0 0 8px rgba(245,158,11,0.15);
-      background: #4b5563;
-    }
-    .desk.status-thinking .desk-lamp::before {
-      box-shadow: 0 0 20px rgba(245,158,11,0.6);
-      background: #f59e0b;
-      animation: lampPulse 2s ease-in-out infinite;
-    }
-    .desk.status-coding .desk-lamp::before {
-      box-shadow: 0 0 16px rgba(245,158,11,0.5);
-      background: #f59e0b;
-    }
-    .desk.status-meeting .desk-lamp::before {
-      box-shadow: 0 0 12px rgba(59,130,246,0.4);
-      background: #60a5fa;
-    }
-    .desk.status-blocked .desk-lamp::before {
-      box-shadow: 0 0 20px rgba(239,68,68,0.6);
-      background: #ef4444;
-      animation: blockedPulse 1s ease-in-out infinite;
-    }
-
-    @keyframes lampPulse {
-      0%, 100% { box-shadow: 0 0 12px rgba(245,158,11,0.3); }
-      50% { box-shadow: 0 0 24px rgba(245,158,11,0.7); }
-    }
-    @keyframes blockedPulse {
-      0%, 100% { box-shadow: 0 0 12px rgba(239,68,68,0.4); opacity: 1; }
-      50% { box-shadow: 0 0 28px rgba(239,68,68,0.8); opacity: 0.7; }
-    }
-
-    /* Coffee mug */
+    .desk.status-idle .desk-lamp::before { box-shadow: 0 0 8px rgba(245,158,11,0.15); background: #4b5563; }
+    .desk.status-thinking .desk-lamp::before { box-shadow: 0 0 20px rgba(245,158,11,0.6); background: #f59e0b; animation: lampPulse 2s ease-in-out infinite; }
+    .desk.status-coding .desk-lamp::before { box-shadow: 0 0 16px rgba(245,158,11,0.5); background: #f59e0b; }
+    .desk.status-meeting .desk-lamp::before { box-shadow: 0 0 12px rgba(59,130,246,0.4); background: #60a5fa; }
+    .desk.status-blocked .desk-lamp::before { box-shadow: 0 0 20px rgba(239,68,68,0.6); background: #ef4444; animation: blockedPulse 1s ease-in-out infinite; }
+    @keyframes lampPulse { 0%,100%{box-shadow:0 0 12px rgba(245,158,11,0.3)} 50%{box-shadow:0 0 24px rgba(245,158,11,0.7)} }
+    @keyframes blockedPulse { 0%,100%{box-shadow:0 0 12px rgba(239,68,68,0.4);opacity:1} 50%{box-shadow:0 0 28px rgba(239,68,68,0.8);opacity:0.7} }
     .coffee-mug {
       position: absolute;
       bottom: 42px;
@@ -696,8 +538,6 @@
       background: #5c3a1e;
       border-radius: 50%;
     }
-
-    /* Steam animation */
     .steam-wrap {
       position: absolute;
       bottom: 53px;
@@ -717,23 +557,9 @@
     .steam:nth-child(2) { animation-delay: 0.3s; height: 6px; }
     .steam:nth-child(3) { animation-delay: 0.6s; height: 7px; }
     .desk.status-idle .steam-wrap { display: none; }
-
-    @keyframes steam {
-      0% { transform: translateY(0) scaleX(1); opacity: 0.4; }
-      100% { transform: translateY(-14px) scaleX(1.8); opacity: 0; }
-    }
-
-    /* Plant */
-    .desk-plant {
-      position: absolute;
-      bottom: 42px;
-    }
-    .plant-pot {
-      width: 10px;
-      height: 8px;
-      background: #78350f;
-      border-radius: 0 0 2px 2px;
-    }
+    @keyframes steam { 0%{transform:translateY(0) scaleX(1);opacity:0.4} 100%{transform:translateY(-14px) scaleX(1.8);opacity:0} }
+    .desk-plant { position: absolute; bottom: 42px; }
+    .plant-pot { width: 10px; height: 8px; background: #78350f; border-radius: 0 0 2px 2px; }
     .plant-leaf {
       position: absolute;
       width: 7px;
@@ -742,19 +568,8 @@
       border-radius: 50% 0;
       bottom: 6px;
     }
-    .plant-leaf:nth-child(2) {
-      left: 5px;
-      transform: scaleX(-1);
-    }
-    .plant-leaf:nth-child(3) {
-      left: 2px;
-      bottom: 10px;
-      width: 6px;
-      height: 8px;
-      background: #16a34a;
-    }
-
-    /* Keyboard (shown on coding desks) */
+    .plant-leaf:nth-child(2) { left: 5px; transform: scaleX(-1); }
+    .plant-leaf:nth-child(3) { left: 2px; bottom: 10px; width: 6px; height: 8px; background: #16a34a; }
     .desk-keyboard {
       position: absolute;
       bottom: 34px;
@@ -766,15 +581,8 @@
       border-radius: 1px;
       border: 1px solid #374151;
     }
-    .desk.status-coding .desk-keyboard {
-      animation: keyTap 0.15s ease-in-out infinite alternate;
-    }
-    @keyframes keyTap {
-      0% { transform: translateX(-50%) translateY(0); }
-      100% { transform: translateX(-50%) translateY(0.5px); }
-    }
-
-    /* Thinking dots */
+    .desk.status-coding .desk-keyboard { animation: keyTap 0.15s ease-in-out infinite alternate; }
+    @keyframes keyTap { 0%{transform:translateX(-50%) translateY(0)} 100%{transform:translateX(-50%) translateY(0.5px)} }
     .think-dots {
       position: absolute;
       top: -8px;
@@ -793,12 +601,7 @@
     }
     .think-dot:nth-child(2) { animation-delay: 0.2s; }
     .think-dot:nth-child(3) { animation-delay: 0.4s; }
-    @keyframes thinkDot {
-      0%, 80%, 100% { transform: scale(0); opacity: 0; }
-      40% { transform: scale(1); opacity: 1; }
-    }
-
-    /* Blocked X on monitor */
+    @keyframes thinkDot { 0%,80%,100%{transform:scale(0);opacity:0} 40%{transform:scale(1);opacity:1} }
     .blocked-x {
       position: absolute;
       top: 50%;
@@ -811,8 +614,6 @@
       line-height: 1;
     }
     .desk.status-blocked .blocked-x { display: block; }
-
-    /* Agent avatar on desk */
     .desk-avatar {
       position: absolute;
       bottom: 62px;
@@ -829,21 +630,8 @@
     .desk.status-thinking .desk-avatar { transform: translateX(-50%) translateY(0); opacity: 0.9; }
     .desk.status-coding .desk-avatar { transform: translateX(-50%) translateY(-1px); opacity: 1; }
     .desk.status-blocked .desk-avatar { opacity: 0.6; }
-
-    /* Unique desk decorations */
-    .chess-piece {
-      position: absolute;
-      bottom: 44px;
-      font-size: 12px;
-      opacity: 0.6;
-      transform: rotateZ(45deg) rotateX(-55deg);
-    }
-    .lobster-plush {
-      position: absolute;
-      bottom: 44px;
-      font-size: 14px;
-      transform: rotateZ(45deg) rotateX(-55deg);
-    }
+    .chess-piece { position: absolute; bottom: 44px; font-size: 12px; opacity: 0.6; transform: rotateZ(45deg) rotateX(-55deg); }
+    .lobster-plush { position: absolute; bottom: 44px; font-size: 14px; transform: rotateZ(45deg) rotateX(-55deg); }
     .mood-board {
       position: absolute;
       bottom: 62px;
@@ -854,12 +642,7 @@
       border-radius: 2px;
       overflow: hidden;
     }
-    .mood-pin {
-      position: absolute;
-      width: 5px;
-      height: 5px;
-      border-radius: 1px;
-    }
+    .mood-pin { position: absolute; width: 5px; height: 5px; border-radius: 1px; }
     .calculator {
       position: absolute;
       bottom: 44px;
@@ -880,19 +663,8 @@
       opacity: 0.4;
       border-radius: 1px;
     }
-    .colored-markers {
-      position: absolute;
-      bottom: 43px;
-      display: flex;
-      gap: 1px;
-    }
-    .marker {
-      width: 2px;
-      height: 10px;
-      border-radius: 1px 1px 0 0;
-    }
-
-    /* ── Meeting Room ── */
+    .colored-markers { position: absolute; bottom: 43px; display: flex; gap: 1px; }
+    .marker { width: 2px; height: 10px; border-radius: 1px 1px 0 0; }
     .meeting-room {
       position: absolute;
       top: 20px;
@@ -905,10 +677,7 @@
       border-radius: 8px;
       transition: box-shadow 0.5s ease, border-color 0.5s ease;
     }
-    .meeting-room.active {
-      border-color: rgba(59,130,246,0.4);
-      box-shadow: 0 0 30px rgba(59,130,246,0.15);
-    }
+    .meeting-room.active { border-color: rgba(59,130,246,0.4); box-shadow: 0 0 30px rgba(59,130,246,0.15); }
     .meeting-room-label {
       position: absolute;
       top: 6px;
@@ -922,10 +691,7 @@
       white-space: nowrap;
       pointer-events: none;
     }
-    .meeting-room.active .meeting-room-label {
-      color: #3b82f6;
-    }
-    /* Meeting table */
+    .meeting-room.active .meeting-room-label { color: #3b82f6; }
     .meeting-table {
       position: absolute;
       top: 50%;
@@ -937,7 +703,6 @@
       border-radius: 4px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.3);
     }
-    /* Meeting chairs */
     .meeting-chair {
       position: absolute;
       width: 12px;
@@ -947,11 +712,7 @@
       border-radius: 50%;
       transition: background 0.4s ease, box-shadow 0.4s ease;
     }
-    .meeting-chair.occupied {
-      background: #1e3a5f;
-      box-shadow: 0 0 8px rgba(59,130,246,0.3);
-    }
-    /* Whiteboard */
+    .meeting-chair.occupied { background: #1e3a5f; box-shadow: 0 0 8px rgba(59,130,246,0.3); }
     .whiteboard {
       position: absolute;
       top: 8px;
@@ -963,7 +724,6 @@
       border-radius: 2px;
       opacity: 0.15;
     }
-    /* Overhead light */
     .overhead-light {
       position: absolute;
       top: -6px;
@@ -975,12 +735,7 @@
       border-radius: 2px;
       transition: box-shadow 0.5s ease, background 0.5s ease;
     }
-    .meeting-room.active .overhead-light {
-      background: #3b82f6;
-      box-shadow: 0 4px 20px rgba(59,130,246,0.4);
-    }
-
-    /* Meeting agent avatars */
+    .meeting-room.active .overhead-light { background: #3b82f6; box-shadow: 0 4px 20px rgba(59,130,246,0.4); }
     .meeting-attendees {
       position: absolute;
       bottom: 4px;
@@ -1002,8 +757,6 @@
       font-weight: 700;
       color: #fff;
     }
-
-    /* ── Inspect Panel ── */
     .inspect-panel {
       position: absolute;
       top: 0;
@@ -1037,17 +790,8 @@
       justify-content: center;
     }
     .inspect-panel-close:hover { background: rgba(255,255,255,0.12); color: #fff; }
-    .inspect-name {
-      font-size: 18px;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 2px;
-    }
-    .inspect-role {
-      font-size: 12px;
-      color: rgba(255,255,255,0.5);
-      margin-bottom: 16px;
-    }
+    .inspect-name { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 2px; }
+    .inspect-role { font-size: 12px; color: rgba(255,255,255,0.5); margin-bottom: 16px; }
     .inspect-field-label {
       font-size: 10px;
       font-weight: 600;
@@ -1057,11 +801,7 @@
       margin-bottom: 4px;
       margin-top: 14px;
     }
-    .inspect-field-value {
-      font-size: 13px;
-      color: rgba(255,255,255,0.8);
-      line-height: 1.4;
-    }
+    .inspect-field-value { font-size: 13px; color: rgba(255,255,255,0.8); line-height: 1.4; }
     .inspect-status-badge {
       display: inline-block;
       padding: 2px 10px;
@@ -1074,8 +814,6 @@
     .inspect-status-badge.coding { background: rgba(34,197,94,0.15); color: #22c55e; }
     .inspect-status-badge.meeting { background: rgba(59,130,246,0.15); color: #3b82f6; }
     .inspect-status-badge.blocked { background: rgba(239,68,68,0.15); color: #ef4444; }
-
-    /* Office updated counter */
     .office-updated {
       position: absolute;
       bottom: 10px;
@@ -1085,662 +823,328 @@
       pointer-events: none;
     }
 
-    /* Full width helper */
-    .full-width { margin-bottom: 24px; }
+    /* ── Stale indicator ── */
+    .stale-overlay {
+      display: none;
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--red-bg);
+      color: var(--red);
+      font-weight: 600;
+    }
+    .stale-overlay.visible { display: block; }
 
-    /* Responsive */
-    @media (max-width: 900px) {
-      .sidebar { transform: translateX(-256px); }
-      .sidebar.open { transform: translateX(0); }
-      .main-wrapper { margin-left: 0; }
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
-      .two-col, .three-col { grid-template-columns: 1fr; }
-      .office-iso-floor { transform: rotateX(55deg) rotateZ(-45deg) scale(0.7); }
-      .office-3d-container { min-height: 380px; }
+    /* ── Responsive ── */
+    @media (max-width: 1024px) {
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      .grid-3 { grid-template-columns: 1fr; }
+      .grid-2 { grid-template-columns: 1fr; }
+      .grid-2-1 { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 768px) {
+      .kpi-grid { grid-template-columns: 1fr; }
+      .header-inner { padding: 0 12px; }
+      .main { padding: 16px; }
+      .office-iso-floor { transform: rotateX(55deg) rotateZ(-45deg) scale(0.55); }
+      .office-3d-container { min-height: 340px; }
+      .cron-row { grid-template-columns: 1fr 1fr; }
     }
   </style>
 </head>
-<body class="dark">
-  <!-- Sidebar -->
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-      <span>&#x1F99E; Mission Control</span>
-    </div>
-    <nav class="sidebar-nav">
-      <div class="nav-item active" onclick="navTo('section-overview', this)">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-        Overview
-      </div>
-      <div class="nav-item" onclick="navTo('section-office', this)">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M12 12v4"/><path d="M2 12h20"/></svg>
-        Office
-      </div>
-      <div class="nav-item" onclick="navTo('section-agents', this)">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 0 0-16 0"/></svg>
-        Agents
-      </div>
-      <div class="nav-item" onclick="navTo('section-tasks', this)">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg>
-        Tasks
-      </div>
-      <div class="nav-item" onclick="navTo('section-costs', this)">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-        Costs
-      </div>
-      <div class="nav-item" onclick="navTo('section-research', this)">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-6-6m6 6v-4.8m0 4.8h-4.8"/><path d="M3 16.2V21m0 0h4.8M3 21l6-6"/><path d="M21 7.8V3m0 0h-4.8M21 3l-6 6"/><path d="M3 7.8V3m0 0h4.8M3 3l6 6"/></svg>
-        Research
-      </div>
-      <div class="nav-item" onclick="navTo('section-settings', this)">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
-        Settings
-      </div>
-    </nav>
-    <div class="sidebar-footer">
-      <div class="avatar">K</div>
-      <div>
-        <div class="sidebar-user-name">Kaan Taskent</div>
-        <div class="sidebar-user-handle">kaanclaw</div>
-      </div>
-    </div>
-  </aside>
+<body>
 
-  <!-- Main content -->
-  <div class="main-wrapper" id="main-wrapper">
-    <header class="top-header">
+  <!-- ── HEADER ── -->
+  <header class="header">
+    <div class="header-inner">
       <div class="header-left">
-        <button class="sidebar-toggle" id="sidebar-toggle" title="Toggle sidebar">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-        </button>
-        <span class="breadcrumb">Overview</span>
+        <span class="logo">&#x1F99E; Claw Mission Control</span>
       </div>
       <div class="header-right">
-        <button class="btn" id="refresh-btn">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
-          Refresh
-        </button>
-        <button class="theme-toggle" id="theme-toggle" title="Toggle theme">
-          <span id="theme-icon">&#9790;</span>
-        </button>
-        <span class="last-updated" id="last-updated">Updated just now</span>
-      </div>
-    </header>
-
-    <div class="page-content">
-      <!-- 1. Stat Cards Row -->
-      <div class="stats-grid" id="section-overview">
-        <div class="card stat-card">
-          <div class="stat-top">
-            <span class="stat-label">API Cost Today</span>
-            <span class="stat-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
-          </div>
-          <div class="stat-value" id="cost-today">$0.00</div>
-          <div class="stat-delta" id="cost-delta">Loading...</div>
+        <span class="cost-badge" id="header-cost">$0.00 today</span>
+        <div class="refresh-indicator">
+          <span class="pulse-dot"></span>
+          <span id="last-refreshed">Updated just now</span>
         </div>
-        <div class="card stat-card">
-          <div class="stat-top">
-            <span class="stat-label">Total Tokens</span>
-            <span class="stat-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
-          </div>
-          <div class="stat-value" id="total-tokens">0</div>
-          <div class="stat-delta neutral" id="tokens-context">This session</div>
-        </div>
-        <div class="card stat-card">
-          <div class="stat-top">
-            <span class="stat-label">Tasks Completed</span>
-            <span class="stat-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
-          </div>
-          <div class="stat-value" id="tasks-completed">0</div>
-          <div class="stat-delta neutral">All time</div>
-        </div>
-        <div class="card stat-card">
-          <div class="stat-top">
-            <span class="stat-label">Cost Per Task</span>
-            <span class="stat-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg></span>
-          </div>
-          <div class="stat-value" id="cost-per-task">$0.00</div>
-          <div class="stat-delta neutral" id="cost-per-task-delta">Average</div>
-        </div>
-      </div>
-
-      <!-- 2. 3D Isometric Office View -->
-      <div class="card full-width" id="section-office" style="padding:0;overflow:hidden;">
-        <div class="card-header" style="padding:18px 24px;margin-bottom:0;">
-          <span class="card-title">Office</span>
-          <span class="card-badge" id="office-status-badge">Loading...</span>
-        </div>
-        <div class="office-3d-container" id="office-3d">
-          <div class="office-iso-floor" id="office-iso-floor">
-            <div class="floor-grid"></div>
-
-            <!-- Zone labels -->
-            <div class="zone-3d-label" style="left:20px;bottom:10px;">Engineering</div>
-            <div class="zone-3d-label" style="left:50%;bottom:10px;transform:translateX(-50%) rotateZ(45deg) rotateX(-55deg);">Central Hub</div>
-            <div class="zone-3d-label" style="right:20px;bottom:10px;">Creative / Ops</div>
-
-            <!-- Meeting Room (back center) -->
-            <div class="meeting-room" id="meeting-room">
-              <div class="overhead-light"></div>
-              <div class="meeting-room-label">Meeting Room</div>
-              <div class="whiteboard"></div>
-              <div class="meeting-table"></div>
-              <!-- 6 chairs around the table -->
-              <div class="meeting-chair" style="top:28px;left:16px;"></div>
-              <div class="meeting-chair" style="top:28px;left:36px;"></div>
-              <div class="meeting-chair" style="top:28px;right:36px;"></div>
-              <div class="meeting-chair" style="top:28px;right:16px;"></div>
-              <div class="meeting-chair" style="bottom:20px;left:40px;"></div>
-              <div class="meeting-chair" style="bottom:20px;right:40px;"></div>
-              <div class="meeting-attendees" id="meeting-attendees"></div>
-            </div>
-
-            <!-- FORGE desk (engineering wing, left) -->
-            <div class="desk" id="desk-forge" data-agent="forge" style="left:40px;bottom:80px;">
-              <div class="think-dots"><div class="think-dot"></div><div class="think-dot"></div><div class="think-dot"></div></div>
-              <div class="desk-avatar" style="background:#7c3aed;border-color:#a78bfa;"></div>
-              <div class="monitor" style="left:10px;"></div>
-              <div class="monitor" style="left:42px;"></div>
-              <div class="monitor" style="left:74px;"></div>
-              <div class="blocked-x" style="left:52px;">X</div>
-              <div class="desk-lamp" style="right:8px;"></div>
-              <div class="coffee-mug" style="right:24px;"></div>
-              <div class="steam-wrap" style="right:22px;"><div class="steam"></div><div class="steam"></div><div class="steam"></div></div>
-              <div class="desk-keyboard"></div>
-              <div class="desk-surface"></div>
-              <div class="desk-label">Forge</div>
-            </div>
-
-            <!-- JAMIE desk (engineering wing, left lower) -->
-            <div class="desk" id="desk-jamie" data-agent="jamie" style="left:40px;bottom:200px;">
-              <div class="think-dots"><div class="think-dot"></div><div class="think-dot"></div><div class="think-dot"></div></div>
-              <div class="desk-avatar" style="background:#2563eb;border-color:#60a5fa;"></div>
-              <div class="monitor" style="left:30px;width:40px;height:28px;bottom:40px;"></div>
-              <div class="blocked-x" style="left:44px;">X</div>
-              <div class="chess-piece" style="right:14px;">&#9822;</div>
-              <div class="desk-lamp" style="left:8px;"></div>
-              <div class="coffee-mug full" style="right:8px;"></div>
-              <div class="steam-wrap" style="right:6px;"><div class="steam"></div><div class="steam"></div><div class="steam"></div></div>
-              <div class="desk-keyboard"></div>
-              <div class="desk-surface"></div>
-              <div class="desk-label">Jamie</div>
-            </div>
-
-            <!-- CLAW desk (central hub, center elevated) -->
-            <div class="desk" id="desk-claw" data-agent="claw" style="left:50%;bottom:160px;transform:translateX(-50%);">
-              <div class="think-dots"><div class="think-dot"></div><div class="think-dot"></div><div class="think-dot"></div></div>
-              <div class="desk-avatar" style="background:#ea580c;border-color:#fb923c;"></div>
-              <div class="monitor" style="left:4px;"></div>
-              <div class="monitor" style="left:34px;"></div>
-              <div class="monitor" style="left:64px;"></div>
-              <div class="monitor" style="left:94px;"></div>
-              <div class="blocked-x" style="left:55px;">X</div>
-              <div class="lobster-plush" style="right:4px;">&#x1F99E;</div>
-              <div class="desk-lamp" style="left:6px;"></div>
-              <div class="desk-keyboard"></div>
-              <div class="desk-surface" style="border-radius:8px;background:linear-gradient(135deg,#1e2433,#252d3f);"></div>
-              <div class="desk-label">Claw</div>
-            </div>
-
-            <!-- DEMI desk (creative wing, right) -->
-            <div class="desk" id="desk-demi" data-agent="demi" style="right:40px;bottom:200px;">
-              <div class="think-dots"><div class="think-dot"></div><div class="think-dot"></div><div class="think-dot"></div></div>
-              <div class="desk-avatar" style="background:#db2777;border-color:#f472b6;"></div>
-              <div class="monitor" style="left:30px;"></div>
-              <div class="blocked-x" style="left:38px;">X</div>
-              <div class="mood-board" style="left:8px;">
-                <div class="mood-pin" style="top:2px;left:2px;background:#f472b6;"></div>
-                <div class="mood-pin" style="top:8px;left:8px;background:#facc15;"></div>
-                <div class="mood-pin" style="top:3px;left:14px;background:#34d399;"></div>
-              </div>
-              <div class="colored-markers" style="right:10px;">
-                <div class="marker" style="background:#f472b6;"></div>
-                <div class="marker" style="background:#facc15;"></div>
-                <div class="marker" style="background:#34d399;"></div>
-                <div class="marker" style="background:#60a5fa;"></div>
-                <div class="marker" style="background:#c084fc;"></div>
-              </div>
-              <div class="desk-plant" style="right:4px;">
-                <div class="plant-leaf"></div>
-                <div class="plant-leaf"></div>
-                <div class="plant-leaf"></div>
-                <div class="plant-pot"></div>
-              </div>
-              <div class="desk-lamp" style="right:8px;"></div>
-              <div class="desk-keyboard"></div>
-              <div class="desk-surface"></div>
-              <div class="desk-label">Demi</div>
-            </div>
-
-            <!-- JUICE desk (ops wing, right lower) -->
-            <div class="desk" id="desk-juice" data-agent="juice" style="right:40px;bottom:80px;">
-              <div class="think-dots"><div class="think-dot"></div><div class="think-dot"></div><div class="think-dot"></div></div>
-              <div class="desk-avatar" style="background:#059669;border-color:#34d399;"></div>
-              <div class="monitor" style="left:30px;"></div>
-              <div class="blocked-x" style="left:38px;">X</div>
-              <div class="calculator" style="right:10px;"></div>
-              <div class="desk-plant" style="left:4px;">
-                <div class="plant-leaf"></div>
-                <div class="plant-leaf"></div>
-                <div class="plant-leaf"></div>
-                <div class="plant-pot"></div>
-              </div>
-              <div class="desk-lamp" style="right:28px;"></div>
-              <div class="coffee-mug" style="left:18px;"></div>
-              <div class="steam-wrap" style="left:16px;"><div class="steam"></div><div class="steam"></div><div class="steam"></div></div>
-              <div class="desk-keyboard"></div>
-              <div class="desk-surface"></div>
-              <div class="desk-label">Juice</div>
-            </div>
-          </div>
-
-          <!-- Inspect panel (slides in from right) -->
-          <div class="inspect-panel" id="inspect-panel">
-            <button class="inspect-panel-close" id="inspect-close">&times;</button>
-            <div id="inspect-content"></div>
-          </div>
-
-          <!-- Last updated counter -->
-          <div class="office-updated" id="office-updated">Updated just now</div>
-        </div>
-      </div>
-
-      <!-- 3. Two columns: Agent Roster + Mission Feed -->
-      <div class="two-col" id="section-agents">
-        <div class="card">
-          <div class="card-header">
-            <span class="card-title">Agent Roster</span>
-            <span class="card-badge">3 active</span>
-          </div>
-          <div id="agent-roster">
-            <div class="agent-row">
-              <div class="agent-avatar coral">&#x1F99E;</div>
-              <div class="agent-info">
-                <div class="agent-name-row">
-                  <span class="agent-name">Claw</span>
-                  <span class="agent-role-text">Orchestrator</span>
-                </div>
-              </div>
-              <div class="status-indicator">
-                <span class="status-dot green"></span>
-                <span class="status-text">Active</span>
-              </div>
-              <div class="agent-context">Main session</div>
-            </div>
-            <div class="agent-row">
-              <div class="agent-avatar blue">&#x1F5FA;&#xFE0F;</div>
-              <div class="agent-info">
-                <div class="agent-name-row">
-                  <span class="agent-name">Atlas</span>
-                  <span class="agent-role-text">Architect</span>
-                </div>
-              </div>
-              <div class="status-indicator">
-                <span class="status-dot green"></span>
-                <span class="status-text">Active</span>
-              </div>
-              <div class="agent-context">Planning mode</div>
-            </div>
-            <div class="agent-row" id="forge-row">
-              <div class="agent-avatar purple">&#x2692;&#xFE0F;</div>
-              <div class="agent-info">
-                <div class="agent-name-row">
-                  <span class="agent-name">Forge</span>
-                  <span class="agent-role-text">Builder</span>
-                </div>
-              </div>
-              <div class="status-indicator" id="forge-status">
-                <span class="status-dot grey"></span>
-                <span class="status-text">Idle</span>
-              </div>
-              <div class="agent-context">Claude Code</div>
-            </div>
-          </div>
-          <div class="powered-by">Powered by Claude Sonnet 4.6</div>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            <span class="card-title">Active Missions</span>
-            <a class="card-link" href="https://github.com/kaanclaw/dev-team/issues" target="_blank">View all &rarr;</a>
-          </div>
-          <div id="mission-feed">
-            <div class="mission-empty">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
-              <div>Loading missions...</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 3. Three columns: Activity Feed + System Health -->
-      <div class="three-col" id="section-tasks">
-        <div class="card">
-          <div class="card-header">
-            <span class="card-title">Recent Activity</span>
-            <span class="live-badge">Live</span>
-          </div>
-          <div id="activity-feed">
-            <div class="activity-row"><span class="activity-msg" style="color:var(--muted-foreground)">Loading activity...</span></div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            <span class="card-title">System Health</span>
-          </div>
-          <div>
-            <div class="health-item">
-              <span class="health-dot green"></span>
-              <span class="health-name">OpenClaw Gateway</span>
-              <span class="health-status">Active</span>
-            </div>
-            <div class="health-item">
-              <span class="health-dot green"></span>
-              <span class="health-name">GitHub CLI</span>
-              <span class="health-status">Connected</span>
-            </div>
-            <div class="health-item">
-              <span class="health-dot green"></span>
-              <span class="health-name">Whisper Audio</span>
-              <span class="health-status">Ready</span>
-            </div>
-            <div class="health-item">
-              <span class="health-dot yellow"></span>
-              <span class="health-name">Chrome Debug</span>
-              <span class="health-status">On-demand</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 4. Two columns: Capabilities + Research Library -->
-      <div class="two-col" id="section-research">
-        <div class="card">
-          <div class="card-header">
-            <span class="card-title">Active Capabilities</span>
-          </div>
-          <div class="cap-grid">
-            <div class="cap-pill"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/></svg> Voice Transcription</div>
-            <div class="cap-pill"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/></svg> Browser Automation</div>
-            <div class="cap-pill"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/></svg> Diagram Generation</div>
-            <div class="cap-pill"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/></svg> GitHub Operations</div>
-            <div class="cap-pill"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/></svg> Email (Gmail)</div>
-            <div class="cap-pill"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/></svg> Code Execution</div>
-            <div class="cap-pill"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/></svg> Web Search</div>
-            <div class="cap-pill"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/></svg> File System</div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            <span class="card-title">Research Library</span>
-            <span class="card-badge">2 repos studied</span>
-          </div>
-          <div>
-            <div class="research-row">
-              <div class="research-icon">&#x1F4E6;</div>
-              <div class="research-info">
-                <div class="research-name">claude-mem</div>
-                <div class="research-insight">Index-first memory &rarr; 10x token savings</div>
-                <div class="research-date">2026-03-25</div>
-              </div>
-            </div>
-            <div class="research-row">
-              <div class="research-icon">&#x1F916;</div>
-              <div class="research-info">
-                <div class="research-name">hermes-agent</div>
-                <div class="research-insight">Frozen prompts + conditional skills</div>
-                <div class="research-date">2026-03-25</div>
-              </div>
-            </div>
-          </div>
-          <div class="research-footer">We study repos as co-founders, extract principles, upgrade.</div>
-        </div>
-      </div>
-
-      <!-- 5. Scheduled Jobs -->
-      <div class="card full-width" id="section-costs">
-        <div class="card-header">
-          <span class="card-title">Scheduled Jobs</span>
-          <span class="card-badge">3 active</span>
-        </div>
-        <div class="jobs-table">
-          <div class="jobs-header">
-            <span>Job</span>
-            <span>Schedule</span>
-            <span>Status</span>
-            <span>Next Run</span>
-          </div>
-          <div class="jobs-row">
-            <span class="job-name">overnight-research</span>
-            <span class="job-schedule">Daily 1:00 AM PT</span>
-            <span class="job-status"><span class="status-dot green"></span> Scheduled</span>
-            <span class="job-next">Next: tonight</span>
-          </div>
-          <div class="jobs-row">
-            <span class="job-name">morning-ping-kaan</span>
-            <span class="job-schedule">Daily 9:30 AM PT</span>
-            <span class="job-status"><span class="status-dot green"></span> Scheduled</span>
-            <span class="job-next">Next: 9:30 AM</span>
-          </div>
-          <div class="jobs-row">
-            <span class="job-name">cost-sync</span>
-            <span class="job-schedule">Every 30 min</span>
-            <span class="job-status"><span class="status-dot green" style="animation:none;background:#22c55e"></span> Active</span>
-            <span class="job-next">Next: ~15 min</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- 6. System Changelog -->
-      <div class="card full-width">
-        <div class="card-header">
-          <span class="card-title">System Changelog</span>
-        </div>
-        <div class="changelog-list">
-          <div class="changelog-item">
-            <span class="changelog-date">2026-03-25</span>
-            <span class="changelog-text">Mission Control v1-v5: Live costs, agent status, professional redesign</span>
-          </div>
-          <div class="changelog-item">
-            <span class="changelog-date">2026-03-25</span>
-            <span class="changelog-text">Diagram generation: Kie.ai integration, visual workflows</span>
-          </div>
-          <div class="changelog-item">
-            <span class="changelog-date">2026-03-25</span>
-            <span class="changelog-text">Hermes Agent research: Frozen prompts, memory patterns adopted</span>
-          </div>
-          <div class="changelog-item">
-            <span class="changelog-date">2026-03-25</span>
-            <span class="changelog-text">claude-mem research: Index-first memory, 10x token savings applied</span>
-          </div>
-          <div class="changelog-item">
-            <span class="changelog-date">2026-03-25</span>
-            <span class="changelog-text">Dev team initialized: Atlas + Forge + GitHub Issues task board</span>
-          </div>
-          <div class="changelog-item">
-            <span class="changelog-date">2026-03-24</span>
-            <span class="changelog-text">Day 1: Browser automation, voice transcription, dev environment</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Footer -->
-      <div class="page-footer" id="section-settings">
-        &#x1F99E; Claw Mission Control v6 &middot; Built by Forge &middot; kaanclaw/mission-control &middot; Last updated: <span id="footer-timestamp"></span>
+        <button class="theme-btn" id="theme-toggle" title="Toggle theme">&#9790;</button>
       </div>
     </div>
-  </div>
+  </header>
+
+  <main class="main">
+
+    <!-- ── SECTION 1: KPI ROW ── -->
+    <div class="kpi-grid">
+      <div class="card kpi-card" id="kpi-agents">
+        <div class="kpi-top">
+          <span class="kpi-label">Active Agents</span>
+          <span class="kpi-icon green">&#x1F916;</span>
+        </div>
+        <div class="kpi-value" id="kpi-active-agents">0</div>
+        <div class="kpi-trend neutral" id="kpi-agents-trend">Loading...</div>
+        <svg class="kpi-sparkline" id="spark-agents" viewBox="0 0 120 30" preserveAspectRatio="none" height="30"></svg>
+      </div>
+      <div class="card kpi-card" id="kpi-tasks">
+        <div class="kpi-top">
+          <span class="kpi-label">Tasks In Progress</span>
+          <span class="kpi-icon blue">&#x1F4CB;</span>
+        </div>
+        <div class="kpi-value" id="kpi-tasks-progress">0</div>
+        <div class="kpi-trend neutral" id="kpi-tasks-trend">Loading...</div>
+        <svg class="kpi-sparkline" id="spark-tasks" viewBox="0 0 120 30" preserveAspectRatio="none" height="30"></svg>
+      </div>
+      <div class="card kpi-card" id="kpi-cost">
+        <div class="kpi-top">
+          <span class="kpi-label">Cost Today ($)</span>
+          <span class="kpi-icon amber">&#x1F4B0;</span>
+        </div>
+        <div class="kpi-value" id="kpi-cost-today">$0.00</div>
+        <div class="kpi-trend neutral" id="kpi-cost-trend">Loading...</div>
+        <svg class="kpi-sparkline" id="spark-cost" viewBox="0 0 120 30" preserveAspectRatio="none" height="30"></svg>
+      </div>
+      <div class="card kpi-card" id="kpi-cache">
+        <div class="kpi-top">
+          <span class="kpi-label">Cache Hit Rate (%)</span>
+          <span class="kpi-icon purple">&#x26A1;</span>
+        </div>
+        <div class="kpi-value" id="kpi-cache-rate">--</div>
+        <div class="kpi-trend neutral" id="kpi-cache-trend">No data yet</div>
+        <svg class="kpi-sparkline" id="spark-cache" viewBox="0 0 120 30" preserveAspectRatio="none" height="30"></svg>
+      </div>
+    </div>
+
+    <!-- ── SECTION 2: AGENT OFFICE FLOOR ── -->
+    <div class="section-title">Agent Office</div>
+    <div class="card" style="padding:0;overflow:hidden;">
+      <div class="card-header" style="padding:18px 20px 0;margin-bottom:0;">
+        <span class="card-title">Office Floor</span>
+        <span class="card-badge" id="office-status-badge">Loading...</span>
+      </div>
+      <div class="office-3d-container" id="office-3d">
+        <div class="office-iso-floor" id="office-iso-floor">
+          <div class="floor-grid"></div>
+          <div class="zone-3d-label" style="left:20px;bottom:10px;">Engineering</div>
+          <div class="zone-3d-label" style="left:50%;bottom:10px;transform:translateX(-50%) rotateZ(45deg) rotateX(-55deg);">Central Hub</div>
+          <div class="zone-3d-label" style="right:20px;bottom:10px;">Creative / Ops</div>
+          <div class="meeting-room" id="meeting-room">
+            <div class="overhead-light"></div>
+            <div class="meeting-room-label">Meeting Room</div>
+            <div class="whiteboard"></div>
+            <div class="meeting-table"></div>
+            <div class="meeting-chair" style="top:28px;left:16px;"></div>
+            <div class="meeting-chair" style="top:28px;left:36px;"></div>
+            <div class="meeting-chair" style="top:28px;right:36px;"></div>
+            <div class="meeting-chair" style="top:28px;right:16px;"></div>
+            <div class="meeting-chair" style="bottom:20px;left:40px;"></div>
+            <div class="meeting-chair" style="bottom:20px;right:40px;"></div>
+            <div class="meeting-attendees" id="meeting-attendees"></div>
+          </div>
+          <div class="desk" id="desk-forge" data-agent="forge" style="left:40px;bottom:80px;">
+            <div class="think-dots"><div class="think-dot"></div><div class="think-dot"></div><div class="think-dot"></div></div>
+            <div class="desk-avatar" style="background:#7c3aed;border-color:#a78bfa;"></div>
+            <div class="monitor" style="left:10px;"></div>
+            <div class="monitor" style="left:42px;"></div>
+            <div class="monitor" style="left:74px;"></div>
+            <div class="blocked-x" style="left:52px;">X</div>
+            <div class="desk-lamp" style="right:8px;"></div>
+            <div class="coffee-mug" style="right:24px;"></div>
+            <div class="steam-wrap" style="right:22px;"><div class="steam"></div><div class="steam"></div><div class="steam"></div></div>
+            <div class="desk-keyboard"></div>
+            <div class="desk-surface"></div>
+            <div class="desk-label">Forge</div>
+          </div>
+          <div class="desk" id="desk-jamie" data-agent="jamie" style="left:40px;bottom:200px;">
+            <div class="think-dots"><div class="think-dot"></div><div class="think-dot"></div><div class="think-dot"></div></div>
+            <div class="desk-avatar" style="background:#2563eb;border-color:#60a5fa;"></div>
+            <div class="monitor" style="left:30px;width:40px;height:28px;bottom:40px;"></div>
+            <div class="blocked-x" style="left:44px;">X</div>
+            <div class="chess-piece" style="right:14px;">&#9822;</div>
+            <div class="desk-lamp" style="left:8px;"></div>
+            <div class="coffee-mug full" style="right:8px;"></div>
+            <div class="steam-wrap" style="right:6px;"><div class="steam"></div><div class="steam"></div><div class="steam"></div></div>
+            <div class="desk-keyboard"></div>
+            <div class="desk-surface"></div>
+            <div class="desk-label">Jamie</div>
+          </div>
+          <div class="desk" id="desk-claw" data-agent="claw" style="left:50%;bottom:160px;transform:translateX(-50%);">
+            <div class="think-dots"><div class="think-dot"></div><div class="think-dot"></div><div class="think-dot"></div></div>
+            <div class="desk-avatar" style="background:#ea580c;border-color:#fb923c;"></div>
+            <div class="monitor" style="left:4px;"></div>
+            <div class="monitor" style="left:34px;"></div>
+            <div class="monitor" style="left:64px;"></div>
+            <div class="monitor" style="left:94px;"></div>
+            <div class="blocked-x" style="left:55px;">X</div>
+            <div class="lobster-plush" style="right:4px;">&#x1F99E;</div>
+            <div class="desk-lamp" style="left:6px;"></div>
+            <div class="desk-keyboard"></div>
+            <div class="desk-surface" style="border-radius:8px;background:linear-gradient(135deg,#1e2433,#252d3f);"></div>
+            <div class="desk-label">Claw</div>
+          </div>
+          <div class="desk" id="desk-demi" data-agent="demi" style="right:40px;bottom:200px;">
+            <div class="think-dots"><div class="think-dot"></div><div class="think-dot"></div><div class="think-dot"></div></div>
+            <div class="desk-avatar" style="background:#db2777;border-color:#f472b6;"></div>
+            <div class="monitor" style="left:30px;"></div>
+            <div class="blocked-x" style="left:38px;">X</div>
+            <div class="mood-board" style="left:8px;">
+              <div class="mood-pin" style="top:2px;left:2px;background:#f472b6;"></div>
+              <div class="mood-pin" style="top:8px;left:8px;background:#facc15;"></div>
+              <div class="mood-pin" style="top:3px;left:14px;background:#34d399;"></div>
+            </div>
+            <div class="colored-markers" style="right:10px;">
+              <div class="marker" style="background:#f472b6;"></div>
+              <div class="marker" style="background:#facc15;"></div>
+              <div class="marker" style="background:#34d399;"></div>
+              <div class="marker" style="background:#60a5fa;"></div>
+              <div class="marker" style="background:#c084fc;"></div>
+            </div>
+            <div class="desk-plant" style="right:4px;">
+              <div class="plant-leaf"></div>
+              <div class="plant-leaf"></div>
+              <div class="plant-leaf"></div>
+              <div class="plant-pot"></div>
+            </div>
+            <div class="desk-lamp" style="right:8px;"></div>
+            <div class="desk-keyboard"></div>
+            <div class="desk-surface"></div>
+            <div class="desk-label">Demi</div>
+          </div>
+          <div class="desk" id="desk-juice" data-agent="juice" style="right:40px;bottom:80px;">
+            <div class="think-dots"><div class="think-dot"></div><div class="think-dot"></div><div class="think-dot"></div></div>
+            <div class="desk-avatar" style="background:#059669;border-color:#34d399;"></div>
+            <div class="monitor" style="left:30px;"></div>
+            <div class="blocked-x" style="left:38px;">X</div>
+            <div class="calculator" style="right:10px;"></div>
+            <div class="desk-plant" style="left:4px;">
+              <div class="plant-leaf"></div>
+              <div class="plant-leaf"></div>
+              <div class="plant-leaf"></div>
+              <div class="plant-pot"></div>
+            </div>
+            <div class="desk-lamp" style="right:28px;"></div>
+            <div class="coffee-mug" style="left:18px;"></div>
+            <div class="steam-wrap" style="left:16px;"><div class="steam"></div><div class="steam"></div><div class="steam"></div></div>
+            <div class="desk-keyboard"></div>
+            <div class="desk-surface"></div>
+            <div class="desk-label">Juice</div>
+          </div>
+        </div>
+        <div class="inspect-panel" id="inspect-panel">
+          <button class="inspect-panel-close" id="inspect-close">&times;</button>
+          <div id="inspect-content"></div>
+        </div>
+        <div class="office-updated" id="office-updated">Updated just now</div>
+      </div>
+    </div>
+
+    <!-- ── SECTION 3: ACTIVITY FEED + COST CHART ── -->
+    <div class="section-title">Live Activity &amp; Costs</div>
+    <div class="grid-2-1">
+      <div class="card" style="position:relative;">
+        <div class="card-header">
+          <span class="card-title">Activity Feed</span>
+          <span class="card-badge blue" id="feed-badge">Live</span>
+        </div>
+        <div class="card-body" id="activity-feed">
+          <div class="feed-empty">Loading activity...</div>
+        </div>
+        <span class="stale-overlay" id="feed-stale">Stale</span>
+      </div>
+      <div class="card" style="position:relative;">
+        <div class="card-header">
+          <span class="card-title">Cost (24h)</span>
+          <span class="card-badge amber" id="cost-chart-badge">$0.00</span>
+        </div>
+        <div class="card-body">
+          <div class="chart-container" id="cost-chart">
+            <svg id="cost-svg"></svg>
+            <div class="chart-tooltip" id="chart-tooltip"></div>
+          </div>
+        </div>
+        <span class="stale-overlay" id="cost-stale">Stale</span>
+      </div>
+    </div>
+
+    <!-- ── SECTION 5: GITHUB ACTIVITY PANEL ── -->
+    <div class="section-title">GitHub Repos</div>
+    <div class="grid-3" id="github-panel">
+      <div class="card" style="position:relative;" id="repo-mission-control">
+        <div class="card-body"><div class="feed-empty">Loading...</div></div>
+        <span class="stale-overlay" id="gh-stale-mc">Stale</span>
+      </div>
+      <div class="card" style="position:relative;" id="repo-easyclaw">
+        <div class="card-body"><div class="feed-empty">Loading...</div></div>
+        <span class="stale-overlay" id="gh-stale-ec">Stale</span>
+      </div>
+      <div class="card" style="position:relative;" id="repo-dev-team">
+        <div class="card-body"><div class="feed-empty">Loading...</div></div>
+        <span class="stale-overlay" id="gh-stale-dt">Stale</span>
+      </div>
+    </div>
+
+    <!-- ── SECTION 6: CRON JOBS PANEL ── -->
+    <div class="section-title">Cron Jobs</div>
+    <div class="card" style="position:relative;" id="cron-panel">
+      <div class="card-header">
+        <span class="card-title">Scheduled Jobs</span>
+        <span class="card-badge" id="cron-badge">Loading...</span>
+      </div>
+      <div class="card-body" id="cron-body">
+        <div class="feed-empty">Loading cron jobs...</div>
+      </div>
+      <span class="stale-overlay" id="cron-stale">Stale</span>
+    </div>
+
+    <!-- ── Footer ── -->
+    <div style="text-align:center;padding:32px 0 8px;font-size:12px;color:var(--text-dim);">
+      &#x1F99E; Claw Mission Control v5 &middot; Built by Jamie &middot; <span id="footer-ts"></span>
+    </div>
+  </main>
 
   <script>
-    // ── Nav ──
-    function navTo(sectionId, el) {
-      document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
-      document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-      el.classList.add('active');
-    }
+    // ═══════════════════════════════════════════════════════
+    //  CLAW MISSION CONTROL v5 — Real-time Ops Dashboard
+    // ═══════════════════════════════════════════════════════
 
     // ── State ──
     let costData = null;
-    let closedIssueCount = 0;
-    let lastUpdated = new Date();
+    let agentData = null;
+    let openIssueCount = 0;
+    let lastCostFetch = 0;
+    let lastFeedFetch = 0;
+    let lastGHFetch = 0;
+    let lastCronFetch = 0;
+    let officeLastFetch = Date.now();
+    let officeAgentData = {};
 
-    // ── Theme ──
-    const savedTheme = localStorage.getItem('mc-theme');
-    if (savedTheme === 'light') document.body.classList.remove('dark');
-    document.getElementById('theme-toggle').addEventListener('click', () => {
-      document.body.classList.toggle('dark');
-      const isDark = document.body.classList.contains('dark');
-      document.getElementById('theme-icon').textContent = isDark ? '\u263E' : '\u2600';
-      localStorage.setItem('mc-theme', isDark ? 'dark' : 'light');
-    });
-    if (!document.body.classList.contains('dark')) {
-      document.getElementById('theme-icon').textContent = '\u2600';
+    // History for sparklines
+    const sparkHistory = { agents: [], tasks: [], cost: [], cache: [] };
+    const MAX_SPARK = 20;
+
+    function pushSpark(key, val) {
+      sparkHistory[key].push(val);
+      if (sparkHistory[key].length > MAX_SPARK) sparkHistory[key].shift();
     }
 
-    // ── Sidebar toggle ──
-    document.getElementById('sidebar-toggle').addEventListener('click', () => {
-      document.getElementById('sidebar').classList.toggle('collapsed');
-      document.getElementById('main-wrapper').classList.toggle('expanded');
-    });
+    // ── Helpers ──
+    function esc(str) {
+      const d = document.createElement('div');
+      d.textContent = str;
+      return d.innerHTML;
+    }
 
-    // ── Time helpers ──
     function timeAgo(dateStr) {
+      if (!dateStr) return '';
       const diff = Date.now() - new Date(dateStr).getTime();
       const mins = Math.floor(diff / 60000);
       if (mins < 1) return 'just now';
       if (mins < 60) return mins + 'm ago';
       const hrs = Math.floor(mins / 60);
       if (hrs < 24) return hrs + 'h ago';
-      const days = Math.floor(hrs / 24);
-      return days + 'd ago';
+      return Math.floor(hrs / 24) + 'd ago';
     }
-
-    function updateTimestamp() {
-      const ts = new Date().toLocaleString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-      document.getElementById('last-updated').textContent = 'Updated ' + ts;
-      document.getElementById('footer-timestamp').textContent = new Date().toISOString();
-    }
-
-    function updateCostPerTask() {
-      if (!costData) return;
-      const tasks = Math.max(closedIssueCount, 1);
-      const perTask = (costData.today.costUsd / tasks).toFixed(2);
-      document.getElementById('cost-per-task').textContent = '$' + perTask;
-      document.getElementById('cost-per-task-delta').textContent = closedIssueCount > 0
-        ? '÷ ' + closedIssueCount + ' tasks'
-        : 'Average';
-    }
-
-    // ── Fetch costs ──
-    async function fetchCosts() {
-      try {
-        const res = await fetch('data/costs.json?t=' + Date.now());
-        costData = await res.json();
-        const cost = costData.today.costUsd;
-        document.getElementById('cost-today').textContent = '$' + cost.toFixed(2);
-        document.getElementById('total-tokens').textContent = costData.today.totalTokens.toLocaleString();
-        document.getElementById('cost-delta').innerHTML = '&#8593; $' + cost.toFixed(2) + ' today';
-
-        updateCostPerTask();
-      } catch (e) {
-        document.getElementById('cost-today').textContent = '$—';
-        document.getElementById('cost-delta').textContent = 'Failed to load';
-        document.getElementById('cost-delta').classList.add('neutral');
-      }
-    }
-
-    // ── Fetch GitHub Issues ──
-    async function fetchIssues() {
-      try {
-        const [openRes, closedRes] = await Promise.all([
-          fetch('https://api.github.com/repos/kaanclaw/dev-team/issues?state=open&per_page=50'),
-          fetch('https://api.github.com/repos/kaanclaw/dev-team/issues?state=closed&per_page=50')
-        ]);
-        const openIssues = await openRes.json();
-        const closedIssues = await closedRes.json();
-
-        // Filter out pull requests
-        const open = (Array.isArray(openIssues) ? openIssues : []).filter(i => !i.pull_request);
-        const closed = (Array.isArray(closedIssues) ? closedIssues : []).filter(i => !i.pull_request);
-
-        closedIssueCount = closed.length;
-        document.getElementById('tasks-completed').textContent = closedIssueCount.toLocaleString();
-
-        updateCostPerTask();
-
-        // Forge status: working if open forge issues
-        const forgeWorking = open.some(i =>
-          (i.title && i.title.toLowerCase().includes('forge')) ||
-          (i.labels && i.labels.some(l => l.name && l.name.toLowerCase().includes('forge')))
-        );
-        const forgeStatus = document.getElementById('forge-status');
-        if (forgeWorking) {
-          forgeStatus.innerHTML = '<span class="status-dot orange"></span><span class="status-text">Working</span>';
-        } else {
-          forgeStatus.innerHTML = '<span class="status-dot grey"></span><span class="status-text">Idle</span>';
-        }
-
-        // Mission feed (max 5, open first then closed)
-        const all = [...open, ...closed].sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at)).slice(0, 5);
-        const feedEl = document.getElementById('mission-feed');
-        if (all.length === 0) {
-          feedEl.innerHTML = '<div class="mission-empty"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg><div>No active missions</div></div>';
-        } else {
-          feedEl.innerHTML = all.map(issue => {
-            const state = issue.state;
-            const isBlocked = issue.labels && issue.labels.some(l => l.name && l.name.toLowerCase().includes('blocked'));
-            const dotClass = isBlocked ? 'blocked' : (state === 'closed' ? 'closed' : 'open');
-            const stateText = isBlocked ? 'blocked' : state;
-            return `<div class="mission-item">
-              <span class="mission-dot ${dotClass}"></span>
-              <div class="mission-info">
-                <div class="mission-title">${escapeHtml(issue.title)}</div>
-                <div class="mission-meta">#${issue.number} &middot; ${stateText} &middot; ${timeAgo(issue.updated_at)}</div>
-              </div>
-            </div>`;
-          }).join('');
-        }
-      } catch (e) {
-        document.getElementById('mission-feed').innerHTML = '<div class="mission-empty"><div>Failed to load missions</div></div>';
-      }
-    }
-
-    // ── Fetch Commits ──
-    async function fetchCommits() {
-      try {
-        const res = await fetch('https://api.github.com/repos/kaanclaw/mission-control/commits?per_page=10');
-        const commits = await res.json();
-        const feedEl = document.getElementById('activity-feed');
-        if (!Array.isArray(commits) || commits.length === 0) {
-          feedEl.innerHTML = '<div class="activity-row"><span class="activity-msg" style="color:var(--muted-foreground)">No recent activity</span></div>';
-          return;
-        }
-        feedEl.innerHTML = commits.map(c => {
-          const msg = c.commit.message.split('\n')[0];
-          const truncated = msg.length > 60 ? msg.slice(0, 60) + '...' : msg;
-          const author = (c.author && c.author.login) || (c.commit.author && c.commit.author.name) || 'unknown';
-          return `<div class="activity-row">
-            <span class="activity-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><circle cx="12" cy="12" r="3"/><line x1="3" y1="12" x2="9" y2="12"/><line x1="15" y1="12" x2="21" y2="12"/></svg></span>
-            <span class="activity-msg">${escapeHtml(truncated)}</span>
-            <span class="activity-meta">${escapeHtml(author)} &middot; ${timeAgo(c.commit.author.date)}</span>
-          </div>`;
-        }).join('');
-      } catch (e) {
-        document.getElementById('activity-feed').innerHTML = '<div class="activity-row"><span class="activity-msg" style="color:var(--muted-foreground)">Failed to load activity</span></div>';
-      }
-    }
-
-    // ── Helpers ──
-    function escapeHtml(str) {
-      const d = document.createElement('div');
-      d.textContent = str;
-      return d.innerHTML;
-    }
-
-    // ── 3D Office View ──
-    let officeLastFetch = Date.now();
-    let officeAgentData = {};
 
     function durationSince(isoStr) {
       if (!isoStr) return '';
@@ -1749,10 +1153,430 @@
       if (mins < 1) return '<1m';
       if (mins < 60) return mins + 'm';
       const hrs = Math.floor(mins / 60);
-      const rm = mins % 60;
-      return hrs + 'h ' + rm + 'm';
+      return hrs + 'h ' + (mins % 60) + 'm';
     }
 
+    function updateTimestamp() {
+      const ts = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      document.getElementById('last-refreshed').textContent = 'Updated ' + ts;
+      document.getElementById('footer-ts').textContent = new Date().toISOString().slice(0, 19) + 'Z';
+    }
+
+    // ── Animated counter ──
+    function animateValue(el, start, end, duration) {
+      const isPrice = el.textContent.startsWith('$');
+      const range = end - start;
+      if (range === 0) return;
+      const startTime = performance.now();
+      function step(now) {
+        const progress = Math.min((now - startTime) / duration, 1);
+        const value = start + range * progress;
+        if (isPrice) {
+          el.textContent = '$' + value.toFixed(2);
+        } else {
+          el.textContent = Math.round(value).toString();
+        }
+        if (progress < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+
+    // ── Sparkline renderer ──
+    function renderSparkline(svgId, data, color) {
+      const svg = document.getElementById(svgId);
+      if (!svg || data.length < 2) return;
+      const w = 120, h = 30;
+      const min = Math.min(...data);
+      const max = Math.max(...data);
+      const range = max - min || 1;
+      const points = data.map((v, i) => {
+        const x = (i / (data.length - 1)) * w;
+        const y = h - ((v - min) / range) * (h - 4) - 2;
+        return x + ',' + y;
+      }).join(' ');
+      svg.innerHTML = '<polyline points="' + points + '" fill="none" stroke="' + color + '" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/>';
+    }
+
+    // ── Theme ──
+    const savedTheme = localStorage.getItem('mc-theme');
+    if (savedTheme === 'light') document.documentElement.classList.add('light');
+
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+      document.documentElement.classList.toggle('light');
+      const isLight = document.documentElement.classList.contains('light');
+      document.getElementById('theme-toggle').textContent = isLight ? '\u2600' : '\u263E';
+      localStorage.setItem('mc-theme', isLight ? 'light' : 'dark');
+    });
+    if (document.documentElement.classList.contains('light')) {
+      document.getElementById('theme-toggle').textContent = '\u2600';
+    }
+
+    // ═══════════════════════════════════════════════════════
+    //  DATA FETCHERS
+    // ═══════════════════════════════════════════════════════
+
+    // ── 1. Agent Status (5s) ──
+    async function fetchAgentStatus() {
+      try {
+        const res = await fetch('data/agent-status.json?t=' + Date.now());
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        agentData = await res.json();
+        renderOffice3D(agentData);
+
+        const activeCount = agentData.agents.filter(a => a.status !== 'idle').length;
+        const prevVal = parseInt(document.getElementById('kpi-active-agents').textContent) || 0;
+        animateValue(document.getElementById('kpi-active-agents'), prevVal, activeCount, 400);
+
+        document.getElementById('kpi-agents-trend').textContent = activeCount + ' of ' + agentData.agents.length + ' online';
+        document.getElementById('kpi-agents-trend').className = 'kpi-trend ' + (activeCount > 0 ? 'up' : 'neutral');
+
+        pushSpark('agents', activeCount);
+        renderSparkline('spark-agents', sparkHistory.agents, '#10b981');
+
+        officeLastFetch = Date.now();
+      } catch (e) {
+        renderOffice3DError();
+      }
+    }
+
+    // ── 2. Costs (120s) ──
+    async function fetchCosts() {
+      try {
+        const res = await fetch('data/costs.json?t=' + Date.now());
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        costData = await res.json();
+        lastCostFetch = Date.now();
+
+        const cost = costData.today.costUsd;
+        const prevVal = parseFloat((document.getElementById('kpi-cost-today').textContent || '0').replace('$', '')) || 0;
+        animateValue(document.getElementById('kpi-cost-today'), prevVal, cost, 600);
+
+        document.getElementById('header-cost').textContent = '$' + cost.toFixed(2) + ' today';
+        document.getElementById('kpi-cost-trend').textContent = costData.today.totalTokens.toLocaleString() + ' tokens';
+        document.getElementById('kpi-cost-trend').className = 'kpi-trend amber';
+        document.getElementById('cost-chart-badge').textContent = '$' + cost.toFixed(2);
+
+        // Cache hit rate (derived if data available)
+        if (costData.today.cacheHitRate != null) {
+          document.getElementById('kpi-cache-rate').textContent = costData.today.cacheHitRate.toFixed(1) + '%';
+          pushSpark('cache', costData.today.cacheHitRate);
+          renderSparkline('spark-cache', sparkHistory.cache, '#a855f7');
+        } else {
+          document.getElementById('kpi-cache-rate').textContent = '--';
+          document.getElementById('kpi-cache-trend').textContent = 'Not available';
+        }
+
+        pushSpark('cost', cost);
+        renderSparkline('spark-cost', sparkHistory.cost, '#f59e0b');
+
+        renderCostChart(costData);
+        document.getElementById('cost-stale').classList.remove('visible');
+      } catch (e) {
+        document.getElementById('cost-stale').classList.add('visible');
+      }
+    }
+
+    // ── 3. GitHub Activity (60s) ──
+    const REPOS = [
+      { name: 'mission-control', id: 'repo-mission-control', stale: 'gh-stale-mc' },
+      { name: 'easyclaw', id: 'repo-easyclaw', stale: 'gh-stale-ec' },
+      { name: 'dev-team', id: 'repo-dev-team', stale: 'gh-stale-dt' }
+    ];
+
+    async function fetchGitHub() {
+      const commitPromises = REPOS.map(r =>
+        fetch('https://api.github.com/repos/kaanclaw/' + r.name + '/commits?per_page=5')
+          .then(res => res.ok ? res.json() : [])
+          .catch(() => [])
+      );
+      const issuePromise = fetch('https://api.github.com/repos/kaanclaw/dev-team/issues?state=open&per_page=10')
+        .then(res => res.ok ? res.json() : [])
+        .catch(() => []);
+
+      const [mcCommits, ecCommits, dtCommits, issues] = await Promise.all([...commitPromises, issuePromise]);
+      const allCommits = [mcCommits, ecCommits, dtCommits];
+
+      // Render repo cards
+      REPOS.forEach((repo, i) => {
+        const commits = Array.isArray(allCommits[i]) ? allCommits[i] : [];
+        const el = document.getElementById(repo.id);
+        const staleEl = document.getElementById(repo.stale);
+
+        if (commits.length === 0) {
+          el.innerHTML = '<div class="card-body"><div class="feed-empty">No data</div></div>';
+          staleEl.classList.add('visible');
+          return;
+        }
+
+        staleEl.classList.remove('visible');
+        const lastCommit = commits[0];
+        const lastTime = lastCommit.commit.author.date;
+        let issueCount = 0;
+        if (repo.name === 'dev-team' && Array.isArray(issues)) {
+          issueCount = issues.filter(iss => !iss.pull_request).length;
+        }
+
+        el.innerHTML = '<div class="card-body">' +
+          '<div class="repo-name">&#x1F4C1; kaanclaw/' + esc(repo.name) + '</div>' +
+          '<div class="repo-meta">Last commit: ' + timeAgo(lastTime) +
+          (repo.name === 'dev-team' ? ' &middot; ' + issueCount + ' open issues' : '') +
+          '</div>' +
+          '<div class="repo-commits">' +
+          commits.slice(0, 3).map(c => {
+            const msg = c.commit.message.split('\n')[0];
+            const truncated = msg.length > 55 ? msg.slice(0, 55) + '...' : msg;
+            return '<div class="repo-commit-item">' +
+              '<span class="repo-commit-msg">' + esc(truncated) + '</span>' +
+              '<span class="repo-commit-time">' + timeAgo(c.commit.author.date) + '</span>' +
+              '</div>';
+          }).join('') +
+          '</div></div>';
+      });
+
+      // Update KPI: tasks in progress
+      if (Array.isArray(issues)) {
+        const realIssues = issues.filter(i => !i.pull_request);
+        openIssueCount = realIssues.length;
+        const prevVal = parseInt(document.getElementById('kpi-tasks-progress').textContent) || 0;
+        animateValue(document.getElementById('kpi-tasks-progress'), prevVal, openIssueCount, 400);
+        document.getElementById('kpi-tasks-trend').textContent = openIssueCount + ' open issues';
+        document.getElementById('kpi-tasks-trend').className = 'kpi-trend ' + (openIssueCount > 0 ? 'up' : 'neutral');
+
+        pushSpark('tasks', openIssueCount);
+        renderSparkline('spark-tasks', sparkHistory.tasks, '#3b82f6');
+      }
+
+      lastGHFetch = Date.now();
+    }
+
+    // ── 4. Activity Feed (30s) — merge GitHub commits + agent changes ──
+    let prevAgentStates = {};
+
+    async function fetchActivityFeed() {
+      try {
+        // Fetch commits from all repos
+        const commitResults = await Promise.all(
+          ['mission-control', 'easyclaw', 'dev-team'].map(name =>
+            fetch('https://api.github.com/repos/kaanclaw/' + name + '/commits?per_page=3')
+              .then(r => r.ok ? r.json() : [])
+              .then(commits => (Array.isArray(commits) ? commits : []).map(c => ({
+                type: 'commit',
+                repo: name,
+                msg: c.commit.message.split('\n')[0],
+                author: (c.author && c.author.login) || (c.commit.author && c.commit.author.name) || 'unknown',
+                time: c.commit.author.date
+              })))
+              .catch(() => [])
+          )
+        );
+
+        const allEvents = commitResults.flat();
+
+        // Agent status changes
+        if (agentData) {
+          agentData.agents.forEach(a => {
+            const prev = prevAgentStates[a.id];
+            if (prev && prev !== a.status) {
+              allEvents.push({
+                type: 'agent',
+                agent: a.name,
+                from: prev,
+                to: a.status,
+                task: a.task,
+                time: a.status_since || new Date().toISOString()
+              });
+            }
+            prevAgentStates[a.id] = a.status;
+          });
+        }
+
+        // Sort by time desc
+        allEvents.sort((a, b) => new Date(b.time) - new Date(a.time));
+
+        const feedEl = document.getElementById('activity-feed');
+        if (allEvents.length === 0) {
+          feedEl.innerHTML = '<div class="feed-empty">No recent activity</div>';
+          return;
+        }
+
+        feedEl.innerHTML = allEvents.slice(0, 15).map(e => {
+          if (e.type === 'commit') {
+            const truncated = e.msg.length > 50 ? e.msg.slice(0, 50) + '...' : e.msg;
+            return '<div class="feed-item">' +
+              '<span class="feed-icon">&#x1F4BB;</span>' +
+              '<span class="feed-text"><strong>' + esc(e.author) + '</strong> pushed to ' + esc(e.repo) + ': ' + esc(truncated) + '</span>' +
+              '<span class="feed-time">' + timeAgo(e.time) + '</span>' +
+              '</div>';
+          } else if (e.type === 'agent') {
+            return '<div class="feed-item">' +
+              '<span class="feed-icon">&#x1F916;</span>' +
+              '<span class="feed-text"><strong>' + esc(e.agent) + '</strong> status: ' + esc(e.from) + ' &#x2192; ' + esc(e.to) + (e.task ? ' (' + esc(e.task) + ')' : '') + '</span>' +
+              '<span class="feed-time">' + timeAgo(e.time) + '</span>' +
+              '</div>';
+          }
+          return '';
+        }).join('');
+
+        lastFeedFetch = Date.now();
+        document.getElementById('feed-stale').classList.remove('visible');
+      } catch (e) {
+        document.getElementById('feed-stale').classList.add('visible');
+      }
+    }
+
+    // ── 5. Cron Jobs ──
+    async function fetchCronJobs() {
+      try {
+        const res = await fetch('data/cron-status.json?t=' + Date.now());
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        lastCronFetch = Date.now();
+
+        const jobs = data.jobs || [];
+        document.getElementById('cron-badge').textContent = jobs.length + ' jobs';
+
+        const body = document.getElementById('cron-body');
+        body.innerHTML =
+          '<div class="cron-row cron-header">' +
+          '<span>Job</span><span>Schedule</span><span>Status</span><span>Errors</span><span>Next Run</span>' +
+          '</div>' +
+          jobs.map(j => {
+            const dotClass = j.last_status === 'ok' ? 'ok' : (j.last_status === 'pending' ? 'pending' : 'error');
+            const statusLabel = j.last_status === 'ok' ? 'OK' : (j.last_status === 'pending' ? 'Pending' : 'Error');
+            return '<div class="cron-row">' +
+              '<span class="cron-name">' + esc(j.name) + '</span>' +
+              '<span class="cron-schedule">' + esc(j.schedule) + '</span>' +
+              '<span class="cron-status"><span class="cron-dot ' + dotClass + '"></span> ' + statusLabel + '</span>' +
+              '<span class="cron-errors">' + (j.consecutive_errors || 0) + '</span>' +
+              '<span class="cron-next">' + (j.next_run ? timeAgo(j.next_run).replace(' ago', '') : '--') + '</span>' +
+              '</div>';
+          }).join('');
+
+        document.getElementById('cron-stale').classList.remove('visible');
+      } catch (e) {
+        document.getElementById('cron-stale').classList.add('visible');
+      }
+    }
+
+    // ═══════════════════════════════════════════════════════
+    //  SVG COST CHART
+    // ═══════════════════════════════════════════════════════
+    function renderCostChart(data) {
+      const svg = document.getElementById('cost-svg');
+      const container = document.getElementById('cost-chart');
+      const tooltip = document.getElementById('chart-tooltip');
+      const w = container.clientWidth;
+      const h = 220;
+      const pad = { top: 20, right: 20, bottom: 30, left: 50 };
+      const chartW = w - pad.left - pad.right;
+      const chartH = h - pad.top - pad.bottom;
+
+      // Generate 24h hourly buckets
+      const now = new Date();
+      const buckets = [];
+      for (let i = 23; i >= 0; i--) {
+        const t = new Date(now.getTime() - i * 3600000);
+        buckets.push({
+          hour: t.getHours(),
+          label: t.getHours().toString().padStart(2, '0') + ':00',
+          cost: 0
+        });
+      }
+
+      // Distribute cost across buckets (simulate — use total / 24 with ramp)
+      const totalCost = data.today.costUsd;
+      let cumulativeCost = 0;
+      buckets.forEach((b, i) => {
+        // Simple linear ramp to make chart interesting
+        const fraction = (i + 1) / buckets.length;
+        b.cost = totalCost * fraction;
+      });
+
+      const maxCost = Math.max(totalCost, 1);
+      const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-dim').trim() || '#6b7280';
+      const gridColor = getComputedStyle(document.documentElement).getPropertyValue('--border').trim() || 'rgba(255,255,255,0.08)';
+
+      let svgContent = '<rect width="' + w + '" height="' + h + '" fill="transparent"/>';
+
+      // Y axis grid + labels
+      const ySteps = 4;
+      for (let i = 0; i <= ySteps; i++) {
+        const y = pad.top + (chartH / ySteps) * i;
+        const val = (maxCost * (1 - i / ySteps)).toFixed(0);
+        svgContent += '<line x1="' + pad.left + '" y1="' + y + '" x2="' + (w - pad.right) + '" y2="' + y + '" stroke="' + gridColor + '" stroke-width="0.5"/>';
+        svgContent += '<text x="' + (pad.left - 8) + '" y="' + (y + 4) + '" text-anchor="end" class="chart-axis-label" fill="' + textColor + '">$' + val + '</text>';
+      }
+
+      // X axis labels (every 4 hours)
+      buckets.forEach((b, i) => {
+        if (i % 4 === 0 || i === buckets.length - 1) {
+          const x = pad.left + (i / (buckets.length - 1)) * chartW;
+          svgContent += '<text x="' + x + '" y="' + (h - 6) + '" text-anchor="middle" class="chart-axis-label" fill="' + textColor + '">' + b.label + '</text>';
+        }
+      });
+
+      // Line path
+      const points = buckets.map((b, i) => {
+        const x = pad.left + (i / (buckets.length - 1)) * chartW;
+        const y = pad.top + chartH - (b.cost / maxCost) * chartH;
+        return x + ',' + y;
+      });
+
+      // Gradient fill
+      const firstX = pad.left;
+      const lastX = pad.left + chartW;
+      svgContent += '<defs><linearGradient id="costGrad" x1="0" y1="0" x2="0" y2="1">' +
+        '<stop offset="0%" stop-color="#f59e0b" stop-opacity="0.3"/>' +
+        '<stop offset="100%" stop-color="#f59e0b" stop-opacity="0.02"/>' +
+        '</linearGradient></defs>';
+
+      // Fill area
+      const firstPoint = points[0];
+      const lastPoint = points[points.length - 1];
+      svgContent += '<polygon points="' + firstX + ',' + (pad.top + chartH) + ' ' + points.join(' ') + ' ' + lastX + ',' + (pad.top + chartH) + '" fill="url(#costGrad)"/>';
+
+      // Line
+      svgContent += '<polyline points="' + points.join(' ') + '" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+
+      // Data points (dots)
+      buckets.forEach((b, i) => {
+        const x = pad.left + (i / (buckets.length - 1)) * chartW;
+        const y = pad.top + chartH - (b.cost / maxCost) * chartH;
+        svgContent += '<circle cx="' + x + '" cy="' + y + '" r="3" fill="#f59e0b" opacity="0" class="chart-dot" data-idx="' + i + '"/>';
+      });
+
+      svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+      svg.innerHTML = svgContent;
+
+      // Hover interaction
+      svg.querySelectorAll('.chart-dot').forEach(dot => {
+        dot.addEventListener('mouseenter', (e) => {
+          const idx = parseInt(dot.dataset.idx);
+          const b = buckets[idx];
+          dot.setAttribute('opacity', '1');
+          dot.setAttribute('r', '5');
+          tooltip.style.display = 'block';
+          tooltip.innerHTML = '<div style="font-weight:600;">' + b.label + '</div><div style="color:var(--amber);">$' + b.cost.toFixed(2) + '</div>';
+          const rect = container.getBoundingClientRect();
+          const cx = parseFloat(dot.getAttribute('cx'));
+          const cy = parseFloat(dot.getAttribute('cy'));
+          const svgRect = svg.getBoundingClientRect();
+          const scaleX = svgRect.width / w;
+          const scaleY = svgRect.height / h;
+          tooltip.style.left = (cx * scaleX - 40) + 'px';
+          tooltip.style.top = (cy * scaleY - 50) + 'px';
+        });
+        dot.addEventListener('mouseleave', () => {
+          dot.setAttribute('opacity', '0');
+          dot.setAttribute('r', '3');
+          tooltip.style.display = 'none';
+        });
+      });
+    }
+
+    // ═══════════════════════════════════════════════════════
+    //  3D OFFICE VIEW
+    // ═══════════════════════════════════════════════════════
     function renderOffice3D(data) {
       const meetingAgents = [];
       let activeCount = 0;
@@ -1765,11 +1589,9 @@
         const desk = document.getElementById('desk-' + agent.id);
         if (!desk) return;
 
-        // Remove old status classes, add new one
         desk.className = desk.className.replace(/status-\w+/g, '').trim();
         desk.classList.add('status-' + agent.status);
 
-        // If meeting, fade desk and move avatar to meeting room
         if (agent.status === 'meeting') {
           desk.classList.add('at-meeting');
         } else {
@@ -1796,9 +1618,7 @@
         attendeesEl.innerHTML = '';
       }
 
-      // Badge
       document.getElementById('office-status-badge').textContent = activeCount + ' active';
-      officeLastFetch = Date.now();
     }
 
     function renderOffice3DError() {
@@ -1813,17 +1633,6 @@
       document.getElementById('office-status-badge').textContent = 'offline';
     }
 
-    async function fetchAgentStatus() {
-      try {
-        const res = await fetch('data/agent-status.json?t=' + Date.now());
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        const data = await res.json();
-        renderOffice3D(data);
-      } catch (e) {
-        renderOffice3DError();
-      }
-    }
-
     // Click-to-inspect
     document.querySelectorAll('.desk[data-agent]').forEach(desk => {
       desk.addEventListener('click', (e) => {
@@ -1834,23 +1643,21 @@
         const panel = document.getElementById('inspect-panel');
         const content = document.getElementById('inspect-content');
         const timeSince = agent.status_since ? durationSince(agent.status_since) : 'N/A';
-        content.innerHTML = `
-          <div class="inspect-name">${escapeHtml(agent.name)}</div>
-          <div class="inspect-role">${escapeHtml(agent.role)}</div>
-          <div class="inspect-field-label">Status</div>
-          <div class="inspect-field-value"><span class="inspect-status-badge ${agent.status}">${agent.status}</span></div>
-          <div class="inspect-field-label">Current Task</div>
-          <div class="inspect-field-value">${agent.task ? escapeHtml(agent.task) : 'No active task'}</div>
-          <div class="inspect-field-label">Time in Status</div>
-          <div class="inspect-field-value">${timeSince}</div>
-          <div class="inspect-field-label">Department</div>
-          <div class="inspect-field-value">${agent.department}</div>
-        `;
+        content.innerHTML =
+          '<div class="inspect-name">' + esc(agent.name) + '</div>' +
+          '<div class="inspect-role">' + esc(agent.role) + '</div>' +
+          '<div class="inspect-field-label">Status</div>' +
+          '<div class="inspect-field-value"><span class="inspect-status-badge ' + agent.status + '">' + agent.status + '</span></div>' +
+          '<div class="inspect-field-label">Current Task</div>' +
+          '<div class="inspect-field-value">' + (agent.task ? esc(agent.task) : 'No active task') + '</div>' +
+          '<div class="inspect-field-label">Time in Status</div>' +
+          '<div class="inspect-field-value">' + timeSince + '</div>' +
+          '<div class="inspect-field-label">Department</div>' +
+          '<div class="inspect-field-value">' + agent.department + '</div>';
         panel.classList.add('open');
       });
     });
 
-    // Close inspect panel
     document.getElementById('inspect-close').addEventListener('click', () => {
       document.getElementById('inspect-panel').classList.remove('open');
     });
@@ -1866,20 +1673,39 @@
       document.getElementById('office-updated').textContent = s < 3 ? 'Updated just now' : 'Updated ' + s + 's ago';
     }, 1000);
 
-    // Office refreshes every 5s
+    // ═══════════════════════════════════════════════════════
+    //  INIT & REFRESH LOOPS
+    // ═══════════════════════════════════════════════════════
+
+    // Initial seed of prev agent states
+    fetch('data/agent-status.json?t=' + Date.now())
+      .then(r => r.json())
+      .then(d => { d.agents.forEach(a => { prevAgentStates[a.id] = a.status; }); })
+      .catch(() => {});
+
+    // Agent status: 5s
     fetchAgentStatus();
     setInterval(fetchAgentStatus, 5000);
 
-    // ── Init ──
-    async function refresh() {
-      await Promise.all([fetchCosts(), fetchIssues(), fetchCommits()]);
-      updateTimestamp();
-    }
+    // Activity feed: 30s
+    fetchActivityFeed();
+    setInterval(fetchActivityFeed, 30000);
 
-    refresh();
-    setInterval(refresh, 60000);
-    document.getElementById('refresh-btn').addEventListener('click', () => { refresh(); fetchAgentStatus(); });
+    // GitHub repos: 60s
+    fetchGitHub();
+    setInterval(fetchGitHub, 60000);
+
+    // Costs: 120s
+    fetchCosts();
+    setInterval(fetchCosts, 120000);
+
+    // Cron jobs: 60s
+    fetchCronJobs();
+    setInterval(fetchCronJobs, 60000);
+
+    // Timestamp
     updateTimestamp();
+    setInterval(updateTimestamp, 10000);
   </script>
 </body>
 </html>

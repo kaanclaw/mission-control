@@ -1,0 +1,9 @@
+{
+  "last_updated": "2026-03-25T23:00:00Z",
+  "jobs": [
+    {"name": "cost-sync", "schedule": "every 30min", "last_run": "2026-03-25T22:55:00Z", "last_status": "ok", "consecutive_errors": 0, "next_run": "2026-03-25T23:25:00Z"},
+    {"name": "daily-self-review", "schedule": "23:00 PT daily", "last_run": null, "last_status": "pending", "consecutive_errors": 0, "next_run": "2026-03-25T23:00:00Z"},
+    {"name": "overnight-research", "schedule": "1:00 AM PT", "last_run": "2026-03-25T01:00:00Z", "last_status": "ok", "consecutive_errors": 0, "next_run": "2026-03-26T01:00:00Z"},
+    {"name": "morning-ping", "schedule": "9:30 AM PT", "last_run": "2026-03-25T09:30:00Z", "last_status": "ok", "consecutive_errors": 0, "next_run": "2026-03-26T09:30:00Z"}
+  ]
+}
