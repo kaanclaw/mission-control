@@ -592,7 +592,7 @@
             <span class="stat-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg></span>
           </div>
           <div class="stat-value" id="cost-per-task">$0.00</div>
-          <div class="stat-delta neutral">Average</div>
+          <div class="stat-delta neutral" id="cost-per-task-delta">Average</div>
         </div>
       </div>
 
@@ -874,6 +874,16 @@
       document.getElementById('footer-timestamp').textContent = new Date().toISOString();
     }
 
+    function updateCostPerTask() {
+      if (!costData) return;
+      const tasks = Math.max(closedIssueCount, 1);
+      const perTask = (costData.today.costUsd / tasks).toFixed(2);
+      document.getElementById('cost-per-task').textContent = '$' + perTask;
+      document.getElementById('cost-per-task-delta').textContent = closedIssueCount > 0
+        ? '÷ ' + closedIssueCount + ' tasks'
+        : 'Average';
+    }
+
     // ── Fetch costs ──
     async function fetchCosts() {
       try {
@@ -884,8 +894,7 @@
         document.getElementById('total-tokens').textContent = costData.today.totalTokens.toLocaleString();
         document.getElementById('cost-delta').innerHTML = '&#8593; $' + cost.toFixed(2) + ' today';
 
-        const tasks = Math.max(closedIssueCount, 1);
-        document.getElementById('cost-per-task').textContent = '$' + (cost / tasks).toFixed(2);
+        updateCostPerTask();
       } catch (e) {
         document.getElementById('cost-today').textContent = '$—';
         document.getElementById('cost-delta').textContent = 'Failed to load';
@@ -910,11 +919,7 @@
         closedIssueCount = closed.length;
         document.getElementById('tasks-completed').textContent = closedIssueCount.toLocaleString();
 
-        // Update cost per task
-        if (costData) {
-          const tasks = Math.max(closedIssueCount, 1);
-          document.getElementById('cost-per-task').textContent = '$' + (costData.today.costUsd / tasks).toFixed(2);
-        }
+        updateCostPerTask();
 
         // Forge status: working if open forge issues
         const forgeWorking = open.some(i =>
