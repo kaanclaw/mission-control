@@ -149,12 +149,64 @@
     }
     .metric-card { text-align: center; }
     .metric-label { font-size: 0.85rem; color: #8b949e; margin-bottom: 0.25rem; }
-    .metric-value { font-size: 2.25rem; font-weight: 700; color: #f78166; }
+    .metric-value {
+      font-size: 2.25rem; font-weight: 700; color: #f78166;
+      transition: opacity 0.4s ease, transform 0.3s ease;
+    }
+    .metric-value.loading {
+      opacity: 0.4;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
     .cost-note {
       font-size: 0.75rem;
       color: #8b949e;
       text-align: center;
       margin-top: 0.75rem;
+      font-style: italic;
+    }
+    .cost-sync {
+      font-size: 0.7rem;
+      color: #8b949e;
+      text-align: center;
+      margin-top: 0.35rem;
+    }
+    .cost-sync .refresh-btn {
+      background: none;
+      border: none;
+      color: #8b949e;
+      cursor: pointer;
+      font-size: 0.8rem;
+      padding: 0 0.25rem;
+      transition: color 0.2s;
+    }
+    .cost-sync .refresh-btn:hover { color: #f78166; }
+
+    /* ── Agent Status Badge ── */
+    .agent-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-left: 0.5rem;
+      vertical-align: middle;
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .status-dot-green { background: #3fb950; animation: pulse 2s ease-in-out infinite; }
+    .status-dot-orange { background: #d29922; animation: pulse 1.5s ease-in-out infinite; }
+    .status-dot-grey { background: #484f58; }
+    .agent-status-text { color: #8b949e; }
+    .agent-working-issue {
+      display: block;
+      font-size: 0.7rem;
+      color: #8b949e;
+      font-weight: 400;
+      margin-top: 0.15rem;
       font-style: italic;
     }
     .model-tag {
@@ -447,19 +499,20 @@
       <div class="cost-grid">
         <div class="card metric-card">
           <div class="metric-label">Today</div>
-          <div class="metric-value">$10.64</div>
+          <div class="metric-value loading" id="cost-today">Syncing...</div>
           <span class="model-tag">claude-sonnet-4-6</span>
         </div>
         <div class="card metric-card">
           <div class="metric-label">This Month</div>
-          <div class="metric-value">$10.64</div>
+          <div class="metric-value loading" id="cost-month">Syncing...</div>
         </div>
         <div class="card metric-card">
           <div class="metric-label">Per Task</div>
-          <div class="metric-value">~$1.40</div>
+          <div class="metric-value loading" id="cost-task">Syncing...</div>
         </div>
       </div>
       <div class="cost-note">Live sync via OpenClaw session data</div>
+      <div class="cost-sync">Last synced: <span id="cost-sync-time">--:--</span> <button class="refresh-btn" id="cost-refresh" title="Refresh cost data">↻</button></div>
     </section>
 
     <!-- 3. Token Usage -->
@@ -478,21 +531,21 @@
           <tbody>
             <tr>
               <td>🗺️ Atlas (Claw)</td>
-              <td class="token-number">~65,857</td>
-              <td class="token-number">~2,342</td>
-              <td class="token-number">~68,199</td>
+              <td class="token-number" id="token-claw-input">—</td>
+              <td class="token-number" id="token-claw-output">—</td>
+              <td class="token-number" id="token-claw-total">Syncing...</td>
             </tr>
             <tr>
               <td>⚒️ Forge</td>
-              <td class="token-number">~85,000</td>
-              <td class="token-number">—</td>
-              <td class="token-number">~85,000</td>
+              <td class="token-number" id="token-forge-input">—</td>
+              <td class="token-number" id="token-forge-output">—</td>
+              <td class="token-number" id="token-forge-total">Syncing...</td>
             </tr>
             <tr style="font-weight:700">
               <td>Total</td>
-              <td class="token-number">~150,857</td>
-              <td class="token-number">~2,342</td>
-              <td class="token-number">~153,199</td>
+              <td class="token-number" id="token-total-input">—</td>
+              <td class="token-number" id="token-total-output">—</td>
+              <td class="token-number" id="token-total-total">Syncing...</td>
             </tr>
           </tbody>
         </table>
@@ -526,7 +579,7 @@
           <div class="agent-header">
             <div>
               <div class="agent-emoji">🗺️</div>
-              <div class="agent-name">ATLAS</div>
+              <div class="agent-name">ATLAS <span class="agent-status"><span class="status-dot status-dot-green"></span><span class="agent-status-text">Active</span></span></div>
             </div>
             <button class="expand-btn" onclick="toggleAgent('atlas')">▼ Details</button>
           </div>
@@ -555,7 +608,7 @@
           <div class="agent-header">
             <div>
               <div class="agent-emoji">⚒️</div>
-              <div class="agent-name">FORGE</div>
+              <div class="agent-name">FORGE <span class="agent-status" id="forge-status"><span class="status-dot status-dot-grey"></span><span class="agent-status-text">Checking...</span></span></div>
             </div>
             <button class="expand-btn" onclick="toggleAgent('forge')">▼ Details</button>
           </div>
@@ -639,7 +692,7 @@
 
   <footer>
     <span id="last-updated">Last updated: --:--:--</span>
-    <span class="footer-brand">🦞 Claw Mission Control v3 · Built by Forge · kaanclaw/mission-control</span>
+    <span class="footer-brand">🦞 Claw Mission Control v4 · Built by Forge · kaanclaw/mission-control</span>
   </footer>
 
   <script>
@@ -833,6 +886,92 @@
 
     fetchGitHubData();
     setInterval(fetchGitHubData, 60000);
+
+    // ── Cost Data Fetching ──
+    function formatUsd(n) { return '$' + n.toFixed(2); }
+    function formatTokens(n) { return n.toLocaleString(); }
+
+    function fetchCostData() {
+      fetch('data/costs.json')
+        .then(function(r) { if (!r.ok) throw new Error('fetch failed'); return r.json(); })
+        .then(function(costs) {
+          var closedEl = document.getElementById('stat-completed');
+          var closed = parseInt(closedEl.textContent) || 1;
+
+          var todayEl = document.getElementById('cost-today');
+          var monthEl = document.getElementById('cost-month');
+          var taskEl = document.getElementById('cost-task');
+
+          todayEl.textContent = formatUsd(costs.today.costUsd);
+          todayEl.classList.remove('loading');
+          monthEl.textContent = formatUsd(costs.thisMonth.costUsd);
+          monthEl.classList.remove('loading');
+          taskEl.textContent = '~' + formatUsd(costs.today.costUsd / Math.max(closed, 1));
+          taskEl.classList.remove('loading');
+
+          // Token table
+          var clawTokens = costs.agents.claw.totalTokens;
+          var forgeTokens = costs.agents.forge.totalTokens;
+          document.getElementById('token-claw-total').textContent = formatTokens(clawTokens);
+          document.getElementById('token-forge-total').textContent = formatTokens(forgeTokens);
+          document.getElementById('token-total-total').textContent = formatTokens(clawTokens + forgeTokens);
+
+          // Sync timestamp
+          var syncDate = new Date(costs.updatedAt);
+          document.getElementById('cost-sync-time').textContent =
+            String(syncDate.getHours()).padStart(2, '0') + ':' +
+            String(syncDate.getMinutes()).padStart(2, '0');
+        })
+        .catch(function() {
+          ['cost-today', 'cost-month', 'cost-task'].forEach(function(id) {
+            var el = document.getElementById(id);
+            el.textContent = 'Syncing...';
+            el.classList.add('loading');
+          });
+        });
+    }
+
+    // Fetch costs after GitHub data loads (so closed count is available)
+    setTimeout(fetchCostData, 1500);
+    setInterval(fetchCostData, 60000);
+
+    document.getElementById('cost-refresh').addEventListener('click', function() {
+      fetchCostData();
+      fetchGitHubData();
+    });
+
+    // ── Forge Agent Status ──
+    function fetchForgeStatus() {
+      fetch('https://api.github.com/repos/kaanclaw/dev-team/issues?state=open&labels=in-progress')
+        .then(function(r) { return r.ok ? r.json() : []; })
+        .then(function(issues) {
+          var statusEl = document.getElementById('forge-status');
+          var forgeIssues = (issues || []).filter(function(iss) {
+            return (iss.labels || []).some(function(l) {
+              return l.name.toLowerCase() === 'forge' || l.name.toLowerCase() === 'in-progress';
+            }) && !iss.pull_request;
+          });
+
+          if (forgeIssues.length > 0) {
+            var title = forgeIssues[0].title;
+            if (title.length > 40) title = title.substring(0, 40) + '…';
+            statusEl.innerHTML = '<span class="status-dot status-dot-orange"></span>' +
+              '<span class="agent-status-text">Working</span>' +
+              '<span class="agent-working-issue">' + escapeHtml(title) + '</span>';
+          } else {
+            statusEl.innerHTML = '<span class="status-dot status-dot-grey"></span>' +
+              '<span class="agent-status-text">Idle</span>';
+          }
+        })
+        .catch(function() {
+          var statusEl = document.getElementById('forge-status');
+          statusEl.innerHTML = '<span class="status-dot status-dot-grey"></span>' +
+            '<span class="agent-status-text">Idle</span>';
+        });
+    }
+
+    fetchForgeStatus();
+    setInterval(fetchForgeStatus, 60000);
 
     // ── Task Creation ──
     document.getElementById('task-btn').addEventListener('click', function() {
