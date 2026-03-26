@@ -238,7 +238,7 @@
     /* Stat cards grid */
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       gap: 16px;
       margin-bottom: 24px;
     }
@@ -487,6 +487,68 @@
     /* Full width helper */
     .full-width { margin-bottom: 24px; }
 
+    /* Log Panel — slide-in from right */
+    .log-panel-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 100;
+      opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
+    }
+    .log-panel-overlay.open { opacity: 1; pointer-events: all; }
+    .log-panel {
+      position: fixed; top: 0; right: 0; width: 520px; max-width: 90vw; height: 100vh;
+      background: var(--card); border-left: 1px solid var(--border); z-index: 101;
+      display: flex; flex-direction: column;
+      transform: translateX(100%); transition: transform 0.25s ease;
+    }
+    .log-panel.open { transform: translateX(0); }
+    .log-panel-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 20px; border-bottom: 1px solid var(--border);
+    }
+    .log-panel-title { font-size: 16px; font-weight: 600; color: var(--foreground); }
+    .log-panel-task { font-size: 13px; color: var(--muted-foreground); margin-top: 2px; }
+    .log-panel-close {
+      background: none; border: 1px solid var(--border); border-radius: var(--radius);
+      color: var(--foreground); cursor: pointer; padding: 4px 10px; font-size: 18px; line-height: 1;
+    }
+    .log-panel-close:hover { background: var(--accent); }
+    .log-panel-body {
+      flex: 1; overflow-y: auto; padding: 16px 20px;
+      font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+      font-size: 12px; line-height: 1.7; color: var(--foreground);
+      white-space: pre-wrap; word-break: break-all;
+      background: var(--muted);
+    }
+    .log-panel-status {
+      padding: 8px 20px; border-top: 1px solid var(--border);
+      font-size: 11px; color: var(--muted-foreground); display: flex; align-items: center; gap: 6px;
+    }
+    .log-panel-status .status-dot { width: 6px; height: 6px; }
+
+    /* Active Missions table */
+    .missions-table-wrap { margin-top: 24px; }
+    .missions-table { width: 100%; border-collapse: collapse; }
+    .missions-table th {
+      text-align: left; font-size: 11px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.05em; color: var(--muted-foreground); padding: 8px 12px;
+    }
+    .missions-table td {
+      padding: 10px 12px; border-top: 1px solid var(--border); font-size: 13px; color: var(--foreground);
+    }
+    .missions-table a { color: var(--chart-3); text-decoration: none; }
+    .missions-table a:hover { text-decoration: underline; }
+    .mission-status-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 500;
+    }
+    .mission-status-pill.coding { background: #3b82f618; color: #3b82f6; }
+    .mission-status-pill.thinking { background: #f59e0b18; color: #f59e0b; }
+    .mission-status-pill.idle { background: var(--muted); color: var(--muted-foreground); }
+    .mission-status-pill.active { background: #22c55e18; color: #22c55e; }
+
+    /* Clickable agent rows */
+    .agent-row.clickable { cursor: pointer; border-radius: 8px; padding: 12px 8px; margin: 0 -8px; transition: background 0.15s; }
+    .agent-row.clickable:hover { background: var(--accent); }
+
     /* Responsive */
     @media (max-width: 900px) {
       .sidebar { transform: translateX(-256px); }
@@ -548,6 +610,7 @@
         <span class="breadcrumb">Overview</span>
       </div>
       <div class="header-right">
+        <a class="btn" href="http://localhost:5175" target="_blank" style="text-decoration:none;">Open EasyClaw &rarr;</a>
         <button class="btn" id="refresh-btn">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
           Refresh
@@ -593,6 +656,14 @@
           </div>
           <div class="stat-value" id="cost-per-task">$0.00</div>
           <div class="stat-delta neutral" id="cost-per-task-delta">Average</div>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-top">
+            <span class="stat-label">Agents Active</span>
+            <span class="stat-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 0 0-16 0"/></svg></span>
+          </div>
+          <div class="stat-value" id="agents-active">—</div>
+          <div class="stat-delta neutral" id="agents-total-label">Loading...</div>
         </div>
       </div>
 
@@ -662,6 +733,18 @@
             </div>
           </div>
         </div>
+      </div>
+
+      <!-- 2b. Active Missions Table -->
+      <div class="card full-width missions-table-wrap" id="active-missions-section">
+        <div class="card-header">
+          <span class="card-title">Active Missions</span>
+          <a class="card-link" href="https://github.com/kaanclaw/workspace/tree/main/agents" target="_blank">View MISSIONS.md &rarr;</a>
+        </div>
+        <table class="missions-table" id="missions-table">
+          <thead><tr><th>Agent</th><th>Current Mission</th><th>Status</th></tr></thead>
+          <tbody id="missions-tbody"><tr><td colspan="3" style="color:var(--muted-foreground)">Loading...</td></tr></tbody>
+        </table>
       </div>
 
       <!-- 3. Three columns: Activity Feed + System Health -->
@@ -821,6 +904,23 @@
       <div class="page-footer" id="section-settings">
         &#x1F99E; Claw Mission Control v5 &middot; Built by Forge &middot; kaanclaw/mission-control &middot; Last updated: <span id="footer-timestamp"></span>
       </div>
+    </div>
+  </div>
+
+  <!-- Log Panel (slide-in) -->
+  <div class="log-panel-overlay" id="log-overlay" onclick="closeLogPanel()"></div>
+  <div class="log-panel" id="log-panel">
+    <div class="log-panel-header">
+      <div>
+        <div class="log-panel-title" id="log-panel-agent">Agent</div>
+        <div class="log-panel-task" id="log-panel-task">Current task</div>
+      </div>
+      <button class="log-panel-close" onclick="closeLogPanel()">&times;</button>
+    </div>
+    <div class="log-panel-body" id="log-panel-body">Loading log...</div>
+    <div class="log-panel-status">
+      <span class="status-dot green"></span>
+      <span>Auto-refreshing every 3s</span>
     </div>
   </div>
 
@@ -990,9 +1090,129 @@
       return d.innerHTML;
     }
 
+    // ── Fetch Agent Status ──
+    async function fetchAgentStatus() {
+      try {
+        const res = await fetch('data/agent-status.json?t=' + Date.now());
+        const data = await res.json();
+        const agents = data.agents || [];
+        const active = agents.filter(a => a.status === 'coding' || a.status === 'active' || a.status === 'thinking').length;
+        const total = agents.length;
+        document.getElementById('agents-active').textContent = active;
+        document.getElementById('agents-total-label').textContent = 'of ' + total + ' total';
+        // Update roster badge
+        const badge = document.querySelector('#section-agents .card-badge');
+        if (badge) badge.textContent = active + ' active';
+        // Render dynamic roster + missions table
+        renderRoster(agents);
+        renderMissions(agents);
+      } catch (e) {
+        document.getElementById('agents-active').textContent = '—';
+        document.getElementById('agents-total-label').textContent = 'Failed to load';
+      }
+    }
+
+    // ── Log Panel ──
+    let logPanelAgent = null;
+    let logPanelInterval = null;
+
+    function openLogPanel(agentId, agentName, agentTask) {
+      logPanelAgent = agentId;
+      document.getElementById('log-panel-agent').textContent = agentName;
+      document.getElementById('log-panel-task').textContent = agentTask || 'No active task';
+      document.getElementById('log-panel-body').textContent = 'Loading log...';
+      document.getElementById('log-overlay').classList.add('open');
+      document.getElementById('log-panel').classList.add('open');
+      fetchAgentLog();
+      logPanelInterval = setInterval(fetchAgentLog, 3000);
+    }
+
+    function closeLogPanel() {
+      document.getElementById('log-overlay').classList.remove('open');
+      document.getElementById('log-panel').classList.remove('open');
+      logPanelAgent = null;
+      if (logPanelInterval) { clearInterval(logPanelInterval); logPanelInterval = null; }
+    }
+
+    async function fetchAgentLog() {
+      if (!logPanelAgent) return;
+      try {
+        const res = await fetch('data/agent-logs/' + logPanelAgent + '.txt?t=' + Date.now());
+        if (!res.ok) throw new Error('Not found');
+        const text = await res.text();
+        const body = document.getElementById('log-panel-body');
+        body.textContent = text;
+        body.scrollTop = body.scrollHeight;
+      } catch (e) {
+        document.getElementById('log-panel-body').textContent = 'No log available for this agent yet.';
+      }
+    }
+
+    // Close on Escape
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLogPanel(); });
+
+    // ── Render Agent Roster from status data ──
+    const agentEmojis = { claw: '\u{1F99E}', forge: '\u2692\uFE0F', jamie: '\u265F\uFE0F', demi: '\u{1F3A8}', juice: '\u{1F4B0}' };
+    const agentColors = { claw: 'coral', forge: 'purple', jamie: 'blue', demi: 'coral', juice: 'blue' };
+
+    function statusDotClass(status) {
+      if (status === 'coding' || status === 'active') return 'green';
+      if (status === 'thinking') return 'orange';
+      return 'grey';
+    }
+
+    function statusLabel(status) {
+      if (status === 'coding') return 'Coding';
+      if (status === 'active') return 'Active';
+      if (status === 'thinking') return 'Thinking';
+      return 'Idle';
+    }
+
+    function renderRoster(agents) {
+      const el = document.getElementById('agent-roster');
+      el.innerHTML = agents.map(a => {
+        const emoji = agentEmojis[a.id] || '\u{1F916}';
+        const color = agentColors[a.id] || 'blue';
+        const dot = statusDotClass(a.status);
+        const label = statusLabel(a.status);
+        const taskText = a.task ? escapeHtml(a.task) : 'No active task';
+        const since = a.status_since ? timeAgo(a.status_since) : '';
+        return `<div class="agent-row clickable" onclick="openLogPanel('${a.id}','${escapeHtml(a.name)}','${escapeHtml(a.task || '')}')">
+          <div class="agent-avatar ${color}">${emoji}</div>
+          <div class="agent-info">
+            <div class="agent-name-row">
+              <span class="agent-name">${escapeHtml(a.name)}</span>
+              <span class="agent-role-text">${escapeHtml(a.role)}</span>
+            </div>
+            <div style="font-size:12px;color:var(--muted-foreground);margin-top:2px;">${taskText}</div>
+          </div>
+          <div class="status-indicator">
+            <span class="status-dot ${dot}"></span>
+            <span class="status-text">${label}</span>
+          </div>
+          <div class="agent-context">${since}</div>
+        </div>`;
+      }).join('');
+    }
+
+    // ── Render Active Missions Table ──
+    function renderMissions(agents) {
+      const tbody = document.getElementById('missions-tbody');
+      const rows = agents.filter(a => a.task).map(a => {
+        const missionsUrl = 'https://github.com/kaanclaw/workspace/tree/main/agents/' + a.id + '/MISSIONS.md';
+        const statusClass = a.status === 'coding' ? 'coding' : (a.status === 'thinking' ? 'thinking' : (a.status === 'active' ? 'active' : 'idle'));
+        return `<tr>
+          <td><strong>${escapeHtml(a.name)}</strong></td>
+          <td><a href="${missionsUrl}" target="_blank">${escapeHtml(a.task)}</a></td>
+          <td><span class="mission-status-pill ${statusClass}"><span class="status-dot ${statusDotClass(a.status)}" style="width:6px;height:6px;"></span>${statusLabel(a.status)}</span></td>
+        </tr>`;
+      });
+      tbody.innerHTML = rows.length ? rows.join('') : '<tr><td colspan="3" style="color:var(--muted-foreground)">No active missions</td></tr>';
+    }
+
     // ── Init ──
     async function refresh() {
-      await Promise.all([fetchCosts(), fetchIssues(), fetchCommits()]);
+      await Promise.all([fetchCosts(), fetchIssues(), fetchCommits(), fetchAgentStatus()]);
       updateTimestamp();
     }
 

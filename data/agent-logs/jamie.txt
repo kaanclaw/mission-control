@@ -1,0 +1,21 @@
+[18:12:05] Reading: /tmp/mission-control-review/index.html
+[18:12:08] Mapping existing dashboard structure (1033 lines)...
+[18:12:12] Reading: data/agent-status.json
+[18:12:14] Reading: agents/jamie/SOUL.md — confirming scope discipline
+[18:12:18] Reading: agents/TRAINING.md — Module 2 review
+[18:12:22] Plan: 3 surgical additions to index.html
+[18:12:24]   1. Live log panel (slide-in, click agent → see output)
+[18:12:24]   2. Active Missions table (agent-status.json driven)
+[18:12:24]   3. Update agent-status.json to reflect current state
+[18:12:30] Writing: CSS for log panel + missions table
+[18:12:45] Writing: HTML — log panel container, missions section
+[18:12:58] Writing: JS — panel logic, 3s log refresh, dynamic roster
+[18:13:10] Writing: data/agent-logs/forge.txt (sample)
+[18:13:12] Writing: data/agent-logs/jamie.txt (sample)
+[18:13:15] Updating: data/agent-status.json
+[18:13:20] Running: python3 -m http.server 8003
+[18:13:22] ✅ Serving at localhost:8003
+[18:13:25] Verifying: existing dashboard sections intact...
+[18:13:28] Verifying: log panel opens on agent click...
+[18:13:30] Verifying: missions table renders from JSON...
+[18:13:32] ✅ All checks passed — committing

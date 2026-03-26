@@ -1,0 +1,12 @@
+[17:00:05] Spawning morning review cycle...
+[17:00:12] Reading: agents/TRAINING.md — checking for updates
+[17:00:18] Reading: data/agent-status.json — overnight results
+[17:00:22] Analysis: Forge shipped 36 commits overnight ✓
+[17:00:25] Analysis: Jamie completed mobile layout + cost badge
+[17:00:30] Planning: EasyClaw demo prep priorities
+[17:00:45] Writing: mission brief for Jamie — Mission Control live stream
+[17:00:52] Dispatching: Jamie → /tmp/mission-control-review
+[17:01:05] Reading: knowledge-base expansion candidates...
+[17:01:18] Evaluating: 3 new repos for research queue
+[17:01:30] Coordinating: demo checklist final items
+[17:01:45] Status: monitoring — Jamie active on Mission Control
