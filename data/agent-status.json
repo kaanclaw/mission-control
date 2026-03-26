@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-03-26T07:33:00Z",
+  "last_updated": "2026-03-26T07:51:00Z",
   "agents": [
     {
       "id": "claw",
@@ -7,17 +7,17 @@
       "role": "Orchestrator",
       "department": "hub",
       "status": "thinking",
-      "task": "Monitoring overnight progress, planning next wave",
-      "status_since": "2026-03-26T07:30:00Z"
+      "task": "Active review loop — reading diffs, queuing fixes, monitoring quality",
+      "status_since": "2026-03-26T07:45:00Z"
     },
     {
       "id": "forge",
       "name": "Forge",
       "role": "Builder",
       "department": "engineering",
-      "status": "idle",
-      "task": "Shipped: visual polish + QR share + demo coaching card ✓",
-      "status_since": "2026-03-26T07:33:00Z"
+      "status": "coding",
+      "task": "Pre-warm health check + Gemini fallback output validation",
+      "status_since": "2026-03-26T07:48:00Z"
     },
     {
       "id": "jamie",
@@ -25,8 +25,8 @@
       "role": "Builder",
       "department": "engineering",
       "status": "idle",
-      "task": "Shipped: 17 Playwright tests + integration test ✓",
-      "status_since": "2026-03-26T07:18:00Z"
+      "task": "Shipped: code review fixes + 17/17 Playwright passing ✓",
+      "status_since": "2026-03-26T07:51:00Z"
     },
     {
       "id": "demi",
