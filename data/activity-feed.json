@@ -1,6 +1,23 @@
 {
   "events": [
     {
+      "type": "system",
+      "icon": "\ud83e\udd9e",
+      "message": "Mission Control is now real-time \u2014 SSE live stream active",
+      "timestamp": "2026-03-26T20:15:14.045750+00:00",
+      "id": 1774556114045
+    },
+    {
+      "type": "agent_update",
+      "agent_id": "forge",
+      "agent_name": "Forge",
+      "status": "coding",
+      "task": "Knowledge base expansion \u2014 enriching 35 empty domain files",
+      "icon": "\ud83e\udd16",
+      "timestamp": "2026-03-26T20:15:14.039552+00:00",
+      "id": 1774556114039
+    },
+    {
       "type": "agent_update",
       "agent_id": "forge",
       "agent_name": "Forge",

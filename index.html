@@ -1203,8 +1203,8 @@
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLogPanel(); });
 
     // ── Render Agent Roster from status data ──
-    const agentEmojis = { claw: '\u{1F99E}', forge: '\u2692\uFE0F', jamie: '\u265F\uFE0F', demi: '\u{1F3A8}', juice: '\u{1F4B0}' };
-    const agentColors = { claw: 'coral', forge: 'purple', jamie: 'blue', demi: 'coral', juice: 'blue' };
+    const agentEmojis = { claw: '\u{1F99E}', forge: '\u2692\uFE0F', jamie: '\u265F\uFE0F', demi: '\u{1F3A8}', juice: '\u{1F4B0}', scout: '\u{1F52D}' };
+    const agentColors = { claw: 'coral', forge: 'purple', jamie: 'blue', demi: 'coral', juice: 'blue', scout: 'green' };
 
     function statusDotClass(status) {
       if (status === 'coding' || status === 'active') return 'green';
