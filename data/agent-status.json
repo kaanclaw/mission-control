@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-03-26T07:51:00Z",
+  "last_updated": "2026-03-26T07:55:00Z",
   "agents": [
     {
       "id": "claw",
@@ -7,8 +7,8 @@
       "role": "Orchestrator",
       "department": "hub",
       "status": "thinking",
-      "task": "Active review loop — reading diffs, queuing fixes, monitoring quality",
-      "status_since": "2026-03-26T07:45:00Z"
+      "task": "Active review loop — reading diffs, writing feedback, queuing fixes",
+      "status_since": "2026-03-26T07:50:00Z"
     },
     {
       "id": "forge",
@@ -16,8 +16,8 @@
       "role": "Builder",
       "department": "engineering",
       "status": "coding",
-      "task": "Pre-warm health check + Gemini fallback output validation",
-      "status_since": "2026-03-26T07:48:00Z"
+      "task": "Gemini SDK migration + system prompt position fix + live E2E test",
+      "status_since": "2026-03-26T07:55:00Z"
     },
     {
       "id": "jamie",
@@ -25,8 +25,8 @@
       "role": "Builder",
       "department": "engineering",
       "status": "idle",
-      "task": "Shipped: code review fixes + 17/17 Playwright passing ✓",
-      "status_since": "2026-03-26T07:51:00Z"
+      "task": "Shipped: code review fixes + 17 Playwright tests passing ✓",
+      "status_since": "2026-03-26T07:53:00Z"
     },
     {
       "id": "demi",
