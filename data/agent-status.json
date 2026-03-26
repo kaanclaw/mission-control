@@ -1,0 +1,50 @@
+{
+  "last_updated": "2026-03-25T22:30:00Z",
+  "agents": [
+    {
+      "id": "claw",
+      "name": "Claw",
+      "role": "Orchestrator",
+      "department": "hub",
+      "status": "thinking",
+      "task": "Planning Mission Control 2.0 with Kaan",
+      "status_since": "2026-03-25T22:25:00Z"
+    },
+    {
+      "id": "forge",
+      "name": "Forge",
+      "role": "Builder",
+      "department": "engineering",
+      "status": "coding",
+      "task": "EasyClaw async fix + system prompt improvements",
+      "status_since": "2026-03-25T22:03:00Z"
+    },
+    {
+      "id": "jamie",
+      "name": "Jamie",
+      "role": "Builder",
+      "department": "engineering",
+      "status": "coding",
+      "task": "Mission Control 2.0 — Office View",
+      "status_since": "2026-03-25T22:33:00Z"
+    },
+    {
+      "id": "demi",
+      "name": "Demi",
+      "role": "CMO / Creative",
+      "department": "creative",
+      "status": "idle",
+      "task": null,
+      "status_since": null
+    },
+    {
+      "id": "juice",
+      "name": "Juice",
+      "role": "Finance",
+      "department": "ops",
+      "status": "idle",
+      "task": null,
+      "status_since": null
+    }
+  ]
+}
