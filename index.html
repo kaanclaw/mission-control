@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claw Mission Control</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0d1117;
+      color: #e6edf3;
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 2rem;
+      border-bottom: 1px solid #30363d;
+      background: #161b22;
+    }
+
+    header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #f78166;
+    }
+
+    #clock {
+      font-size: 1rem;
+      color: #8b949e;
+      font-variant-numeric: tabular-nums;
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    section > h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #8b949e;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 0.85rem;
+    }
+
+    .card {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 1.25rem;
+      transition: border-color 0.2s;
+    }
+
+    .card:hover {
+      border-color: #f78166;
+    }
+
+    /* Cost Tracker */
+    .cost-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .metric-card {
+      text-align: center;
+    }
+
+    .metric-label {
+      font-size: 0.85rem;
+      color: #8b949e;
+      margin-bottom: 0.25rem;
+    }
+
+    .metric-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #f78166;
+    }
+
+    /* Agent Roster */
+    .agent-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1rem;
+    }
+
+    .agent-emoji {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .agent-name {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #e6edf3;
+    }
+
+    .agent-role {
+      font-size: 0.9rem;
+      color: #f78166;
+      margin-bottom: 0.75rem;
+    }
+
+    .agent-traits {
+      font-size: 0.85rem;
+      color: #8b949e;
+      font-style: italic;
+    }
+
+    /* Task Stats */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1rem;
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: #8b949e;
+    }
+
+    .stat-value {
+      font-size: 1.75rem;
+      font-weight: 700;
+    }
+
+    .stat-completed .stat-value { color: #3fb950; }
+    .stat-progress .stat-value { color: #d29922; }
+    .stat-blocked .stat-value { color: #f85149; }
+
+    /* Token Usage Table */
+    .token-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .token-table th,
+    .token-table td {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid #30363d;
+    }
+
+    .token-table th {
+      color: #8b949e;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+    }
+
+    .token-table td {
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Activity Feed */
+    .feed-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .feed-item {
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #30363d;
+      font-size: 0.9rem;
+      color: #c9d1d9;
+    }
+
+    .feed-item:last-child {
+      border-bottom: none;
+    }
+
+    .feed-time {
+      color: #8b949e;
+      margin-right: 0.5rem;
+    }
+
+    .feed-agent {
+      color: #f78166;
+      font-weight: 600;
+    }
+
+    @media (max-width: 600px) {
+      header { padding: 1rem; flex-direction: column; gap: 0.5rem; }
+      main { padding: 1rem; }
+      .metric-value { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🦞 Claw Mission Control</h1>
+    <div id="clock"></div>
+  </header>
+
+  <main>
+    <!-- Cost Tracker -->
+    <section>
+      <h2>Cost Tracker</h2>
+      <div class="cost-grid">
+        <div class="card metric-card">
+          <div class="metric-label">Total API Cost</div>
+          <div class="metric-value">$0.00</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-label">Today</div>
+          <div class="metric-value">$0.00</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-label">This Month</div>
+          <div class="metric-value">$0.00</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Agent Roster -->
+    <section>
+      <h2>Agent Roster</h2>
+      <div class="agent-grid">
+        <div class="card">
+          <div class="agent-emoji">🗺️</div>
+          <div class="agent-name">ATLAS</div>
+          <div class="agent-role">Architect / Engineering Lead</div>
+          <div class="agent-traits">Direct. Plans before acting. Never hides uncertainty. Routes to Forge for all coding.</div>
+        </div>
+        <div class="card">
+          <div class="agent-emoji">⚒️</div>
+          <div class="agent-name">FORGE</div>
+          <div class="agent-role">Builder / Full-Stack Developer</div>
+          <div class="agent-traits">Moves fast. Clean code. Tests before marking done. Commits with clear messages.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Task Stats -->
+    <section>
+      <h2>Task Stats</h2>
+      <div class="stats-grid">
+        <div class="card stat-completed">
+          <div class="stat-label">Tasks Completed</div>
+          <div class="stat-value">0</div>
+        </div>
+        <div class="card stat-progress">
+          <div class="stat-label">In Progress</div>
+          <div class="stat-value">0</div>
+        </div>
+        <div class="card stat-blocked">
+          <div class="stat-label">Blocked</div>
+          <div class="stat-value">0</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Token Usage -->
+    <section>
+      <h2>Token Usage</h2>
+      <div class="card">
+        <table class="token-table">
+          <thead>
+            <tr>
+              <th>Agent</th>
+              <th>Input Tokens</th>
+              <th>Output Tokens</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>🗺️ Atlas</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+            </tr>
+            <tr>
+              <td>⚒️ Forge</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Activity Feed -->
+    <section>
+      <h2>Activity Feed</h2>
+      <div class="card">
+        <ul class="feed-list">
+          <li class="feed-item">
+            <span class="feed-time">2026-03-25 17:00</span>
+            <span class="feed-agent">Forge:</span> Initialized mission-control repo
+          </li>
+          <li class="feed-item">
+            <span class="feed-time">2026-03-25 16:56</span>
+            <span class="feed-agent">Claw:</span> GitHub auth configured for kaanclaw
+          </li>
+          <li class="feed-item">
+            <span class="feed-time">2026-03-25 16:35</span>
+            <span class="feed-agent">Claw:</span> kaanclaw GitHub account created
+          </li>
+          <li class="feed-item">
+            <span class="feed-time">2026-03-25 09:30</span>
+            <span class="feed-agent">Claw:</span> Morning briefing delivered
+          </li>
+          <li class="feed-item">
+            <span class="feed-time">2026-03-24 23:00</span>
+            <span class="feed-agent">Claw:</span> Dev environment setup complete
+          </li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    function updateClock() {
+      var now = new Date();
+      var str = now.getFullYear() + '-' +
+        String(now.getMonth() + 1).padStart(2, '0') + '-' +
+        String(now.getDate()).padStart(2, '0') + ' ' +
+        String(now.getHours()).padStart(2, '0') + ':' +
+        String(now.getMinutes()).padStart(2, '0') + ':' +
+        String(now.getSeconds()).padStart(2, '0');
+      document.getElementById('clock').textContent = str;
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+  </script>
+</body>
+</html>
