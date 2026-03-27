@@ -1,25 +1,25 @@
 {
-  "updatedAt": "2026-03-27T21:57:16.373Z",
+  "updatedAt": "2026-03-27T22:27:14.621Z",
   "today": {
     "date": "2026-03-27",
-    "costUsd": 382.42073839999995,
-    "totalTokens": 615429,
-    "inputTokens": 4,
-    "outputTokens": 586
+    "costUsd": 395.02265539999996,
+    "totalTokens": 619558,
+    "inputTokens": 5,
+    "outputTokens": 661
   },
   "thisMonth": {
     "month": "2026-03",
-    "costUsd": 382.42073839999995,
-    "totalTokens": 615429
+    "costUsd": 395.02265539999996,
+    "totalTokens": 619558
   },
   "agents": {
     "claw": {
-      "costUsd": 267.6945168799999,
-      "totalTokens": 430800
+      "costUsd": 276.51585878,
+      "totalTokens": 433691
     },
     "forge": {
-      "costUsd": 114.72622151999998,
-      "totalTokens": 184629
+      "costUsd": 118.50679661999999,
+      "totalTokens": 185867
     }
   }
 }
