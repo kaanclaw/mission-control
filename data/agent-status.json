@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-03-26T20:15:14.039272+00:00",
+  "last_updated": "2026-03-26T21:30:00.000000+00:00",
   "agents": [
     {
       "id": "claw",
@@ -7,26 +7,26 @@
       "role": "Orchestrator",
       "department": "hub",
       "status": "thinking",
-      "task": "Building real-time Mission Control",
-      "status_since": "2026-03-26T20:12:08.613142+00:00"
+      "task": "Reviewing team progress and planning next missions",
+      "status_since": "2026-03-26T21:25:00.000000+00:00"
     },
     {
       "id": "forge",
       "name": "Forge",
       "role": "Builder",
       "department": "engineering",
-      "status": "coding",
-      "task": "Knowledge base expansion \u2014 enriching 35 empty domain files",
-      "status_since": "2026-03-26T20:15:14.039264+00:00"
+      "status": "idle",
+      "task": null,
+      "status_since": null
     },
     {
       "id": "jamie",
       "name": "Jamie",
       "role": "Builder",
       "department": "engineering",
-      "status": "coding",
-      "task": "Wiring SSE to Mission Control dashboard",
-      "status_since": "2026-03-26T20:12:08.620768+00:00"
+      "status": "idle",
+      "task": null,
+      "status_since": null
     },
     {
       "id": "demi",
@@ -52,8 +52,8 @@
       "role": "Researcher",
       "department": "research",
       "status": "idle",
-      "task": "Knowledge base analysis \u2014 35 domain files to enrich",
-      "status_since": "2026-03-26T20:00:00Z"
+      "task": null,
+      "status_since": null
     }
   ]
 }
