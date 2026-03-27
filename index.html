@@ -492,6 +492,97 @@
     .changelog-date { font-size: 12px; color: var(--muted-foreground); white-space: nowrap; min-width: 80px; font-weight: 500; }
     .changelog-text { font-size: 14px; color: var(--foreground); }
 
+    /* Cost chart panel */
+    .cost-chart-panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 24px;
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+      transition: max-height 0.35s ease, opacity 0.25s ease, padding 0.25s ease;
+      padding: 0 24px;
+    }
+    .cost-chart-panel.open {
+      max-height: 600px;
+      opacity: 1;
+      padding: 24px;
+    }
+    .cost-chart-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .cost-chart-title { font-size: 16px; font-weight: 600; color: var(--foreground); }
+    .cost-chart-toggles { display: flex; gap: 4px; }
+    .cost-chart-toggles button {
+      padding: 4px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--muted-foreground);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.15s, color 0.15s;
+    }
+    .cost-chart-toggles button.active {
+      background: var(--primary);
+      color: var(--primary-foreground);
+      border-color: var(--primary);
+    }
+    .cost-chart-toggles button:hover:not(.active) { background: var(--accent); }
+    .cost-chart-svg-wrap {
+      background: var(--muted);
+      border-radius: 8px;
+      padding: 16px;
+      height: 200px;
+      position: relative;
+    }
+    .cost-chart-svg-wrap svg { width: 100%; height: 100%; }
+    .cost-chart-legend {
+      display: flex;
+      gap: 20px;
+      margin-top: 12px;
+      font-size: 12px;
+      color: var(--muted-foreground);
+    }
+    .cost-chart-legend span { display: flex; align-items: center; gap: 6px; }
+    .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+    /* Per-agent cost bars */
+    .agent-cost-bars { margin-top: 16px; }
+    .agent-cost-bar-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .agent-cost-bar-row:last-child { margin-bottom: 0; }
+    .agent-cost-name { width: 60px; font-size: 13px; font-weight: 600; color: var(--foreground); }
+    .agent-cost-bar-track {
+      flex: 1;
+      height: 20px;
+      background: var(--muted);
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+    }
+    .agent-cost-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.5s ease;
+    }
+    .agent-cost-amount { width: 80px; font-size: 13px; color: var(--foreground); text-align: right; font-weight: 500; }
+    .agent-cost-pct { width: 40px; font-size: 12px; color: var(--muted-foreground); text-align: right; }
+
+    /* Clickable stat card */
+    .stat-card.clickable { cursor: pointer; transition: border-color 0.15s; }
+    .stat-card.clickable:hover { border-color: var(--ring); }
+
     /* Footer */
     .page-footer {
       text-align: center;
@@ -719,7 +810,7 @@
     <div class="page-content">
       <!-- 1. Stat Cards Row -->
       <div class="stats-grid" id="section-overview">
-        <div class="card stat-card">
+        <div class="card stat-card clickable" id="cost-today-card" onclick="toggleCostChart()">
           <div class="stat-top">
             <span class="stat-label">API Cost Today</span>
             <span class="stat-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
@@ -766,6 +857,26 @@
         <a class="quick-link-pill" href="http://localhost:5175" target="_blank">&#x1F4CB; EasyClaw</a>
         <a class="quick-link-pill" href="https://github.com/kaanclaw" target="_blank">&#x1F4CA; GitHub</a>
         <a class="quick-link-pill" href="https://docs.google.com/document/d/event-picks" target="_blank">&#x1F4DD; Event Picks</a>
+      </div>
+
+      <!-- Cost History Chart (toggle via API Cost Today card) -->
+      <div class="cost-chart-panel" id="cost-chart-panel">
+        <div class="cost-chart-header">
+          <span class="cost-chart-title">Cost Over Time</span>
+          <div class="cost-chart-toggles">
+            <button class="active" data-range="24h">24h</button>
+            <button data-range="7d">7d</button>
+            <button data-range="all">All</button>
+          </div>
+        </div>
+        <div class="cost-chart-svg-wrap">
+          <svg id="cost-chart-svg" viewBox="0 0 800 160" preserveAspectRatio="none"></svg>
+        </div>
+        <div class="cost-chart-legend">
+          <span><span class="legend-dot" style="background:#06b6d4"></span> Claw</span>
+          <span><span class="legend-dot" style="background:#a855f7"></span> Forge</span>
+        </div>
+        <div class="agent-cost-bars" id="agent-cost-bars"></div>
       </div>
 
       <!-- 2. Two columns: Agent Roster + Mission Feed -->
@@ -1078,12 +1189,12 @@
 
     function updateCostPerTask() {
       if (!costData) return;
-      const tasks = Math.max(closedIssueCount, 1);
+      const tasks = Math.max(closedIssueCount, 10);
       const perTask = (costData.today.costUsd / tasks).toFixed(2);
       document.getElementById('cost-per-task').textContent = '$' + perTask;
       document.getElementById('cost-per-task-delta').textContent = closedIssueCount > 0
         ? '÷ ' + closedIssueCount + ' tasks'
-        : 'Average';
+        : '÷ ~10 tasks (est.)';
     }
 
     // ── Fetch costs ──
@@ -1477,6 +1588,111 @@
       refresh();
       connectSSE();
     });
+
+    // ── Cost Chart ──
+    let costHistoryData = [];
+    let costChartRange = '24h';
+
+    function toggleCostChart() {
+      document.getElementById('cost-chart-panel').classList.toggle('open');
+      if (costHistoryData.length === 0) fetchCostHistory();
+    }
+
+    async function fetchCostHistory() {
+      try {
+        const res = await fetch('data/costs-history.json?t=' + Date.now());
+        costHistoryData = await res.json();
+        renderCostChart();
+        renderAgentCostBars();
+      } catch (e) {
+        document.getElementById('cost-chart-svg').innerHTML = '<text x="400" y="80" text-anchor="middle" fill="var(--muted-foreground)" font-size="13">Failed to load cost history</text>';
+      }
+    }
+
+    // Range toggle buttons
+    document.querySelectorAll('.cost-chart-toggles button').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        document.querySelectorAll('.cost-chart-toggles button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        costChartRange = btn.dataset.range;
+        renderCostChart();
+      });
+    });
+
+    function filterByRange(data) {
+      if (costChartRange === 'all' || costChartRange === '7d') return data;
+      // 24h: last 48 entries (already 24h of 30min intervals)
+      return data;
+    }
+
+    function renderCostChart() {
+      const svg = document.getElementById('cost-chart-svg');
+      const data = filterByRange(costHistoryData);
+      if (!data.length) return;
+
+      const w = 800, h = 160, padL = 45, padR = 10, padT = 10, padB = 25;
+      const chartW = w - padL - padR;
+      const chartH = h - padT - padB;
+
+      const allVals = data.flatMap(d => [d.agents.claw, d.agents.forge, d.costUsd]);
+      const minV = Math.floor(Math.min(...allVals) * 0.95);
+      const maxV = Math.ceil(Math.max(...allVals) * 1.02);
+      const range = maxV - minV || 1;
+
+      function x(i) { return padL + (i / (data.length - 1)) * chartW; }
+      function y(v) { return padT + chartH - ((v - minV) / range) * chartH; }
+
+      // Build polyline points
+      const clawPts = data.map((d, i) => `${x(i)},${y(d.agents.claw)}`).join(' ');
+      const forgePts = data.map((d, i) => `${x(i)},${y(d.agents.forge)}`).join(' ');
+
+      // Y-axis labels (4 ticks)
+      let yLabels = '';
+      for (let t = 0; t <= 3; t++) {
+        const val = minV + (range * t / 3);
+        const yPos = y(val);
+        yLabels += `<text x="${padL - 6}" y="${yPos + 4}" text-anchor="end" fill="var(--muted-foreground)" font-size="10">$${Math.round(val)}</text>`;
+        yLabels += `<line x1="${padL}" y1="${yPos}" x2="${w - padR}" y2="${yPos}" stroke="var(--border)" stroke-dasharray="3,3"/>`;
+      }
+
+      // X-axis labels (5 ticks)
+      let xLabels = '';
+      for (let t = 0; t < 5; t++) {
+        const idx = Math.floor((data.length - 1) * t / 4);
+        const ts = new Date(data[idx].timestamp);
+        const label = ts.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+        xLabels += `<text x="${x(idx)}" y="${h - 2}" text-anchor="middle" fill="var(--muted-foreground)" font-size="10">${label}</text>`;
+      }
+
+      svg.innerHTML = `
+        ${yLabels}
+        ${xLabels}
+        <polyline points="${clawPts}" fill="none" stroke="#06b6d4" stroke-width="2" stroke-linejoin="round"/>
+        <polyline points="${forgePts}" fill="none" stroke="#a855f7" stroke-width="2" stroke-linejoin="round"/>
+      `;
+    }
+
+    function renderAgentCostBars() {
+      if (!costHistoryData.length) return;
+      const latest = costHistoryData[costHistoryData.length - 1];
+      const total = latest.costUsd || 1;
+      const agents = [
+        { name: 'Claw', cost: latest.agents.claw, color: '#06b6d4' },
+        { name: 'Forge', cost: latest.agents.forge, color: '#a855f7' }
+      ];
+      document.getElementById('agent-cost-bars').innerHTML = agents.map(a => {
+        const pct = ((a.cost / total) * 100).toFixed(0);
+        return `<div class="agent-cost-bar-row">
+          <span class="agent-cost-name">${a.name}</span>
+          <div class="agent-cost-bar-track">
+            <div class="agent-cost-bar-fill" style="width:${pct}%;background:${a.color}"></div>
+          </div>
+          <span class="agent-cost-amount">$${a.cost.toFixed(2)}</span>
+          <span class="agent-cost-pct">${pct}%</span>
+        </div>`;
+      }).join('');
+    }
     updateTimestamp();
 
     // Update active timers every 30s
