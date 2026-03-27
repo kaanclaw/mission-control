@@ -820,7 +820,7 @@
             </div>
           </div>
           <div class="powered-by">Powered by Claude Sonnet 4.6</div>
-          <div class="skills-card">&#x1F9E9; Skills: 12 installed</div>
+          <div class="skills-card">&#x1F9E9; Skills: <span id="skills-count">12</span> installed</div>
         </div>
 
         <div class="card">
@@ -1299,7 +1299,17 @@
       return 'Idle';
     }
 
+    function activeForText(statusSince, status) {
+      if (!statusSince || status === 'idle') return '';
+      const mins = Math.floor((Date.now() - new Date(statusSince).getTime()) / 60000);
+      return 'Active for ' + mins + 'm';
+    }
+
+    // Store latest agents for timer refresh
+    let latestAgents = [];
+
     function renderRoster(agents) {
+      latestAgents = agents;
       const el = document.getElementById('agent-roster');
       el.innerHTML = agents.map(a => {
         const emoji = agentEmojis[a.id] || '\u{1F916}';
@@ -1308,7 +1318,8 @@
         const label = statusLabel(a.status);
         const taskText = a.task ? escapeHtml(a.task) : 'No active task';
         const since = a.status_since ? timeAgo(a.status_since) : '';
-        return `<div class="agent-row clickable" onclick="openLogPanel('${a.id}','${escapeHtml(a.name)}','${escapeHtml(a.task || '')}')">
+        const activeText = activeForText(a.status_since, a.status);
+        return `<div class="agent-row clickable" data-agent-id="${a.id}" onclick="openLogPanel('${a.id}','${escapeHtml(a.name)}','${escapeHtml(a.task || '')}')">
           <div class="agent-avatar ${color}">${emoji}</div>
           <div class="agent-info">
             <div class="agent-name-row">
@@ -1317,6 +1328,7 @@
             </div>
             <div style="font-size:12px;color:var(--muted-foreground);margin-top:2px;">${taskText}</div>
             <div class="task-progress-bar ${a.status}"><div class="bar-fill"></div></div>
+            ${activeText ? `<div class="active-timer" style="font-size:11px;color:var(--muted-foreground);margin-top:3px;">${activeText}</div>` : ''}
           </div>
           <div class="status-indicator">
             <span class="status-dot ${dot}"></span>
@@ -1419,15 +1431,40 @@
       };
     }
 
+    // ── Fetch Skills Count ──
+    function fetchSkillsCount() {
+      fetch('data/skills-count.json?t=' + Date.now())
+        .then(r => r.json())
+        .then(d => { document.getElementById('skills-count').textContent = d.count; })
+        .catch(() => {}); // graceful fallback to hardcoded
+    }
+
+    // ── Refresh active timers every 30s ──
+    function refreshActiveTimers() {
+      if (!latestAgents.length) return;
+      document.querySelectorAll('.active-timer').forEach(el => {
+        const row = el.closest('.agent-row');
+        if (!row) return;
+        const agentId = row.getAttribute('data-agent-id');
+        const agent = latestAgents.find(a => a.id === agentId);
+        if (agent) {
+          const text = activeForText(agent.status_since, agent.status);
+          el.textContent = text;
+        }
+      });
+    }
+
     // ── Init ──
     async function refresh() {
       await Promise.all([fetchCosts(), fetchIssues(), fetchAgentStatus()]);
+      fetchSkillsCount();
       updateTimestamp();
     }
 
-    // Initial load: fetch costs + issues, then connect SSE for live data
+    // Initial load: fetch costs + issues + skills, then connect SSE for live data
     (async function init() {
       await Promise.all([fetchCosts(), fetchIssues()]);
+      fetchSkillsCount();
       updateTimestamp();
       connectSSE();
     })();
@@ -1442,13 +1479,8 @@
     });
     updateTimestamp();
 
-    // Update relative timestamps in activity feed every 30s
-    setInterval(() => {
-      document.querySelectorAll('#activity-feed .activity-meta').forEach(el => {
-        // Timestamps are rendered as text, so we skip re-rendering here
-        // The feed re-renders on new events anyway
-      });
-    }, 30000);
+    // Update active timers every 30s
+    setInterval(refreshActiveTimers, 30000);
   </script>
 </body>
 </html>
