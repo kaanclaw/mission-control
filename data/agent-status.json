@@ -1,12 +1,68 @@
 {
-  "last_updated": "2026-03-27T05:16:00Z",
+  "last_updated": "2026-03-28T01:15:00.000000+00:00",
   "agents": [
-    {"id": "claw", "name": "Claw", "role": "Orchestrator", "department": "hub", "status": "coding", "task": "Overnight: eval baseline, skill scanner, transcription analysis", "status_since": "2026-03-27T04:00:00Z"},
-    {"id": "forge", "name": "Forge", "role": "Builder", "department": "engineering", "status": "idle", "task": "Shipped: eval harness improvements + skill scanner", "status_since": "2026-03-27T05:15:00Z"},
-    {"id": "rex", "name": "Rex", "role": "Builder", "department": "engineering", "status": "idle", "task": "Standing by for new projects", "status_since": null},
-    {"id": "jamie", "name": "Jamie", "role": "Builder", "department": "engineering", "status": "idle", "task": "Shipped: cost chart + real-time fixes", "status_since": "2026-03-27T03:10:00Z"},
-    {"id": "scout", "name": "Scout", "role": "Researcher", "department": "research", "status": "idle", "task": "Event analysis complete", "status_since": "2026-03-27T03:00:00Z"},
-    {"id": "demi", "name": "Demi", "role": "CMO / Creative", "department": "creative", "status": "idle", "task": null, "status_since": null},
-    {"id": "juice", "name": "Juice", "role": "Finance", "department": "ops", "status": "idle", "task": null, "status_since": null}
+    {
+      "id": "claw",
+      "name": "Claw",
+      "role": "Orchestrator",
+      "department": "hub",
+      "status": "thinking",
+      "task": "Orchestrating Supabase integration + Mission Control fixes",
+      "status_since": "2026-03-28T01:15:00.000000+00:00"
+    },
+    {
+      "id": "forge",
+      "name": "Forge",
+      "role": "Builder",
+      "department": "engineering",
+      "status": "idle",
+      "task": "Supabase integration shipped",
+      "status_since": "2026-03-28T00:42:24.894534+00:00"
+    },
+    {
+      "id": "rex",
+      "name": "Rex",
+      "role": "Builder",
+      "department": "engineering",
+      "status": "idle",
+      "task": "Last: 39 domain knowledge files filled",
+      "status_since": "2026-03-28T00:42:24.895362+00:00"
+    },
+    {
+      "id": "jamie",
+      "name": "Jamie",
+      "role": "Builder",
+      "department": "engineering",
+      "status": "coding",
+      "task": "Fixing Mission Control bugs",
+      "status_since": "2026-03-28T01:15:00.000000+00:00"
+    },
+    {
+      "id": "scout",
+      "name": "Scout",
+      "role": "Researcher",
+      "department": "research",
+      "status": "idle",
+      "task": "Last: KB expansion research delivered",
+      "status_since": "2026-03-28T00:42:24.897210+00:00"
+    },
+    {
+      "id": "demi",
+      "name": "Demi",
+      "role": "CMO / Creative",
+      "department": "creative",
+      "status": "idle",
+      "task": null,
+      "status_since": null
+    },
+    {
+      "id": "juice",
+      "name": "Juice",
+      "role": "Finance",
+      "department": "ops",
+      "status": "idle",
+      "task": null,
+      "status_since": null
+    }
   ]
 }

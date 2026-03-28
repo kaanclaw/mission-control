@@ -1411,7 +1411,7 @@
     }
 
     function activeForText(statusSince, status) {
-      if (!statusSince || status === 'idle') return '';
+      if (!statusSince || (status !== 'coding' && status !== 'thinking')) return '';
       const mins = Math.floor((Date.now() - new Date(statusSince).getTime()) / 60000);
       return 'Active for ' + mins + 'm';
     }
@@ -1572,9 +1572,9 @@
       updateTimestamp();
     }
 
-    // Initial load: fetch costs + issues + skills, then connect SSE for live data
+    // Initial load: fetch costs + issues + agent status + skills, then connect SSE for live data
     (async function init() {
-      await Promise.all([fetchCosts(), fetchIssues()]);
+      await Promise.all([fetchCosts(), fetchIssues(), fetchAgentStatus()]);
       fetchSkillsCount();
       updateTimestamp();
       connectSSE();
