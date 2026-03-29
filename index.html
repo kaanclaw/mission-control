@@ -32,12 +32,14 @@
       --chart-4: #eab308;
       --chart-5: #f59e0b;
       --sidebar-bg: #fafafa;
+      --orange: #f97316;
+      --orange-glow: rgba(249,115,22,0.2);
     }
 
     .dark {
       --background: #0a0a0a;
       --foreground: #fafafa;
-      --card: #1a1a1a;
+      --card: #1e1c1a;
       --card-foreground: #fafafa;
       --muted: #262626;
       --muted-foreground: #a3a3a3;
@@ -49,12 +51,14 @@
       --accent-foreground: #fafafa;
       --destructive: #f87171;
       --ring: #525252;
-      --chart-1: #818cf8;
-      --chart-2: #34d399;
-      --chart-3: #fbbf24;
-      --chart-4: #c084fc;
-      --chart-5: #fb7185;
+      --chart-1: #f97316;
+      --chart-2: #06b6d4;
+      --chart-3: #3b82f6;
+      --chart-4: #eab308;
+      --chart-5: #f59e0b;
       --sidebar-bg: #141414;
+      --orange: #f97316;
+      --orange-glow: rgba(249,115,22,0.2);
     }
 
     body {
@@ -112,6 +116,15 @@
     .nav-item:hover { background: var(--accent); color: var(--foreground); }
     .nav-item.active { background: var(--accent); color: var(--foreground); font-weight: 600; }
     .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+    .nav-section-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted-foreground);
+      padding: 12px 12px 4px;
+      opacity: 0.7;
+    }
     .sidebar-footer {
       padding: 16px 20px;
       border-top: 1px solid var(--border);
@@ -205,12 +218,95 @@
     /* Content */
     .page-content { padding: 24px; max-width: 1400px; }
 
-    /* Cards */
+    /* ══════════════════════════════════════════
+       TOP STATS BAR (Phase 1)
+       ══════════════════════════════════════════ */
+    .top-stats-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .top-stat {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .dark .top-stat {
+      box-shadow: 0 0 15px var(--orange-glow);
+      border-color: rgba(249,115,22,0.15);
+    }
+    .top-stat:hover { border-color: var(--orange); }
+    .top-stat.clickable { cursor: pointer; }
+    .top-stat-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted-foreground);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .top-stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--foreground);
+      line-height: 1.2;
+    }
+    .top-stat-sub {
+      font-size: 12px;
+      color: var(--muted-foreground);
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .top-stat-sub .delta-up { color: #22c55e; }
+    .top-stat-sub .delta-down { color: #ef4444; }
+    .top-stat-accent {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--orange);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      opacity: 0.6;
+    }
+    .agent-dots-row {
+      display: flex;
+      gap: 4px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+    .agent-mini-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border);
+      transition: all 0.3s;
+    }
+    .agent-mini-dot.active { border-color: transparent; animation: pulse 2s ease-in-out infinite; }
+    .agent-mini-dot.idle { opacity: 0.4; }
+
+    /* ══════════════════════════════════════════
+       CARDS (v6 reskin)
+       ══════════════════════════════════════════ */
     .card {
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       padding: 24px;
+    }
+    .dark .card {
+      box-shadow: 0 0 15px var(--orange-glow);
+      border-color: rgba(249,115,22,0.1);
     }
     .card-header {
       display: flex;
@@ -235,25 +331,8 @@
     }
     .card-link:hover { color: var(--foreground); }
 
-    /* Stat cards grid */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-    .stat-card .stat-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 8px;
-    }
-    .stat-label { font-size: 14px; color: var(--muted-foreground); font-weight: 500; }
-    .stat-icon { color: var(--muted-foreground); }
-    .stat-icon svg { width: 16px; height: 16px; }
-    .stat-value { font-size: 30px; font-weight: 700; color: var(--foreground); line-height: 1.2; }
-    .stat-delta { font-size: 13px; color: #22c55e; margin-top: 4px; font-weight: 500; }
-    .stat-delta.neutral { color: var(--muted-foreground); }
+    /* Old stat cards grid - kept for backward compat but hidden */
+    .stats-grid { display: none; }
 
     /* Two-col sections */
     .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
@@ -269,21 +348,31 @@
     }
     .agent-row:last-child { border-bottom: none; }
     .agent-avatar {
-      width: 40px;
-      height: 40px;
+      width: 48px;
+      height: 48px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 18px;
+      font-size: 22px;
       flex-shrink: 0;
+      transition: box-shadow 0.3s;
     }
+    .dark .agent-avatar { box-shadow: 0 0 10px var(--orange-glow); }
     .agent-avatar.coral { background: #fb923c20; }
     .agent-avatar.blue { background: #3b82f620; }
     .agent-avatar.purple { background: #a855f720; }
+    .agent-avatar.green { background: #22c55e20; }
+    .agent-avatar.pink { background: #ec489920; }
+    .agent-avatar.cyan { background: #06b6d420; }
+    .agent-avatar.yellow { background: #eab30820; }
     .dark .agent-avatar.coral { background: #fb923c30; }
     .dark .agent-avatar.blue { background: #3b82f630; }
     .dark .agent-avatar.purple { background: #a855f730; }
+    .dark .agent-avatar.green { background: #22c55e30; }
+    .dark .agent-avatar.pink { background: #ec489930; }
+    .dark .agent-avatar.cyan { background: #06b6d430; }
+    .dark .agent-avatar.yellow { background: #eab30830; }
     .agent-info { flex: 1; }
     .agent-name-row { display: flex; align-items: center; gap: 8px; }
     .agent-name { font-weight: 600; font-size: 14px; color: var(--foreground); }
@@ -486,7 +575,7 @@
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: var(--primary);
+      background: var(--orange);
       z-index: 1;
     }
     .changelog-date { font-size: 12px; color: var(--muted-foreground); white-space: nowrap; min-width: 80px; font-weight: 500; }
@@ -504,6 +593,7 @@
       transition: max-height 0.35s ease, opacity 0.25s ease, padding 0.25s ease;
       padding: 0 24px;
     }
+    .dark .cost-chart-panel { box-shadow: 0 0 15px var(--orange-glow); }
     .cost-chart-panel.open {
       max-height: 600px;
       opacity: 1;
@@ -530,9 +620,9 @@
       transition: background 0.15s, color 0.15s;
     }
     .cost-chart-toggles button.active {
-      background: var(--primary);
-      color: var(--primary-foreground);
-      border-color: var(--primary);
+      background: var(--orange);
+      color: #fff;
+      border-color: var(--orange);
     }
     .cost-chart-toggles button:hover:not(.active) { background: var(--accent); }
     .cost-chart-svg-wrap {
@@ -579,10 +669,6 @@
     .agent-cost-amount { width: 80px; font-size: 13px; color: var(--foreground); text-align: right; font-weight: 500; }
     .agent-cost-pct { width: 40px; font-size: 12px; color: var(--muted-foreground); text-align: right; }
 
-    /* Clickable stat card */
-    .stat-card.clickable { cursor: pointer; transition: border-color 0.15s; }
-    .stat-card.clickable:hover { border-color: var(--ring); }
-
     /* Footer */
     .page-footer {
       text-align: center;
@@ -596,7 +682,7 @@
     /* Full width helper */
     .full-width { margin-bottom: 24px; }
 
-    /* Log Panel — slide-in from right */
+    /* Log Panel */
     .log-panel-overlay {
       position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 100;
       opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
@@ -643,7 +729,7 @@
     .missions-table td {
       padding: 10px 12px; border-top: 1px solid var(--border); font-size: 13px; color: var(--foreground);
     }
-    .missions-table a { color: var(--chart-3); text-decoration: none; }
+    .missions-table a { color: var(--orange); text-decoration: none; }
     .missions-table a:hover { text-decoration: underline; }
     .mission-status-pill {
       display: inline-flex; align-items: center; gap: 5px;
@@ -730,13 +816,267 @@
     .agent-row.clickable { cursor: pointer; border-radius: 8px; padding: 12px 8px; margin: 0 -8px; transition: background 0.15s; }
     .agent-row.clickable:hover { background: var(--accent); }
 
-    /* Responsive */
+    /* ══════════════════════════════════════════
+       TAB SWITCHING
+       ══════════════════════════════════════════ */
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+
+    /* ══════════════════════════════════════════
+       OFFICE VIEW (Phase 2 — Isometric)
+       ══════════════════════════════════════════ */
+    .office-container {
+      position: relative;
+      width: 100%;
+      min-height: 700px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border-radius: var(--radius);
+      background: #0d0d0d;
+      border: 1px solid rgba(249,115,22,0.15);
+      box-shadow: 0 0 30px var(--orange-glow);
+    }
+    .office-perspective {
+      perspective: 1200px;
+      width: 100%;
+      height: 700px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .office-grid {
+      position: relative;
+      width: 700px;
+      height: 700px;
+      transform: rotateX(60deg) rotateZ(-45deg);
+      transform-style: preserve-3d;
+    }
+    /* Circuit pattern floor */
+    .office-floor {
+      position: absolute;
+      inset: 0;
+      background:
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 49px,
+          rgba(249,115,22,0.06) 49px,
+          rgba(249,115,22,0.06) 50px
+        ),
+        repeating-linear-gradient(
+          90deg,
+          transparent,
+          transparent 49px,
+          rgba(249,115,22,0.06) 49px,
+          rgba(249,115,22,0.06) 50px
+        );
+      border: 1px solid rgba(249,115,22,0.1);
+      border-radius: 8px;
+    }
+    /* Subtle circuit traces */
+    .office-floor::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 25% 25%, rgba(249,115,22,0.04) 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, rgba(249,115,22,0.04) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(249,115,22,0.06) 0%, transparent 40%);
+      pointer-events: none;
+    }
+
+    /* Department zones */
+    .dept-zone {
+      position: absolute;
+      border-radius: 12px;
+      border: 1.5px solid rgba(249,115,22,0.15);
+      background: rgba(30,28,26,0.85);
+      padding: 16px;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .dept-zone.has-active {
+      border-color: rgba(249,115,22,0.4);
+      box-shadow: 0 0 25px rgba(249,115,22,0.15), inset 0 0 20px rgba(249,115,22,0.05);
+    }
+    .dept-zone-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--orange);
+      text-align: center;
+      /* Counter-rotate to make text readable */
+      transform: rotateZ(45deg) rotateX(-60deg);
+      white-space: nowrap;
+    }
+    .dept-agents {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      /* Counter-rotate */
+      transform: rotateZ(45deg) rotateX(-60deg);
+    }
+    .office-agent {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      position: relative;
+      cursor: pointer;
+    }
+    .office-agent-circle {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      border: 2px solid rgba(255,255,255,0.1);
+      transition: border-color 0.3s, box-shadow 0.3s;
+      position: relative;
+    }
+    .office-agent-circle.active-agent {
+      border-color: var(--orange);
+      box-shadow: 0 0 12px var(--orange-glow);
+    }
+    .office-agent-status-dot {
+      position: absolute;
+      bottom: -1px;
+      right: -1px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 2px solid #0d0d0d;
+    }
+    .office-agent-name {
+      font-size: 11px;
+      font-weight: 600;
+      color: #ccc;
+      text-align: center;
+    }
+
+    /* Floating tooltip above active agents */
+    .office-tooltip {
+      position: absolute;
+      bottom: calc(100% + 12px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1e1c1a;
+      border: 1px solid rgba(249,115,22,0.3);
+      border-radius: 8px;
+      padding: 8px 12px;
+      min-width: 160px;
+      max-width: 220px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      pointer-events: none;
+      z-index: 10;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .office-agent:hover .office-tooltip,
+    .office-tooltip.visible {
+      opacity: 1;
+    }
+    .office-tooltip-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .office-tooltip-task {
+      font-size: 11px;
+      color: #a3a3a3;
+      line-height: 1.4;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    /* Department positions on the isometric grid */
+    .dept-central-command {
+      width: 180px; height: 180px;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+      border-color: rgba(249,115,22,0.3);
+    }
+    .dept-build-lab {
+      width: 200px; height: 160px;
+      top: 40px; left: 40px;
+    }
+    .dept-creative-studio {
+      width: 170px; height: 140px;
+      top: 40px; right: 40px;
+    }
+    .dept-finance {
+      width: 160px; height: 140px;
+      bottom: 40px; left: 40px;
+    }
+    .dept-research-hub {
+      width: 200px; height: 160px;
+      bottom: 40px; right: 40px;
+    }
+
+    /* Connection lines between departments */
+    .dept-connections {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .dept-connections line {
+      stroke: rgba(249,115,22,0.12);
+      stroke-width: 1;
+      stroke-dasharray: 4 4;
+    }
+
+    /* Office ambient particles */
+    @keyframes float-particle {
+      0%, 100% { transform: translateY(0) scale(1); opacity: 0.3; }
+      50% { transform: translateY(-10px) scale(1.2); opacity: 0.6; }
+    }
+    .office-particle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: var(--orange);
+      opacity: 0.3;
+      animation: float-particle 3s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    /* ══════════════════════════════════════════
+       RESPONSIVE
+       ══════════════════════════════════════════ */
     @media (max-width: 900px) {
       .sidebar { transform: translateX(-256px); }
       .sidebar.open { transform: translateX(0); }
       .main-wrapper { margin-left: 0; }
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .top-stats-bar { grid-template-columns: repeat(2, 1fr); }
       .two-col, .three-col { grid-template-columns: 1fr; }
+      .office-perspective { height: 500px; }
+      .office-grid { width: 450px; height: 450px; }
+      .dept-zone { padding: 10px; }
+      .dept-zone-label { font-size: 9px; }
+      .office-agent-circle { width: 32px; height: 32px; font-size: 16px; }
+      .dept-build-lab, .dept-creative-studio, .dept-finance, .dept-research-hub { width: 140px; height: 110px; }
+      .dept-central-command { width: 130px; height: 130px; }
+    }
+    @media (max-width: 600px) {
+      .top-stats-bar { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -747,27 +1087,32 @@
       <span>&#x1F99E; Mission Control</span>
     </div>
     <nav class="sidebar-nav">
-      <div class="nav-item active" onclick="navTo('section-overview', this)">
+      <div class="nav-item active" data-tab="office" onclick="switchTab('office', this)">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Office
+      </div>
+      <div class="nav-section-label">Dashboard</div>
+      <div class="nav-item" data-tab="dashboard" data-section="section-overview" onclick="switchTab('dashboard', this, 'section-overview')">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
         Overview
       </div>
-      <div class="nav-item" onclick="navTo('section-agents', this)">
+      <div class="nav-item" data-tab="dashboard" data-section="section-agents" onclick="switchTab('dashboard', this, 'section-agents')">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 0 0-16 0"/></svg>
         Agents
       </div>
-      <div class="nav-item" onclick="navTo('section-tasks', this)">
+      <div class="nav-item" data-tab="dashboard" data-section="section-tasks" onclick="switchTab('dashboard', this, 'section-tasks')">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg>
         Tasks
       </div>
-      <div class="nav-item" onclick="navTo('section-costs', this)">
+      <div class="nav-item" data-tab="dashboard" data-section="section-costs" onclick="switchTab('dashboard', this, 'section-costs')">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
         Costs
       </div>
-      <div class="nav-item" onclick="navTo('section-research', this)">
+      <div class="nav-item" data-tab="dashboard" data-section="section-research" onclick="switchTab('dashboard', this, 'section-research')">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-6-6m6 6v-4.8m0 4.8h-4.8"/><path d="M3 16.2V21m0 0h4.8M3 21l6-6"/><path d="M21 7.8V3m0 0h-4.8M21 3l-6 6"/><path d="M3 7.8V3m0 0h4.8M3 3l6 6"/></svg>
         Research
       </div>
-      <div class="nav-item" onclick="navTo('section-settings', this)">
+      <div class="nav-item" data-tab="dashboard" data-section="section-settings" onclick="switchTab('dashboard', this, 'section-settings')">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
         Settings
       </div>
@@ -788,7 +1133,7 @@
         <button class="sidebar-toggle" id="sidebar-toggle" title="Toggle sidebar">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
         </button>
-        <span class="breadcrumb">Overview</span>
+        <span class="breadcrumb" id="breadcrumb">Office</span>
       </div>
       <div class="header-right">
         <span class="sse-indicator disconnected" id="sse-indicator">
@@ -808,58 +1153,50 @@
     </header>
 
     <div class="page-content">
-      <!-- 1. Stat Cards Row -->
-      <div class="stats-grid" id="section-overview">
-        <div class="card stat-card clickable" id="cost-today-card" onclick="toggleCostChart()">
-          <div class="stat-top">
-            <span class="stat-label">API Cost Today</span>
-            <span class="stat-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
+      <!-- ═══ TOP STATS BAR (always visible) ═══ -->
+      <div class="top-stats-bar" id="top-stats-bar">
+        <div class="top-stat clickable" onclick="toggleCostChart()">
+          <div class="top-stat-accent"></div>
+          <div class="top-stat-label">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            Costs Today
           </div>
-          <div class="stat-value" id="cost-today">$0.00</div>
-          <div class="stat-delta" id="cost-delta">Loading...</div>
+          <div class="top-stat-value" id="ts-cost">$0.00</div>
+          <div class="top-stat-sub">
+            <span id="ts-tokens">0 tokens</span>
+            <span id="ts-cost-delta"></span>
+          </div>
         </div>
-        <div class="card stat-card">
-          <div class="stat-top">
-            <span class="stat-label">Total Tokens</span>
-            <span class="stat-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
+        <div class="top-stat">
+          <div class="top-stat-accent"></div>
+          <div class="top-stat-label">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 0 0-16 0"/></svg>
+            Active Agents
           </div>
-          <div class="stat-value" id="total-tokens">0</div>
-          <div class="stat-delta neutral" id="tokens-context">This session</div>
+          <div class="top-stat-value" id="ts-agents">0/7</div>
+          <div class="agent-dots-row" id="ts-agent-dots"></div>
         </div>
-        <div class="card stat-card">
-          <div class="stat-top">
-            <span class="stat-label">Tasks Completed</span>
-            <span class="stat-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+        <div class="top-stat">
+          <div class="top-stat-accent"></div>
+          <div class="top-stat-label">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg>
+            Tasks Completed
           </div>
-          <div class="stat-value" id="tasks-completed">0</div>
-          <div class="stat-delta neutral">All time</div>
+          <div class="top-stat-value" id="ts-tasks">0</div>
+          <div class="top-stat-sub">today</div>
         </div>
-        <div class="card stat-card">
-          <div class="stat-top">
-            <span class="stat-label">Cost Per Task</span>
-            <span class="stat-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg></span>
+        <div class="top-stat">
+          <div class="top-stat-accent"></div>
+          <div class="top-stat-label">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Next Deadline
           </div>
-          <div class="stat-value" id="cost-per-task">$0.00</div>
-          <div class="stat-delta neutral" id="cost-per-task-delta">Average</div>
-        </div>
-        <div class="card stat-card">
-          <div class="stat-top">
-            <span class="stat-label">Agents Active</span>
-            <span class="stat-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 0 0-16 0"/></svg></span>
-          </div>
-          <div class="stat-value" id="agents-active">—</div>
-          <div class="stat-delta neutral" id="agents-total-label">Loading...</div>
+          <div class="top-stat-value" id="ts-deadline">--:--</div>
+          <div class="top-stat-sub" id="ts-deadline-name">Loading...</div>
         </div>
       </div>
 
-      <!-- Quick Links -->
-      <div class="quick-links">
-        <a class="quick-link-pill" href="http://localhost:5175" target="_blank">&#x1F4CB; EasyClaw</a>
-        <a class="quick-link-pill" href="https://github.com/kaanclaw" target="_blank">&#x1F4CA; GitHub</a>
-        <a class="quick-link-pill" href="https://docs.google.com/document/d/event-picks" target="_blank">&#x1F4DD; Event Picks</a>
-      </div>
-
-      <!-- Cost History Chart (toggle via API Cost Today card) -->
+      <!-- Cost History Chart (toggle via Costs Today card) -->
       <div class="cost-chart-panel" id="cost-chart-panel">
         <div class="cost-chart-header">
           <span class="cost-chart-title">Cost Over Time</span>
@@ -879,244 +1216,260 @@
         <div class="agent-cost-bars" id="agent-cost-bars"></div>
       </div>
 
-      <!-- 2. Two columns: Agent Roster + Mission Feed -->
-      <div class="two-col" id="section-agents">
-        <div class="card">
-          <div class="card-header">
-            <span class="card-title">Agent Roster</span>
-            <span class="card-badge">3 active</span>
-          </div>
-          <div id="agent-roster">
-            <div class="agent-row">
-              <div class="agent-avatar coral">&#x1F99E;</div>
-              <div class="agent-info">
-                <div class="agent-name-row">
-                  <span class="agent-name">Claw</span>
-                  <span class="agent-role-text">Orchestrator</span>
-                </div>
+      <!-- ═══ TAB: OFFICE VIEW ═══ -->
+      <div class="tab-pane active" id="tab-office">
+        <div class="office-container">
+          <div class="office-perspective">
+            <div class="office-grid" id="office-grid">
+              <div class="office-floor"></div>
+
+              <!-- Connection lines -->
+              <svg class="dept-connections" viewBox="0 0 700 700" preserveAspectRatio="none">
+                <line x1="350" y1="350" x2="140" y2="120"/>
+                <line x1="350" y1="350" x2="560" y2="120"/>
+                <line x1="350" y1="350" x2="120" y2="580"/>
+                <line x1="350" y1="350" x2="560" y2="580"/>
+              </svg>
+
+              <!-- Central Command — Claw -->
+              <div class="dept-zone dept-central-command" id="dept-hub">
+                <div class="dept-zone-label">Central Command</div>
+                <div class="dept-agents" id="dept-hub-agents"></div>
               </div>
-              <div class="status-indicator">
-                <span class="status-dot green"></span>
-                <span class="status-text">Active</span>
+
+              <!-- Build Lab — Forge + Jamie -->
+              <div class="dept-zone dept-build-lab" id="dept-engineering">
+                <div class="dept-zone-label">Build Lab</div>
+                <div class="dept-agents" id="dept-engineering-agents"></div>
               </div>
-              <div class="agent-context">Main session</div>
-            </div>
-            <div class="agent-row">
-              <div class="agent-avatar blue">&#x1F5FA;&#xFE0F;</div>
-              <div class="agent-info">
-                <div class="agent-name-row">
-                  <span class="agent-name">Atlas</span>
-                  <span class="agent-role-text">Architect</span>
-                </div>
+
+              <!-- Creative Studio — Demi -->
+              <div class="dept-zone dept-creative-studio" id="dept-creative">
+                <div class="dept-zone-label">Creative Studio</div>
+                <div class="dept-agents" id="dept-creative-agents"></div>
               </div>
-              <div class="status-indicator">
-                <span class="status-dot green"></span>
-                <span class="status-text">Active</span>
+
+              <!-- Finance — Juice -->
+              <div class="dept-zone dept-finance" id="dept-ops">
+                <div class="dept-zone-label">Finance</div>
+                <div class="dept-agents" id="dept-ops-agents"></div>
               </div>
-              <div class="agent-context">Planning mode</div>
-            </div>
-            <div class="agent-row" id="forge-row">
-              <div class="agent-avatar purple">&#x2692;&#xFE0F;</div>
-              <div class="agent-info">
-                <div class="agent-name-row">
-                  <span class="agent-name">Forge</span>
-                  <span class="agent-role-text">Builder</span>
-                </div>
+
+              <!-- Research Hub — Scout + Rex -->
+              <div class="dept-zone dept-research-hub" id="dept-research">
+                <div class="dept-zone-label">Research Hub</div>
+                <div class="dept-agents" id="dept-research-agents"></div>
               </div>
-              <div class="status-indicator" id="forge-status">
-                <span class="status-dot grey"></span>
-                <span class="status-text">Idle</span>
-              </div>
-              <div class="agent-context">Claude Code</div>
             </div>
           </div>
-          <div class="powered-by">Powered by Claude Sonnet 4.6</div>
-          <div class="skills-card">&#x1F9E9; Skills: <span id="skills-count">12</span> installed</div>
+        </div>
+      </div>
+
+      <!-- ═══ TAB: DASHBOARD VIEW (all existing content) ═══ -->
+      <div class="tab-pane" id="tab-dashboard">
+        <!-- Quick Links -->
+        <div class="quick-links" id="section-overview">
+          <a class="quick-link-pill" href="http://localhost:5175" target="_blank">&#x1F4CB; EasyClaw</a>
+          <a class="quick-link-pill" href="https://github.com/kaanclaw" target="_blank">&#x1F4CA; GitHub</a>
+          <a class="quick-link-pill" href="https://docs.google.com/document/d/event-picks" target="_blank">&#x1F4DD; Event Picks</a>
         </div>
 
-        <div class="card">
+        <!-- Agent Roster + Mission Feed -->
+        <div class="two-col" id="section-agents">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Agent Roster</span>
+              <span class="card-badge" id="roster-badge">0 active</span>
+            </div>
+            <div id="agent-roster">
+              <div class="agent-row">
+                <div class="agent-avatar coral">&#x1F99E;</div>
+                <div class="agent-info">
+                  <div class="agent-name-row">
+                    <span class="agent-name">Claw</span>
+                    <span class="agent-role-text">Orchestrator</span>
+                  </div>
+                </div>
+                <div class="status-indicator">
+                  <span class="status-dot grey"></span>
+                  <span class="status-text">Loading...</span>
+                </div>
+              </div>
+            </div>
+            <div class="powered-by">Powered by Claude Opus 4.6</div>
+            <div class="skills-card">&#x1F9E9; Skills: <span id="skills-count">12</span> installed</div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Active Missions</span>
+              <a class="card-link" href="https://github.com/kaanclaw/dev-team/issues" target="_blank">View all &rarr;</a>
+            </div>
+            <div id="mission-feed">
+              <div class="mission-empty">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+                <div>Loading missions...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Active Missions Table -->
+        <div class="card full-width missions-table-wrap" id="active-missions-section">
           <div class="card-header">
             <span class="card-title">Active Missions</span>
-            <a class="card-link" href="https://github.com/kaanclaw/dev-team/issues" target="_blank">View all &rarr;</a>
+            <a class="card-link" href="https://github.com/kaanclaw/workspace/tree/main/agents" target="_blank">View MISSIONS.md &rarr;</a>
           </div>
-          <div id="mission-feed">
-            <div class="mission-empty">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
-              <div>Loading missions...</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 2b. Active Missions Table -->
-      <div class="card full-width missions-table-wrap" id="active-missions-section">
-        <div class="card-header">
-          <span class="card-title">Active Missions</span>
-          <a class="card-link" href="https://github.com/kaanclaw/workspace/tree/main/agents" target="_blank">View MISSIONS.md &rarr;</a>
-        </div>
-        <table class="missions-table" id="missions-table">
-          <thead><tr><th>Agent</th><th>Current Mission</th><th>Status</th></tr></thead>
-          <tbody id="missions-tbody"><tr><td colspan="3" style="color:var(--muted-foreground)">Loading...</td></tr></tbody>
-        </table>
-      </div>
-
-      <!-- 3. Three columns: Activity Feed + System Health -->
-      <div class="three-col" id="section-tasks">
-        <div class="card">
-          <div class="card-header">
-            <span class="card-title">Recent Activity</span>
-            <span class="live-badge">Live</span>
-          </div>
-          <div id="activity-feed">
-            <div class="activity-row"><span class="activity-msg" style="color:var(--muted-foreground)">Loading activity...</span></div>
-          </div>
+          <table class="missions-table" id="missions-table">
+            <thead><tr><th>Agent</th><th>Current Mission</th><th>Status</th></tr></thead>
+            <tbody id="missions-tbody"><tr><td colspan="3" style="color:var(--muted-foreground)">Loading...</td></tr></tbody>
+          </table>
         </div>
 
-        <div class="card">
-          <div class="card-header">
-            <span class="card-title">System Health</span>
-          </div>
-          <div>
-            <div class="health-item">
-              <span class="health-dot green"></span>
-              <span class="health-name">OpenClaw Gateway</span>
-              <span class="health-status">Active</span>
+        <!-- Activity Feed + System Health -->
+        <div class="three-col" id="section-tasks">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Recent Activity</span>
+              <span class="live-badge">Live</span>
             </div>
-            <div class="health-item">
-              <span class="health-dot green"></span>
-              <span class="health-name">GitHub CLI</span>
-              <span class="health-status">Connected</span>
-            </div>
-            <div class="health-item">
-              <span class="health-dot green"></span>
-              <span class="health-name">Whisper Audio</span>
-              <span class="health-status">Ready</span>
-            </div>
-            <div class="health-item">
-              <span class="health-dot yellow"></span>
-              <span class="health-name">Chrome Debug</span>
-              <span class="health-status">On-demand</span>
+            <div id="activity-feed">
+              <div class="activity-row"><span class="activity-msg" style="color:var(--muted-foreground)">Loading activity...</span></div>
             </div>
           </div>
-        </div>
-      </div>
 
-      <!-- 4. Two columns: Capabilities + Research Library -->
-      <div class="two-col" id="section-research">
-        <div class="card">
-          <div class="card-header">
-            <span class="card-title">Active Capabilities</span>
-          </div>
-          <div class="cap-grid">
-            <div class="cap-pill"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/></svg> Voice Transcription</div>
-            <div class="cap-pill"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/></svg> Browser Automation</div>
-            <div class="cap-pill"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/></svg> Diagram Generation</div>
-            <div class="cap-pill"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/></svg> GitHub Operations</div>
-            <div class="cap-pill"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/></svg> Email (Gmail)</div>
-            <div class="cap-pill"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/></svg> Code Execution</div>
-            <div class="cap-pill"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/></svg> Web Search</div>
-            <div class="cap-pill"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/></svg> File System</div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            <span class="card-title">Research Library</span>
-            <span class="card-badge">2 repos studied</span>
-          </div>
-          <div>
-            <div class="research-row">
-              <div class="research-icon">&#x1F4E6;</div>
-              <div class="research-info">
-                <div class="research-name">claude-mem</div>
-                <div class="research-insight">Index-first memory &rarr; 10x token savings</div>
-                <div class="research-date">2026-03-25</div>
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">System Health</span>
+            </div>
+            <div>
+              <div class="health-item">
+                <span class="health-dot green"></span>
+                <span class="health-name">OpenClaw Gateway</span>
+                <span class="health-status">Active</span>
               </div>
-            </div>
-            <div class="research-row">
-              <div class="research-icon">&#x1F916;</div>
-              <div class="research-info">
-                <div class="research-name">hermes-agent</div>
-                <div class="research-insight">Frozen prompts + conditional skills</div>
-                <div class="research-date">2026-03-25</div>
+              <div class="health-item">
+                <span class="health-dot green"></span>
+                <span class="health-name">GitHub CLI</span>
+                <span class="health-status">Connected</span>
+              </div>
+              <div class="health-item">
+                <span class="health-dot green"></span>
+                <span class="health-name">Whisper Audio</span>
+                <span class="health-status">Ready</span>
+              </div>
+              <div class="health-item">
+                <span class="health-dot yellow"></span>
+                <span class="health-name">Chrome Debug</span>
+                <span class="health-status">On-demand</span>
               </div>
             </div>
           </div>
-          <div class="research-footer">We study repos as co-founders, extract principles, upgrade.</div>
         </div>
-      </div>
 
-      <!-- 5. Scheduled Jobs -->
-      <div class="card full-width" id="section-costs">
-        <div class="card-header">
-          <span class="card-title">Scheduled Jobs</span>
-          <span class="card-badge">3 active</span>
-        </div>
-        <div class="jobs-table">
-          <div class="jobs-header">
-            <span>Job</span>
-            <span>Schedule</span>
-            <span>Status</span>
-            <span>Next Run</span>
+        <!-- Capabilities + Research Library -->
+        <div class="two-col" id="section-research">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Active Capabilities</span>
+            </div>
+            <div class="cap-grid">
+              <div class="cap-pill"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/></svg> Voice Transcription</div>
+              <div class="cap-pill"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/></svg> Browser Automation</div>
+              <div class="cap-pill"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/></svg> Diagram Generation</div>
+              <div class="cap-pill"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/></svg> GitHub Operations</div>
+              <div class="cap-pill"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/></svg> Email (Gmail)</div>
+              <div class="cap-pill"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/></svg> Code Execution</div>
+              <div class="cap-pill"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/></svg> Web Search</div>
+              <div class="cap-pill"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/></svg> File System</div>
+            </div>
           </div>
-          <div class="jobs-row">
-            <span class="job-name">overnight-research</span>
-            <span class="job-schedule">Daily 1:00 AM PT</span>
-            <span class="job-status"><span class="status-dot green"></span> Scheduled</span>
-            <span class="job-next">Next: tonight</span>
-          </div>
-          <div class="jobs-row">
-            <span class="job-name">morning-ping-kaan</span>
-            <span class="job-schedule">Daily 9:30 AM PT</span>
-            <span class="job-status"><span class="status-dot green"></span> Scheduled</span>
-            <span class="job-next">Next: 9:30 AM</span>
-          </div>
-          <div class="jobs-row">
-            <span class="job-name">cost-sync</span>
-            <span class="job-schedule">Every 30 min</span>
-            <span class="job-status"><span class="status-dot green" style="animation:none;background:#22c55e"></span> Active</span>
-            <span class="job-next">Next: ~15 min</span>
-          </div>
-        </div>
-      </div>
 
-      <!-- 6. System Changelog -->
-      <div class="card full-width">
-        <div class="card-header">
-          <span class="card-title">System Changelog</span>
-        </div>
-        <div class="changelog-list">
-          <div class="changelog-item">
-            <span class="changelog-date">2026-03-25</span>
-            <span class="changelog-text">Mission Control v1-v5: Live costs, agent status, professional redesign</span>
-          </div>
-          <div class="changelog-item">
-            <span class="changelog-date">2026-03-25</span>
-            <span class="changelog-text">Diagram generation: Kie.ai integration, visual workflows</span>
-          </div>
-          <div class="changelog-item">
-            <span class="changelog-date">2026-03-25</span>
-            <span class="changelog-text">Hermes Agent research: Frozen prompts, memory patterns adopted</span>
-          </div>
-          <div class="changelog-item">
-            <span class="changelog-date">2026-03-25</span>
-            <span class="changelog-text">claude-mem research: Index-first memory, 10x token savings applied</span>
-          </div>
-          <div class="changelog-item">
-            <span class="changelog-date">2026-03-25</span>
-            <span class="changelog-text">Dev team initialized: Atlas + Forge + GitHub Issues task board</span>
-          </div>
-          <div class="changelog-item">
-            <span class="changelog-date">2026-03-24</span>
-            <span class="changelog-text">Day 1: Browser automation, voice transcription, dev environment</span>
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Research Library</span>
+              <span class="card-badge">2 repos studied</span>
+            </div>
+            <div>
+              <div class="research-row">
+                <div class="research-icon">&#x1F4E6;</div>
+                <div class="research-info">
+                  <div class="research-name">claude-mem</div>
+                  <div class="research-insight">Index-first memory &rarr; 10x token savings</div>
+                  <div class="research-date">2026-03-25</div>
+                </div>
+              </div>
+              <div class="research-row">
+                <div class="research-icon">&#x1F916;</div>
+                <div class="research-info">
+                  <div class="research-name">hermes-agent</div>
+                  <div class="research-insight">Frozen prompts + conditional skills</div>
+                  <div class="research-date">2026-03-25</div>
+                </div>
+              </div>
+            </div>
+            <div class="research-footer">We study repos as co-founders, extract principles, upgrade.</div>
           </div>
         </div>
-      </div>
 
-      <!-- Footer -->
-      <div class="page-footer" id="section-settings">
-        &#x1F99E; Claw Mission Control v5 &middot; Built by Forge &middot; kaanclaw/mission-control &middot; Last updated: <span id="footer-timestamp"></span>
-      </div>
+        <!-- Scheduled Jobs -->
+        <div class="card full-width" id="section-costs">
+          <div class="card-header">
+            <span class="card-title">Scheduled Jobs</span>
+            <span class="card-badge" id="jobs-badge">3 active</span>
+          </div>
+          <div class="jobs-table" id="jobs-table-dynamic">
+            <div class="jobs-header">
+              <span>Job</span>
+              <span>Schedule</span>
+              <span>Status</span>
+              <span>Next Run</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- System Changelog -->
+        <div class="card full-width">
+          <div class="card-header">
+            <span class="card-title">System Changelog</span>
+          </div>
+          <div class="changelog-list">
+            <div class="changelog-item">
+              <span class="changelog-date">2026-03-28</span>
+              <span class="changelog-text">Mission Control v6: Isometric office view, top stats bar, dashboard reskin</span>
+            </div>
+            <div class="changelog-item">
+              <span class="changelog-date">2026-03-25</span>
+              <span class="changelog-text">Mission Control v1-v5: Live costs, agent status, professional redesign</span>
+            </div>
+            <div class="changelog-item">
+              <span class="changelog-date">2026-03-25</span>
+              <span class="changelog-text">Diagram generation: Kie.ai integration, visual workflows</span>
+            </div>
+            <div class="changelog-item">
+              <span class="changelog-date">2026-03-25</span>
+              <span class="changelog-text">Hermes Agent research: Frozen prompts, memory patterns adopted</span>
+            </div>
+            <div class="changelog-item">
+              <span class="changelog-date">2026-03-25</span>
+              <span class="changelog-text">claude-mem research: Index-first memory, 10x token savings applied</span>
+            </div>
+            <div class="changelog-item">
+              <span class="changelog-date">2026-03-25</span>
+              <span class="changelog-text">Dev team initialized: Atlas + Forge + GitHub Issues task board</span>
+            </div>
+            <div class="changelog-item">
+              <span class="changelog-date">2026-03-24</span>
+              <span class="changelog-text">Day 1: Browser automation, voice transcription, dev environment</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="page-footer" id="section-settings">
+          &#x1F99E; Claw Mission Control v6 &middot; Built by Jamie &middot; kaanclaw/mission-control &middot; Last updated: <span id="footer-timestamp"></span>
+        </div>
+      </div><!-- /tab-dashboard -->
     </div>
   </div>
 
@@ -1138,19 +1491,64 @@
   </div>
 
   <script>
-    // ── Nav ──
-    function navTo(sectionId, el) {
-      document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
-      document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-      el.classList.add('active');
-    }
-
-    // ── State ──
+    // ═══════════════════════════════════════════
+    // STATE
+    // ═══════════════════════════════════════════
     let costData = null;
     let closedIssueCount = 0;
     let lastUpdated = new Date();
+    let latestAgents = [];
+    let cronJobs = [];
+    let currentTab = 'office';
 
-    // ── Theme ──
+    // ═══════════════════════════════════════════
+    // AGENT CONFIG
+    // ═══════════════════════════════════════════
+    const agentEmojis = {
+      claw: '\u{1F99E}', forge: '\u2692\uFE0F', jamie: '\u265F\uFE0F',
+      demi: '\u{1F3A8}', juice: '\u{1F4B0}', scout: '\u{1F52D}', rex: '\u{1F996}'
+    };
+    const agentColors = {
+      claw: 'coral', forge: 'purple', jamie: 'blue',
+      demi: 'pink', juice: 'cyan', scout: 'green', rex: 'yellow'
+    };
+    const agentDotColors = {
+      claw: '#f97316', forge: '#a855f7', jamie: '#3b82f6',
+      demi: '#ec4899', juice: '#06b6d4', scout: '#22c55e', rex: '#eab308'
+    };
+    const agentDepartments = {
+      claw: 'hub', forge: 'engineering', jamie: 'engineering',
+      demi: 'creative', juice: 'ops', scout: 'research', rex: 'research'
+    };
+
+    // ═══════════════════════════════════════════
+    // TAB SWITCHING
+    // ═══════════════════════════════════════════
+    function switchTab(tab, navEl, sectionId) {
+      currentTab = tab;
+      // Update nav active state
+      document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+      navEl.classList.add('active');
+      // Show/hide tab panes
+      document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+      if (tab === 'office') {
+        document.getElementById('tab-office').classList.add('active');
+        document.getElementById('breadcrumb').textContent = 'Office';
+      } else {
+        document.getElementById('tab-dashboard').classList.add('active');
+        document.getElementById('breadcrumb').textContent = navEl.textContent.trim();
+        if (sectionId) {
+          setTimeout(() => {
+            const el = document.getElementById(sectionId);
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          }, 50);
+        }
+      }
+    }
+
+    // ═══════════════════════════════════════════
+    // THEME
+    // ═══════════════════════════════════════════
     const savedTheme = localStorage.getItem('mc-theme');
     if (savedTheme === 'light') document.body.classList.remove('dark');
     document.getElementById('theme-toggle').addEventListener('click', () => {
@@ -1163,13 +1561,17 @@
       document.getElementById('theme-icon').textContent = '\u2600';
     }
 
-    // ── Sidebar toggle ──
+    // ═══════════════════════════════════════════
+    // SIDEBAR TOGGLE
+    // ═══════════════════════════════════════════
     document.getElementById('sidebar-toggle').addEventListener('click', () => {
       document.getElementById('sidebar').classList.toggle('collapsed');
       document.getElementById('main-wrapper').classList.toggle('expanded');
     });
 
-    // ── Time helpers ──
+    // ═══════════════════════════════════════════
+    // HELPERS
+    // ═══════════════════════════════════════════
     function timeAgo(dateStr) {
       const diff = Date.now() - new Date(dateStr).getTime();
       const mins = Math.floor(diff / 60000);
@@ -1181,41 +1583,127 @@
       return days + 'd ago';
     }
 
+    function escapeHtml(str) {
+      if (!str) return '';
+      const d = document.createElement('div');
+      d.textContent = str;
+      return d.innerHTML;
+    }
+
     function updateTimestamp() {
       const ts = new Date().toLocaleString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
       document.getElementById('last-updated').textContent = 'Updated ' + ts;
-      document.getElementById('footer-timestamp').textContent = new Date().toISOString();
+      const ft = document.getElementById('footer-timestamp');
+      if (ft) ft.textContent = new Date().toISOString();
     }
 
-    function updateCostPerTask() {
-      if (!costData) return;
-      const tasks = Math.max(closedIssueCount, 10);
-      const perTask = (costData.today.costUsd / tasks).toFixed(2);
-      document.getElementById('cost-per-task').textContent = '$' + perTask;
-      document.getElementById('cost-per-task-delta').textContent = closedIssueCount > 0
-        ? '÷ ' + closedIssueCount + ' tasks'
-        : '÷ ~10 tasks (est.)';
+    // ═══════════════════════════════════════════
+    // TOP STATS BAR
+    // ═══════════════════════════════════════════
+    function updateTopStats() {
+      // Costs
+      if (costData) {
+        document.getElementById('ts-cost').textContent = '$' + costData.today.costUsd.toFixed(2);
+        document.getElementById('ts-tokens').textContent = costData.today.totalTokens.toLocaleString() + ' tokens';
+      }
+      // Tasks
+      document.getElementById('ts-tasks').textContent = closedIssueCount;
+      // Agents
+      updateAgentDots();
+      // Deadline
+      updateNextDeadline();
     }
 
-    // ── Fetch costs ──
+    function updateAgentDots() {
+      const dotsEl = document.getElementById('ts-agent-dots');
+      const active = latestAgents.filter(a => a.status === 'coding' || a.status === 'active' || a.status === 'thinking').length;
+      const total = latestAgents.length || 7;
+      document.getElementById('ts-agents').textContent = active + '/' + total;
+      dotsEl.innerHTML = latestAgents.map(a => {
+        const isActive = a.status === 'coding' || a.status === 'active' || a.status === 'thinking';
+        const color = agentDotColors[a.id] || '#a3a3a3';
+        return `<div class="agent-mini-dot ${isActive ? 'active' : 'idle'}" style="background:${color}" title="${escapeHtml(a.name)}: ${escapeHtml(a.status)}"></div>`;
+      }).join('');
+    }
+
+    function updateNextDeadline() {
+      if (!cronJobs.length) return;
+      const now = new Date();
+      let nearest = null;
+      let nearestName = '';
+      cronJobs.forEach(job => {
+        if (job.next_run) {
+          const nextDate = new Date(job.next_run);
+          if (!nearest || nextDate < nearest) {
+            nearest = nextDate;
+            nearestName = job.name;
+          }
+        }
+      });
+      if (nearest) {
+        const diff = nearest.getTime() - now.getTime();
+        if (diff > 0) {
+          const hrs = Math.floor(diff / 3600000);
+          const mins = Math.floor((diff % 3600000) / 60000);
+          document.getElementById('ts-deadline').textContent = hrs > 0 ? hrs + 'h ' + mins + 'm' : mins + 'm';
+        } else {
+          document.getElementById('ts-deadline').textContent = 'Now';
+        }
+        document.getElementById('ts-deadline-name').textContent = nearestName.replace(/-/g, ' ');
+      }
+    }
+
+    // ═══════════════════════════════════════════
+    // FETCH COSTS
+    // ═══════════════════════════════════════════
     async function fetchCosts() {
       try {
         const res = await fetch('data/costs.json?t=' + Date.now());
         costData = await res.json();
-        const cost = costData.today.costUsd;
-        document.getElementById('cost-today').textContent = '$' + cost.toFixed(2);
-        document.getElementById('total-tokens').textContent = costData.today.totalTokens.toLocaleString();
-        document.getElementById('cost-delta').innerHTML = '&#8593; $' + cost.toFixed(2) + ' today';
-
-        updateCostPerTask();
+        updateTopStats();
       } catch (e) {
-        document.getElementById('cost-today').textContent = '$—';
-        document.getElementById('cost-delta').textContent = 'Failed to load';
-        document.getElementById('cost-delta').classList.add('neutral');
+        document.getElementById('ts-cost').textContent = '$\u2014';
       }
     }
 
-    // ── Fetch GitHub Issues ──
+    // ═══════════════════════════════════════════
+    // FETCH CRON STATUS
+    // ═══════════════════════════════════════════
+    async function fetchCronStatus() {
+      try {
+        const res = await fetch('data/cron-status.json?t=' + Date.now());
+        const data = await res.json();
+        cronJobs = data.jobs || [];
+        renderScheduledJobs();
+        updateNextDeadline();
+      } catch (e) {}
+    }
+
+    function renderScheduledJobs() {
+      const container = document.getElementById('jobs-table-dynamic');
+      const header = container.querySelector('.jobs-header');
+      // Remove existing rows
+      container.querySelectorAll('.jobs-row').forEach(r => r.remove());
+      const badge = document.getElementById('jobs-badge');
+      if (badge) badge.textContent = cronJobs.length + ' active';
+      cronJobs.forEach(job => {
+        const row = document.createElement('div');
+        row.className = 'jobs-row';
+        const statusDot = job.last_status === 'ok' ? 'green' : 'yellow';
+        const statusText = job.last_status === 'ok' ? 'Scheduled' : (job.last_status || 'Pending');
+        const nextText = job.next_run ? timeAgo(job.next_run) : 'TBD';
+        row.innerHTML = `
+          <span class="job-name">${escapeHtml(job.name)}</span>
+          <span class="job-schedule">${escapeHtml(job.schedule)}</span>
+          <span class="job-status"><span class="status-dot ${statusDot}"></span> ${escapeHtml(statusText)}</span>
+          <span class="job-next">${nextText}</span>`;
+        container.appendChild(row);
+      });
+    }
+
+    // ═══════════════════════════════════════════
+    // FETCH GITHUB ISSUES
+    // ═══════════════════════════════════════════
     async function fetchIssues() {
       try {
         const [openRes, closedRes] = await Promise.all([
@@ -1225,28 +1713,13 @@
         const openIssues = await openRes.json();
         const closedIssues = await closedRes.json();
 
-        // Filter out pull requests
         const open = (Array.isArray(openIssues) ? openIssues : []).filter(i => !i.pull_request);
         const closed = (Array.isArray(closedIssues) ? closedIssues : []).filter(i => !i.pull_request);
 
         closedIssueCount = closed.length;
-        document.getElementById('tasks-completed').textContent = closedIssueCount.toLocaleString();
+        updateTopStats();
 
-        updateCostPerTask();
-
-        // Forge status: working if open forge issues
-        const forgeWorking = open.some(i =>
-          (i.title && i.title.toLowerCase().includes('forge')) ||
-          (i.labels && i.labels.some(l => l.name && l.name.toLowerCase().includes('forge')))
-        );
-        const forgeStatus = document.getElementById('forge-status');
-        if (forgeWorking) {
-          forgeStatus.innerHTML = '<span class="status-dot orange"></span><span class="status-text">Working</span>';
-        } else {
-          forgeStatus.innerHTML = '<span class="status-dot grey"></span><span class="status-text">Idle</span>';
-        }
-
-        // Mission feed (max 5, open first then closed)
+        // Mission feed
         const all = [...open, ...closed].sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at)).slice(0, 5);
         const feedEl = document.getElementById('mission-feed');
         if (all.length === 0) {
@@ -1271,7 +1744,9 @@
       }
     }
 
-    // ── Render Activity Feed ──
+    // ═══════════════════════════════════════════
+    // ACTIVITY FEED
+    // ═══════════════════════════════════════════
     function renderActivityFeed(events) {
       const feedEl = document.getElementById('activity-feed');
       if (!Array.isArray(events) || events.length === 0) {
@@ -1321,40 +1796,171 @@
         <span class="activity-msg">${msg}</span>
         <span class="activity-meta">${ts}</span>`;
       feedEl.insertBefore(row, feedEl.firstChild);
-      // Keep max 20 rows
       while (feedEl.children.length > 20) feedEl.removeChild(feedEl.lastChild);
     }
 
-    // ── Helpers ──
-    function escapeHtml(str) {
-      const d = document.createElement('div');
-      d.textContent = str;
-      return d.innerHTML;
+    // ═══════════════════════════════════════════
+    // AGENT STATUS
+    // ═══════════════════════════════════════════
+    function statusDotClass(status) {
+      if (status === 'coding' || status === 'active') return 'green';
+      if (status === 'thinking') return 'orange';
+      return 'grey';
     }
 
-    // ── Fetch Agent Status ──
+    function statusLabel(status) {
+      if (status === 'coding') return 'Coding';
+      if (status === 'active') return 'Active';
+      if (status === 'thinking') return 'Thinking';
+      return 'Idle';
+    }
+
+    function statusColor(status) {
+      if (status === 'coding') return '#22c55e';
+      if (status === 'active') return '#22c55e';
+      if (status === 'thinking') return '#f59e0b';
+      return '#a3a3a3';
+    }
+
+    function activeForText(statusSince, status) {
+      if (!statusSince || (status !== 'coding' && status !== 'thinking')) return '';
+      const mins = Math.floor((Date.now() - new Date(statusSince).getTime()) / 60000);
+      return 'Active for ' + mins + 'm';
+    }
+
     async function fetchAgentStatus() {
       try {
         const res = await fetch('data/agent-status.json?t=' + Date.now());
         const data = await res.json();
-        const agents = data.agents || [];
-        const active = agents.filter(a => a.status === 'coding' || a.status === 'active' || a.status === 'thinking').length;
-        const total = agents.length;
-        document.getElementById('agents-active').textContent = active;
-        document.getElementById('agents-total-label').textContent = 'of ' + total + ' total';
-        // Update roster badge
-        const badge = document.querySelector('#section-agents .card-badge');
-        if (badge) badge.textContent = active + ' active';
-        // Render dynamic roster + missions table
-        renderRoster(agents);
-        renderMissions(agents);
+        handleAgentStatusData(data);
       } catch (e) {
-        document.getElementById('agents-active').textContent = '—';
-        document.getElementById('agents-total-label').textContent = 'Failed to load';
+        document.getElementById('ts-agents').textContent = '\u2014/7';
       }
     }
 
-    // ── Log Panel ──
+    function handleAgentStatusData(data) {
+      const agents = data.agents || [];
+      latestAgents = agents;
+      const active = agents.filter(a => a.status === 'coding' || a.status === 'active' || a.status === 'thinking').length;
+      const total = agents.length;
+      // Update roster badge
+      const badge = document.getElementById('roster-badge');
+      if (badge) badge.textContent = active + ' active';
+      // Render dashboard roster
+      renderRoster(agents);
+      renderMissions(agents);
+      // Render office view
+      renderOfficeAgents(agents);
+      // Update top stats
+      updateTopStats();
+    }
+
+    // ═══════════════════════════════════════════
+    // DASHBOARD: AGENT ROSTER
+    // ═══════════════════════════════════════════
+    function renderRoster(agents) {
+      const el = document.getElementById('agent-roster');
+      el.innerHTML = agents.map(a => {
+        const emoji = agentEmojis[a.id] || '\u{1F916}';
+        const color = agentColors[a.id] || 'blue';
+        const dot = statusDotClass(a.status);
+        const label = statusLabel(a.status);
+        const taskText = a.task ? escapeHtml(a.task) : 'No active task';
+        const since = a.status_since ? timeAgo(a.status_since) : '';
+        const activeText = activeForText(a.status_since, a.status);
+        return `<div class="agent-row clickable" data-agent-id="${a.id}" onclick="openLogPanel('${a.id}','${escapeHtml(a.name)}','${escapeHtml(a.task || '')}')">
+          <div class="agent-avatar ${color}">${emoji}</div>
+          <div class="agent-info">
+            <div class="agent-name-row">
+              <span class="agent-name">${escapeHtml(a.name)}</span>
+              <span class="agent-role-text">${escapeHtml(a.role)}</span>
+            </div>
+            <div style="font-size:12px;color:var(--muted-foreground);margin-top:2px;">${taskText}</div>
+            <div class="task-progress-bar ${a.status}"><div class="bar-fill"></div></div>
+            ${activeText ? `<div class="active-timer" style="font-size:11px;color:var(--muted-foreground);margin-top:3px;">${activeText}</div>` : ''}
+          </div>
+          <div class="status-indicator">
+            <span class="status-dot ${dot}"></span>
+            <span class="status-text">${label}</span>
+          </div>
+          <div class="agent-context">${since}</div>
+        </div>`;
+      }).join('');
+    }
+
+    // ═══════════════════════════════════════════
+    // DASHBOARD: ACTIVE MISSIONS TABLE
+    // ═══════════════════════════════════════════
+    function renderMissions(agents) {
+      const tbody = document.getElementById('missions-tbody');
+      const rows = agents.filter(a => a.task).map(a => {
+        const missionsUrl = 'https://github.com/kaanclaw/workspace/tree/main/agents/' + a.id + '/MISSIONS.md';
+        const statusClass = a.status === 'coding' ? 'coding' : (a.status === 'thinking' ? 'thinking' : (a.status === 'active' ? 'active' : 'idle'));
+        return `<tr>
+          <td><strong>${escapeHtml(a.name)}</strong></td>
+          <td><a href="${missionsUrl}" target="_blank">${escapeHtml(a.task)}</a></td>
+          <td><span class="mission-status-pill ${statusClass}"><span class="status-dot ${statusDotClass(a.status)}" style="width:6px;height:6px;"></span>${statusLabel(a.status)}</span></td>
+        </tr>`;
+      });
+      tbody.innerHTML = rows.length ? rows.join('') : '<tr><td colspan="3" style="color:var(--muted-foreground)">No active missions</td></tr>';
+    }
+
+    // ═══════════════════════════════════════════
+    // OFFICE VIEW: RENDER AGENTS IN DEPARTMENTS
+    // ═══════════════════════════════════════════
+    function renderOfficeAgents(agents) {
+      // Group agents by department
+      const depts = { hub: [], engineering: [], creative: [], ops: [], research: [] };
+      agents.forEach(a => {
+        const dept = agentDepartments[a.id] || a.department || 'hub';
+        if (depts[dept]) depts[dept].push(a);
+      });
+
+      // Render each department
+      Object.keys(depts).forEach(deptKey => {
+        const container = document.getElementById('dept-' + deptKey + '-agents');
+        const zone = document.getElementById('dept-' + deptKey);
+        if (!container || !zone) return;
+
+        const deptAgents = depts[deptKey];
+        const hasActive = deptAgents.some(a => a.status === 'coding' || a.status === 'active' || a.status === 'thinking');
+        zone.classList.toggle('has-active', hasActive);
+
+        container.innerHTML = deptAgents.map(a => {
+          const emoji = agentEmojis[a.id] || '\u{1F916}';
+          const isActive = a.status === 'coding' || a.status === 'active' || a.status === 'thinking';
+          const dotColor = statusColor(a.status);
+          const bgColor = agentDotColors[a.id] || '#666';
+          const taskText = a.task ? escapeHtml(a.task) : 'Idle';
+          const label = statusLabel(a.status);
+
+          return `<div class="office-agent" onclick="openLogPanel('${a.id}','${escapeHtml(a.name)}','${escapeHtml(a.task || '')}')">
+            <div class="office-agent-circle ${isActive ? 'active-agent' : ''}" style="background:${bgColor}20;">
+              ${emoji}
+              <div class="office-agent-status-dot" style="background:${dotColor}"></div>
+            </div>
+            <div class="office-agent-name">${escapeHtml(a.name)}</div>
+            ${isActive ? `<div class="office-tooltip visible">
+              <div class="office-tooltip-status">
+                <span class="status-dot ${statusDotClass(a.status)}" style="width:6px;height:6px;"></span>
+                <span style="color:${dotColor}">${label}</span>
+              </div>
+              <div class="office-tooltip-task">${taskText}</div>
+            </div>` : `<div class="office-tooltip">
+              <div class="office-tooltip-status">
+                <span class="status-dot grey" style="width:6px;height:6px;"></span>
+                <span>Idle</span>
+              </div>
+              <div class="office-tooltip-task">${taskText}</div>
+            </div>`}
+          </div>`;
+        }).join('');
+      });
+    }
+
+    // ═══════════════════════════════════════════
+    // LOG PANEL
+    // ═══════════════════════════════════════════
     let logPanelAgent = null;
     let logPanelInterval = null;
 
@@ -1390,82 +1996,11 @@
       }
     }
 
-    // Close on Escape
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLogPanel(); });
 
-    // ── Render Agent Roster from status data ──
-    const agentEmojis = { claw: '\u{1F99E}', forge: '\u2692\uFE0F', jamie: '\u265F\uFE0F', demi: '\u{1F3A8}', juice: '\u{1F4B0}', scout: '\u{1F52D}' };
-    const agentColors = { claw: 'coral', forge: 'purple', jamie: 'blue', demi: 'coral', juice: 'blue', scout: 'green' };
-
-    function statusDotClass(status) {
-      if (status === 'coding' || status === 'active') return 'green';
-      if (status === 'thinking') return 'orange';
-      return 'grey';
-    }
-
-    function statusLabel(status) {
-      if (status === 'coding') return 'Coding';
-      if (status === 'active') return 'Active';
-      if (status === 'thinking') return 'Thinking';
-      return 'Idle';
-    }
-
-    function activeForText(statusSince, status) {
-      if (!statusSince || (status !== 'coding' && status !== 'thinking')) return '';
-      const mins = Math.floor((Date.now() - new Date(statusSince).getTime()) / 60000);
-      return 'Active for ' + mins + 'm';
-    }
-
-    // Store latest agents for timer refresh
-    let latestAgents = [];
-
-    function renderRoster(agents) {
-      latestAgents = agents;
-      const el = document.getElementById('agent-roster');
-      el.innerHTML = agents.map(a => {
-        const emoji = agentEmojis[a.id] || '\u{1F916}';
-        const color = agentColors[a.id] || 'blue';
-        const dot = statusDotClass(a.status);
-        const label = statusLabel(a.status);
-        const taskText = a.task ? escapeHtml(a.task) : 'No active task';
-        const since = a.status_since ? timeAgo(a.status_since) : '';
-        const activeText = activeForText(a.status_since, a.status);
-        return `<div class="agent-row clickable" data-agent-id="${a.id}" onclick="openLogPanel('${a.id}','${escapeHtml(a.name)}','${escapeHtml(a.task || '')}')">
-          <div class="agent-avatar ${color}">${emoji}</div>
-          <div class="agent-info">
-            <div class="agent-name-row">
-              <span class="agent-name">${escapeHtml(a.name)}</span>
-              <span class="agent-role-text">${escapeHtml(a.role)}</span>
-            </div>
-            <div style="font-size:12px;color:var(--muted-foreground);margin-top:2px;">${taskText}</div>
-            <div class="task-progress-bar ${a.status}"><div class="bar-fill"></div></div>
-            ${activeText ? `<div class="active-timer" style="font-size:11px;color:var(--muted-foreground);margin-top:3px;">${activeText}</div>` : ''}
-          </div>
-          <div class="status-indicator">
-            <span class="status-dot ${dot}"></span>
-            <span class="status-text">${label}</span>
-          </div>
-          <div class="agent-context">${since}</div>
-        </div>`;
-      }).join('');
-    }
-
-    // ── Render Active Missions Table ──
-    function renderMissions(agents) {
-      const tbody = document.getElementById('missions-tbody');
-      const rows = agents.filter(a => a.task).map(a => {
-        const missionsUrl = 'https://github.com/kaanclaw/workspace/tree/main/agents/' + a.id + '/MISSIONS.md';
-        const statusClass = a.status === 'coding' ? 'coding' : (a.status === 'thinking' ? 'thinking' : (a.status === 'active' ? 'active' : 'idle'));
-        return `<tr>
-          <td><strong>${escapeHtml(a.name)}</strong></td>
-          <td><a href="${missionsUrl}" target="_blank">${escapeHtml(a.task)}</a></td>
-          <td><span class="mission-status-pill ${statusClass}"><span class="status-dot ${statusDotClass(a.status)}" style="width:6px;height:6px;"></span>${statusLabel(a.status)}</span></td>
-        </tr>`;
-      });
-      tbody.innerHTML = rows.length ? rows.join('') : '<tr><td colspan="3" style="color:var(--muted-foreground)">No active missions</td></tr>';
-    }
-
-    // ── SSE Connection ──
+    // ═══════════════════════════════════════════
+    // SSE CONNECTION
+    // ═══════════════════════════════════════════
     let evtSource = null;
     let sseReconnectTimer = null;
 
@@ -1484,18 +2019,6 @@
       }
     }
 
-    function handleAgentStatusData(data) {
-      const agents = data.agents || [];
-      const active = agents.filter(a => a.status === 'coding' || a.status === 'active' || a.status === 'thinking').length;
-      const total = agents.length;
-      document.getElementById('agents-active').textContent = active;
-      document.getElementById('agents-total-label').textContent = 'of ' + total + ' total';
-      const badge = document.querySelector('#section-agents .card-badge');
-      if (badge) badge.textContent = active + ' active';
-      renderRoster(agents);
-      renderMissions(agents);
-    }
-
     function connectSSE() {
       if (evtSource) { evtSource.close(); }
       evtSource = new EventSource('http://localhost:8090/stream');
@@ -1509,19 +2032,15 @@
         try {
           const msg = JSON.parse(e.data);
           if (msg.type === 'snapshot') {
-            // Full initial state
             if (msg.status) handleAgentStatusData(msg.status);
             if (msg.activity && msg.activity.events) renderActivityFeed(msg.activity.events);
             updateTimestamp();
           } else if (msg.type === 'status') {
-            // Agent status update
             if (msg.data) handleAgentStatusData(msg.data);
             updateTimestamp();
           } else if (msg.type === 'activity') {
-            // New activity event
             if (msg.event) prependActivity(msg.event);
           } else if (msg.type === 'log') {
-            // Log line for an agent
             if (logPanelAgent && msg.agent_id === logPanelAgent && msg.line) {
               const body = document.getElementById('log-panel-body');
               const ts = new Date().toLocaleTimeString('en-US', { hour12: false });
@@ -1529,28 +2048,29 @@
               body.scrollTop = body.scrollHeight;
             }
           }
-        } catch (err) {
-          // ignore parse errors (heartbeats etc)
-        }
+        } catch (err) {}
       };
 
       evtSource.onerror = function() {
         setSseStatus(false);
         evtSource.close();
-        // Auto-reconnect after 3s
         sseReconnectTimer = setTimeout(connectSSE, 3000);
       };
     }
 
-    // ── Fetch Skills Count ──
+    // ═══════════════════════════════════════════
+    // SKILLS COUNT
+    // ═══════════════════════════════════════════
     function fetchSkillsCount() {
       fetch('data/skills-count.json?t=' + Date.now())
         .then(r => r.json())
         .then(d => { document.getElementById('skills-count').textContent = d.count; })
-        .catch(() => {}); // graceful fallback to hardcoded
+        .catch(() => {});
     }
 
-    // ── Refresh active timers every 30s ──
+    // ═══════════════════════════════════════════
+    // ACTIVE TIMERS (refresh every 30s)
+    // ═══════════════════════════════════════════
     function refreshActiveTimers() {
       if (!latestAgents.length) return;
       document.querySelectorAll('.active-timer').forEach(el => {
@@ -1559,37 +2079,14 @@
         const agentId = row.getAttribute('data-agent-id');
         const agent = latestAgents.find(a => a.id === agentId);
         if (agent) {
-          const text = activeForText(agent.status_since, agent.status);
-          el.textContent = text;
+          el.textContent = activeForText(agent.status_since, agent.status);
         }
       });
     }
 
-    // ── Init ──
-    async function refresh() {
-      await Promise.all([fetchCosts(), fetchIssues(), fetchAgentStatus()]);
-      fetchSkillsCount();
-      updateTimestamp();
-    }
-
-    // Initial load: fetch costs + issues + agent status + skills, then connect SSE for live data
-    (async function init() {
-      await Promise.all([fetchCosts(), fetchIssues(), fetchAgentStatus()]);
-      fetchSkillsCount();
-      updateTimestamp();
-      connectSSE();
-    })();
-
-    // Keep costs/issues on a slower poll (they don't come via SSE)
-    setInterval(() => { fetchCosts(); fetchIssues(); }, 120000);
-
-    // Manual refresh button fetches everything + reconnects SSE
-    document.getElementById('refresh-btn').addEventListener('click', () => {
-      refresh();
-      connectSSE();
-    });
-
-    // ── Cost Chart ──
+    // ═══════════════════════════════════════════
+    // COST CHART
+    // ═══════════════════════════════════════════
     let costHistoryData = [];
     let costChartRange = '24h';
 
@@ -1609,7 +2106,6 @@
       }
     }
 
-    // Range toggle buttons
     document.querySelectorAll('.cost-chart-toggles button').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -1622,7 +2118,6 @@
 
     function filterByRange(data) {
       if (costChartRange === 'all' || costChartRange === '7d') return data;
-      // 24h: last 48 entries (already 24h of 30min intervals)
       return data;
     }
 
@@ -1643,11 +2138,9 @@
       function x(i) { return padL + (i / (data.length - 1)) * chartW; }
       function y(v) { return padT + chartH - ((v - minV) / range) * chartH; }
 
-      // Build polyline points
       const clawPts = data.map((d, i) => `${x(i)},${y(d.agents.claw)}`).join(' ');
       const forgePts = data.map((d, i) => `${x(i)},${y(d.agents.forge)}`).join(' ');
 
-      // Y-axis labels (4 ticks)
       let yLabels = '';
       for (let t = 0; t <= 3; t++) {
         const val = minV + (range * t / 3);
@@ -1656,7 +2149,6 @@
         yLabels += `<line x1="${padL}" y1="${yPos}" x2="${w - padR}" y2="${yPos}" stroke="var(--border)" stroke-dasharray="3,3"/>`;
       }
 
-      // X-axis labels (5 ticks)
       let xLabels = '';
       for (let t = 0; t < 5; t++) {
         const idx = Math.floor((data.length - 1) * t / 4);
@@ -1693,10 +2185,35 @@
         </div>`;
       }).join('');
     }
-    updateTimestamp();
 
-    // Update active timers every 30s
+    // ═══════════════════════════════════════════
+    // INIT
+    // ═══════════════════════════════════════════
+    async function refresh() {
+      await Promise.all([fetchCosts(), fetchIssues(), fetchAgentStatus(), fetchCronStatus()]);
+      fetchSkillsCount();
+      updateTimestamp();
+    }
+
+    (async function init() {
+      await Promise.all([fetchCosts(), fetchIssues(), fetchAgentStatus(), fetchCronStatus()]);
+      fetchSkillsCount();
+      updateTimestamp();
+      connectSSE();
+    })();
+
+    // Slow poll for costs/issues (not via SSE)
+    setInterval(() => { fetchCosts(); fetchIssues(); }, 120000);
+
+    // Refresh button
+    document.getElementById('refresh-btn').addEventListener('click', () => {
+      refresh();
+      connectSSE();
+    });
+
+    // Active timers every 30s
     setInterval(refreshActiveTimers, 30000);
+    updateTimestamp();
   </script>
 </body>
 </html>
