@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🦞 Mission Control</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Inter', sans-serif;
+  background: #121010;
+  color: #e8e0d8;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── Top Stats Bar ── */
+.top-bar {
+  display: flex;
+  gap: 12px;
+  padding: 16px 24px;
+  background: #1a1714;
+  border-bottom: 1px solid rgba(249,115,22,0.15);
+}
+.stat-card {
+  flex: 1;
+  background: #2a2420;
+  border: 1px solid rgba(249,115,22,0.2);
+  border-radius: 10px;
+  padding: 14px 18px;
+}
+.stat-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(249,115,22,0.6);
+  margin-bottom: 6px;
+}
+.stat-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: #f5f0eb;
+}
+.stat-sub {
+  font-size: 11px;
+  color: rgba(232,224,216,0.4);
+  margin-top: 4px;
+}
+.stat-sub .up { color: #22c55e; }
+.stat-sub .down { color: #ef4444; }
+
+/* ── Tab Switcher ── */
+.tab-bar {
+  display: flex;
+  gap: 0;
+  padding: 0 24px;
+  background: #1a1714;
+  border-bottom: 1px solid rgba(249,115,22,0.1);
+}
+.tab-btn {
+  padding: 12px 24px;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(232,224,216,0.4);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  background: none;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  font-family: inherit;
+}
+.tab-btn:hover { color: rgba(232,224,216,0.7); }
+.tab-btn.active {
+  color: #f97316;
+  border-bottom-color: #f97316;
+}
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ── Office View ── */
+.office-scene {
+  position: relative;
+  width: 100%;
+  min-height: 700px;
+  background: #121010;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(249,115,22,0.03) 0px, transparent 1px, transparent 50px),
+    repeating-linear-gradient(90deg, rgba(249,115,22,0.03) 0px, transparent 1px, transparent 50px);
+  overflow: hidden;
+  padding: 40px;
+}
+.office-scene::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 30%, rgba(18,16,16,0.9) 100%);
+  pointer-events: none;
+}
+
+.iso-floor {
+  position: relative;
+  max-width: 850px;
+  margin: 0 auto;
+  transform: perspective(1400px) rotateX(50deg) rotateZ(-35deg);
+  transform-style: preserve-3d;
+  z-index: 1;
+}
+
+/* Department Cards */
+.dept {
+  position: absolute;
+  background: #2a2420;
+  border: 1px solid rgba(249,115,22,0.25);
+  border-radius: 14px;
+  padding: 20px;
+  transition: all 0.4s ease;
+  transform: translateZ(15px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+.dept:hover {
+  transform: translateZ(30px);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.5), 0 0 25px rgba(249,115,22,0.1);
+  border-color: rgba(249,115,22,0.4);
+}
+.dept.active-dept {
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4), 0 0 20px rgba(249,115,22,0.12);
+  border-color: rgba(249,115,22,0.35);
+}
+
+/* Positioning */
+.dept-central { left: 280px; top: 200px; width: 260px; min-height: 200px; z-index: 5; border-color: rgba(6,182,212,0.3); }
+.dept-central:hover { border-color: rgba(6,182,212,0.5); box-shadow: 0 15px 40px rgba(0,0,0,0.5), 0 0 30px rgba(6,182,212,0.12); }
+.dept-buildlab { left: 20px; top: 20px; width: 240px; }
+.dept-creative { left: 560px; top: 20px; width: 220px; }
+.dept-finance { left: 20px; top: 380px; width: 220px; }
+.dept-research { left: 560px; top: 380px; width: 240px; }
+
+.dept-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  color: rgba(249,115,22,0.55);
+}
+.dept-central .dept-title {
+  color: rgba(6,182,212,0.6);
+  text-align: center;
+}
+
+/* Agent Portraits */
+.agents-row {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  align-items: flex-start;
+}
+.agent-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+  /* Counter-rotate so portraits face camera */
+  transform: rotateZ(35deg) rotateX(-50deg);
+}
+.portrait {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(249,115,22,0.35);
+  transition: all 0.3s ease;
+  background: #1a1714;
+}
+.portrait:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 20px rgba(249,115,22,0.3);
+}
+.portrait-lg {
+  width: 90px;
+  height: 90px;
+  border-color: rgba(6,182,212,0.4);
+  box-shadow: 0 0 25px rgba(6,182,212,0.12);
+}
+.portrait-lg:hover {
+  box-shadow: 0 0 35px rgba(6,182,212,0.25);
+}
+.agent-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #e8e0d8;
+}
+.agent-sublabel {
+  font-size: 9px;
+  color: rgba(232,224,216,0.4);
+}
+/* Status dot */
+.sdot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  position: absolute;
+  top: 0; right: 8px;
+  border: 2px solid #2a2420;
+}
+.sdot.on { background: #22c55e; box-shadow: 0 0 6px #22c55e; }
+.sdot.think { background: #f59e0b; box-shadow: 0 0 6px #f59e0b; }
+.sdot.off { background: #4b5563; }
+
+/* Floating Tooltip */
+.tip {
+  position: absolute;
+  top: -55px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1a1714;
+  border: 1px solid rgba(249,115,22,0.3);
+  border-radius: 8px;
+  padding: 7px 12px;
+  min-width: 150px;
+  text-align: center;
+  animation: tipFloat 3s ease-in-out infinite;
+  z-index: 10;
+  pointer-events: none;
+}
+.tip::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 8px; height: 8px;
+  background: #1a1714;
+  border-right: 1px solid rgba(249,115,22,0.3);
+  border-bottom: 1px solid rgba(249,115,22,0.3);
+}
+.tip-text { font-size: 10px; color: #e8e0d8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px; }
+.tip-bar { height: 3px; background: rgba(249,115,22,0.12); border-radius: 2px; margin-top: 5px; overflow: hidden; }
+.tip-fill { height: 100%; background: #f97316; border-radius: 2px; }
+@keyframes tipFloat {
+  0%,100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-3px); }
+}
+
+/* Connection Lines */
+.connections {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.connections line {
+  stroke: rgba(249,115,22,0.08);
+  stroke-width: 1;
+  stroke-dasharray: 6 6;
+}
+
+/* ── Dashboard View ── */
+.dashboard {
+  padding: 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.dash-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 16px;
+}
+.dash-card {
+  background: #2a2420;
+  border: 1px solid rgba(249,115,22,0.2);
+  border-radius: 12px;
+  padding: 20px;
+}
+.dash-card-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(249,115,22,0.5);
+  margin-bottom: 14px;
+}
+.agent-list-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(249,115,22,0.06);
+}
+.agent-list-item:last-child { border-bottom: none; }
+.agent-list-portrait {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(249,115,22,0.3);
+}
+.agent-list-info { flex: 1; }
+.agent-list-name { font-size: 13px; font-weight: 600; }
+.agent-list-task { font-size: 11px; color: rgba(232,224,216,0.4); margin-top: 2px; }
+.agent-list-status { font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 12px; }
+.status-active { background: rgba(34,197,94,0.15); color: #22c55e; }
+.status-idle { background: rgba(75,85,99,0.15); color: #6b7280; }
+.status-thinking { background: rgba(245,158,11,0.15); color: #f59e0b; }
+
+/* Activity Feed */
+.feed-item {
+  display: flex;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(249,115,22,0.05);
+  font-size: 12px;
+}
+.feed-time { color: rgba(232,224,216,0.3); white-space: nowrap; font-size: 10px; }
+.feed-text { color: rgba(232,224,216,0.7); }
+
+/* Live indicator */
+.live-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  display: inline-block;
+  animation: livePulse 2s ease-in-out infinite;
+  margin-right: 6px;
+}
+@keyframes livePulse {
+  0%,100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+</style>
+</head>
+<body>
+
+<!-- Top Stats Bar -->
+<div class="top-bar">
+  <div class="stat-card">
+    <div class="stat-label">💰 Costs Today</div>
+    <div class="stat-value" id="cost-today">$0.00</div>
+    <div class="stat-sub" id="cost-tokens">0 tokens</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">🤖 Active Agents</div>
+    <div class="stat-value" id="agents-active">0/7</div>
+    <div class="stat-sub" id="agents-dots"></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">✅ Tasks Completed</div>
+    <div class="stat-value" id="tasks-done">0</div>
+    <div class="stat-sub">today</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">⏰ Next Deadline</div>
+    <div class="stat-value" id="next-deadline" style="font-size:16px">—</div>
+    <div class="stat-sub" id="deadline-name"></div>
+  </div>
+</div>
+
+<!-- Tab Switcher -->
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('office')">🏢 Office</button>
+  <button class="tab-btn" onclick="switchTab('dashboard')">📊 Dashboard</button>
+</div>
+
+<!-- ═══ OFFICE VIEW ═══ -->
+<div class="tab-content active" id="tab-office">
+  <div class="office-scene">
+    <div class="iso-floor">
+      <!-- Connection Lines -->
+      <svg class="connections" viewBox="0 0 820 550" preserveAspectRatio="none">
+        <line x1="410" y1="300" x2="140" y2="80"/>
+        <line x1="410" y1="300" x2="670" y2="80"/>
+        <line x1="410" y1="300" x2="130" y2="460"/>
+        <line x1="410" y1="300" x2="680" y2="460"/>
+      </svg>
+
+      <!-- Central Command — Claw -->
+      <div class="dept dept-central active-dept">
+        <div class="dept-title">⚡ Central Command</div>
+        <div class="agents-row">
+          <div class="agent-card">
+            <div class="tip" id="tip-claw"><div class="tip-text">Orchestrating team</div><div class="tip-bar"><div class="tip-fill" style="width:100%"></div></div></div>
+            <img src="data/portraits/claw.png" class="portrait portrait-lg" alt="Claw">
+            <span class="sdot on"></span>
+            <span class="agent-label">Claw</span>
+            <span class="agent-sublabel">Orchestrator</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Build Lab — Forge + Jamie -->
+      <div class="dept dept-buildlab active-dept">
+        <div class="dept-title">🔨 Build Lab</div>
+        <div class="agents-row">
+          <div class="agent-card">
+            <div class="tip" id="tip-forge"><div class="tip-text">EasyClaw output format</div><div class="tip-bar"><div class="tip-fill" style="width:78%"></div></div></div>
+            <img src="data/portraits/forge.png" class="portrait" style="border-color:rgba(168,85,247,0.45)" alt="Forge">
+            <span class="sdot on"></span>
+            <span class="agent-label">Forge</span>
+            <span class="agent-sublabel">Builder</span>
+          </div>
+          <div class="agent-card">
+            <img src="data/portraits/jamie.png" class="portrait" style="border-color:rgba(59,130,246,0.45)" alt="Jamie">
+            <span class="sdot off"></span>
+            <span class="agent-label">Jamie</span>
+            <span class="agent-sublabel">Builder</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Creative Studio — Demi -->
+      <div class="dept dept-creative">
+        <div class="dept-title">🎨 Creative Studio</div>
+        <div class="agents-row">
+          <div class="agent-card">
+            <img src="data/portraits/demi.png" class="portrait" style="border-color:rgba(251,113,133,0.45)" alt="Demi">
+            <span class="sdot off"></span>
+            <span class="agent-label">Demi</span>
+            <span class="agent-sublabel">Creative</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Finance — Juice -->
+      <div class="dept dept-finance active-dept">
+        <div class="dept-title">💰 Finance</div>
+        <div class="agents-row">
+          <div class="agent-card">
+            <div class="tip" id="tip-juice"><div class="tip-text">Daily market analysis</div><div class="tip-bar"><div class="tip-fill" style="width:45%"></div></div></div>
+            <img src="data/portraits/juice.png" class="portrait" style="border-color:rgba(245,158,11,0.45)" alt="Juice">
+            <span class="sdot think"></span>
+            <span class="agent-label">Juice</span>
+            <span class="agent-sublabel">Analyst</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Research Hub — Scout + Rex -->
+      <div class="dept dept-research">
+        <div class="dept-title">🔭 Research Hub</div>
+        <div class="agents-row">
+          <div class="agent-card">
+            <img src="data/portraits/scout.png" class="portrait" style="border-color:rgba(34,197,94,0.45)" alt="Scout">
+            <span class="sdot off"></span>
+            <span class="agent-label">Scout</span>
+            <span class="agent-sublabel">Researcher</span>
+          </div>
+          <div class="agent-card">
+            <img src="data/portraits/rex.png" class="portrait" style="border-color:rgba(249,115,22,0.45)" alt="Rex">
+            <span class="sdot off"></span>
+            <span class="agent-label">Rex</span>
+            <span class="agent-sublabel">Builder</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DASHBOARD VIEW ═══ -->
+<div class="tab-content" id="tab-dashboard">
+  <div class="dashboard">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
+      <span class="live-dot"></span>
+      <span style="font-size:12px;color:rgba(232,224,216,0.5)">LIVE</span>
+    </div>
+    <div class="dash-grid">
+      <div class="dash-card">
+        <div class="dash-card-title">Agent Roster</div>
+        <div id="dash-roster"></div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-card-title">Activity Feed</div>
+        <div id="dash-feed"><div class="feed-item"><span class="feed-text">Waiting for data...</span></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Tab switching
+function switchTab(tab) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// Agent data
+const agents = [
+  {id:'claw',name:'Claw',role:'Orchestrator'},
+  {id:'forge',name:'Forge',role:'Builder'},
+  {id:'jamie',name:'Jamie',role:'Builder'},
+  {id:'rex',name:'Rex',role:'Builder'},
+  {id:'scout',name:'Scout',role:'Researcher'},
+  {id:'juice',name:'Juice',role:'Analyst'},
+  {id:'demi',name:'Demi',role:'Creative'},
+];
+
+// Render dashboard roster
+function renderRoster(agentData) {
+  const el = document.getElementById('dash-roster');
+  if (!el) return;
+  const list = agentData || agents;
+  el.innerHTML = list.map(a => {
+    const status = a.status || 'idle';
+    const task = a.task || 'Standing by';
+    const statusClass = status === 'coding' || status === 'active' ? 'status-active' : status === 'thinking' ? 'status-thinking' : 'status-idle';
+    const statusLabel = status === 'coding' ? 'Active' : status === 'thinking' ? 'Thinking' : 'Idle';
+    return '<div class="agent-list-item">' +
+      '<img src="data/portraits/' + a.id + '.png" class="agent-list-portrait">' +
+      '<div class="agent-list-info"><div class="agent-list-name">' + a.name + ' <span style="font-weight:400;color:rgba(232,224,216,0.3);font-size:11px">' + (a.role||'') + '</span></div>' +
+      '<div class="agent-list-task">' + task + '</div></div>' +
+      '<span class="agent-list-status ' + statusClass + '">' + statusLabel + '</span></div>';
+  }).join('');
+}
+renderRoster();
+
+// SSE Connection
+const sse = new EventSource('http://localhost:8090/stream');
+sse.onmessage = function(e) {
+  try {
+    const msg = JSON.parse(e.data);
+    if (msg.type === 'snapshot' && msg.status) {
+      const a = msg.status.agents || [];
+      renderRoster(a);
+      updateStats(a);
+    }
+    if (msg.type === 'status' && msg.data) {
+      const a = msg.data.agents || [];
+      renderRoster(a);
+      updateStats(a);
+    }
+  } catch(err) {}
+};
+
+function updateStats(agents) {
+  const active = agents.filter(a => a.status === 'coding' || a.status === 'thinking' || a.status === 'active');
+  document.getElementById('agents-active').textContent = active.length + '/' + agents.length;
+}
+
+// Load costs
+fetch('data/costs.json').then(r=>r.json()).then(d=>{
+  document.getElementById('cost-today').textContent = '$' + (d.today?.costUsd || 0).toFixed(2);
+  document.getElementById('cost-tokens').textContent = (d.today?.totalTokens || 0).toLocaleString() + ' tokens';
+}).catch(()=>{});
+
+// Load cron status for next deadline
+fetch('data/cron-status.json').then(r=>r.json()).then(d=>{
+  if (d.jobs && d.jobs.length) {
+    const next = d.jobs.sort((a,b) => new Date(a.next_run) - new Date(b.next_run))[0];
+    document.getElementById('next-deadline').textContent = next.schedule || next.name;
+    document.getElementById('deadline-name').textContent = next.name;
+  }
+}).catch(()=>{});
+</script>
+</body>
+</html>

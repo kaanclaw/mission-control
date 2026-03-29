@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mission Control 🦞</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: 'Inter', sans-serif; background: #0d0b08; color: #e8e0d8; min-height: 100vh; overflow-x: hidden; }
+.top-bar { position:relative; z-index:100; display:flex; align-items:center; justify-content:space-between; padding:10px 20px; background:rgba(13,11,8,0.9); border-bottom:1px solid rgba(249,115,22,0.2); backdrop-filter:blur(8px); }
+.logo { font-size:18px; font-weight:800; color:#f97316; }
+.top-stats { display:flex; gap:40px; }
+.stat { text-align:center; }
+.stat-label { font-size:10px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:rgba(249,115,22,0.6); }
+.stat-value { font-size:22px; font-weight:700; color:#fff; line-height:1.1; }
+.top-bar-right { font-size:12px; color:rgba(232,224,216,0.4); }
+.live-dot { width:7px; height:7px; border-radius:50%; background:#22c55e; display:inline-block; animation:livePulse 2s infinite; margin-right:6px; }
+@keyframes livePulse { 0%,100%{opacity:1}50%{opacity:0.3} }
+.tab-bar { position:relative; z-index:100; display:flex; padding:0 20px; background:rgba(13,11,8,0.95); border-bottom:1px solid rgba(249,115,22,0.1); }
+.tab-btn { padding:10px 20px; font-size:12px; font-weight:600; color:rgba(232,224,216,0.4); cursor:pointer; border-bottom:2px solid transparent; transition:all 0.2s; background:none; border-top:none; border-left:none; border-right:none; font-family:inherit; }
+.tab-btn:hover { color:rgba(232,224,216,0.7); }
+.tab-btn.active { color:#f97316; border-bottom-color:#f97316; }
+.tab-content { display:none; }
+.tab-content.active { display:block; }
+.office-wrap { position:relative; width:100%; height:calc(100vh - 88px); overflow:hidden; }
+.office-bg { width:100%; height:100%; object-fit:cover; object-position:center; display:block; }
+.office-overlay { position:absolute; inset:0; pointer-events:none; }
+.agent-tip { position:absolute; background:rgba(10,8,5,0.9); border:1px solid rgba(249,115,22,0.4); border-radius:8px; padding:8px 12px; min-width:175px; pointer-events:none; animation:tipFloat 3s ease-in-out infinite; box-shadow:0 4px 20px rgba(0,0,0,0.6); }
+.agent-tip::after { content:''; position:absolute; bottom:-6px; left:50%; transform:translateX(-50%) rotate(45deg); width:10px; height:10px; background:rgba(10,8,5,0.9); border-right:1px solid rgba(249,115,22,0.4); border-bottom:1px solid rgba(249,115,22,0.4); }
+.tip-name { font-size:12px; font-weight:700; color:#fff; }
+.tip-task { font-size:11px; color:rgba(232,224,216,0.8); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:195px; margin:2px 0 4px; }
+.tip-status { display:flex; align-items:center; gap:5px; }
+.sdot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+.sdot.on { background:#22c55e; box-shadow:0 0 5px #22c55e; }
+.sdot.think { background:#f59e0b; box-shadow:0 0 5px #f59e0b; }
+.sdot.off { background:#4b5563; }
+.tip-status-text { font-size:10px; font-weight:600; color:rgba(232,224,216,0.6); }
+.tip-progress { height:3px; background:rgba(249,115,22,0.12); border-radius:2px; margin-top:5px; }
+.tip-fill { height:100%; background:#f97316; border-radius:2px; transition:width 0.5s; }
+@keyframes tipFloat { 0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)} }
+#tip-forge  { left:13%; top:35%; animation-delay:0s; }
+#tip-jamie  { left:31%; top:10%; animation-delay:0.5s; }
+#tip-claw   { left:40%; top:44%; animation-delay:1s; border-color:rgba(6,182,212,0.5); }
+#tip-juice  { left:9%;  top:60%; animation-delay:1.5s; }
+#tip-scout  { left:62%; top:60%; animation-delay:2s; }
+#tip-demi   { left:67%; top:10%; animation-delay:0.3s; }
+.zone-label { position:absolute; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:rgba(249,115,22,0.7); text-shadow:0 0 12px rgba(249,115,22,0.5); pointer-events:none; }
+#zlabel-buildlab  { left:5%;  top:4%; }
+#zlabel-creative  { left:74%; top:4%; }
+#zlabel-finance   { left:4%;  top:55%; }
+#zlabel-research  { left:68%; top:55%; }
+#zlabel-central   { left:41%; top:69%; font-size:13px; color:rgba(249,115,22,1); text-shadow:0 0 20px rgba(249,115,22,0.8); }
+.dashboard { padding:24px; max-width:1100px; margin:0 auto; }
+.dash-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px; }
+.dash-card { background:#1a1510; border:1px solid rgba(249,115,22,0.18); border-radius:12px; padding:20px; }
+.dash-title { font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:rgba(249,115,22,0.5); margin-bottom:14px; }
+.agent-row-d { display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid rgba(249,115,22,0.06); }
+.agent-row-d:last-child { border-bottom:none; }
+.ap { width:44px; height:44px; border-radius:50%; object-fit:cover; border:2px solid rgba(249,115,22,0.25); }
+.ai { flex:1; }
+.an { font-size:13px; font-weight:600; }
+.at { font-size:11px; color:rgba(232,224,216,0.4); margin-top:2px; }
+.badge { font-size:10px; font-weight:600; padding:3px 8px; border-radius:10px; }
+.ba { background:rgba(34,197,94,0.15); color:#22c55e; }
+.bi { background:rgba(75,85,99,0.15); color:#6b7280; }
+.bt { background:rgba(245,158,11,0.15); color:#f59e0b; }
+</style>
+</head>
+<body>
+<div class="top-bar">
+  <div style="display:flex;align-items:center;gap:8px"><span class="logo">🦞 Mission Control</span><span class="live-dot"></span></div>
+  <div class="top-stats">
+    <div class="stat"><div class="stat-label">Team Efficiency</div><div class="stat-value" id="s-eff">92%</div></div>
+    <div class="stat"><div class="stat-label">Projects Active</div><div class="stat-value" id="s-proj">5</div></div>
+    <div class="stat"><div class="stat-label">Cost Today</div><div class="stat-value" id="s-cost">$0</div></div>
+    <div class="stat"><div class="stat-label">Next Deadline</div><div class="stat-value" id="s-dl" style="font-size:14px">—</div></div>
+  </div>
+  <div class="top-bar-right" id="clock"></div>
+</div>
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('office',this)">🏢 Office</button>
+  <button class="tab-btn" onclick="switchTab('dashboard',this)">📊 Dashboard</button>
+</div>
+<div class="tab-content active" id="tab-office">
+  <div class="office-wrap">
+    <img class="office-bg" src="data/mc-scene.png" alt="Office">
+    <div class="office-overlay">
+      <span class="zone-label" id="zlabel-buildlab">Build Lab</span>
+      <span class="zone-label" id="zlabel-creative">Creative Studio</span>
+      <span class="zone-label" id="zlabel-finance">Finance</span>
+      <span class="zone-label" id="zlabel-research">Research Hub</span>
+      <span class="zone-label" id="zlabel-central">Central Command</span>
+      <div class="agent-tip" id="tip-forge">
+        <div class="tip-name">Forge <span style="font-size:9px;color:rgba(168,85,247,0.7);font-weight:400">(Builder)</span></div>
+        <div class="tip-task" id="forge-task">Compiling module Alpha-1...</div>
+        <div class="tip-status"><div class="sdot on" id="forge-dot"></div><span class="tip-status-text" id="forge-status">Building: 78%</span></div>
+        <div class="tip-progress"><div class="tip-fill" id="forge-prog" style="width:78%"></div></div>
+      </div>
+      <div class="agent-tip" id="tip-jamie">
+        <div class="tip-name">Jamie <span style="font-size:9px;color:rgba(59,130,246,0.7);font-weight:400">(Builder)</span></div>
+        <div class="tip-task" id="jamie-task">Debugging latest patch...</div>
+        <div class="tip-status"><div class="sdot on" id="jamie-dot"></div><span class="tip-status-text" id="jamie-status">Debugging: In progress</span></div>
+        <div class="tip-progress"><div class="tip-fill" id="jamie-prog" style="width:55%"></div></div>
+      </div>
+      <div class="agent-tip" id="tip-claw">
+        <div class="tip-name" style="color:#06b6d4">Claw <span style="font-size:9px;color:rgba(6,182,212,0.6);font-weight:400">(Orchestrator)</span></div>
+        <div class="tip-task" id="claw-task">Synchronizing team objectives...</div>
+        <div class="tip-status"><div class="sdot on" id="claw-dot" style="background:#06b6d4;box-shadow:0 0 5px #06b6d4"></div><span class="tip-status-text" id="claw-status" style="color:#06b6d4">ONLINE: Coordinating</span></div>
+        <div class="tip-progress"><div class="tip-fill" id="claw-prog" style="width:100%;background:#06b6d4"></div></div>
+      </div>
+      <div class="agent-tip" id="tip-juice">
+        <div class="tip-name">Juice <span style="font-size:9px;color:rgba(245,158,11,0.7);font-weight:400">(Analyst)</span></div>
+        <div class="tip-task" id="juice-task">Analyzing quarterly projections...</div>
+        <div class="tip-status"><div class="sdot think" id="juice-dot"></div><span class="tip-status-text" id="juice-status">Financial Review: On track</span></div>
+        <div class="tip-progress"><div class="tip-fill" id="juice-prog" style="width:45%"></div></div>
+      </div>
+      <div class="agent-tip" id="tip-scout">
+        <div class="tip-name">Scout <span style="font-size:9px;color:rgba(34,197,94,0.7);font-weight:400">(Researcher)</span></div>
+        <div class="tip-task" id="scout-task">Exploring new market trends...</div>
+        <div class="tip-status"><div class="sdot think" id="scout-dot"></div><span class="tip-status-text" id="scout-status">Researching: Gathering Data</span></div>
+        <div class="tip-progress"><div class="tip-fill" id="scout-prog" style="width:30%;background:#22c55e"></div></div>
+      </div>
+      <div class="agent-tip" id="tip-demi">
+        <div class="tip-name">Demi <span style="font-size:9px;color:rgba(251,113,133,0.7);font-weight:400">(CMO)</span></div>
+        <div class="tip-task" id="demi-task">Refining campaign visuals...</div>
+        <div class="tip-status"><div class="sdot on" id="demi-dot"></div><span class="tip-status-text" id="demi-status">Designing: Active</span></div>
+        <div class="tip-progress"><div class="tip-fill" id="demi-prog" style="width:65%;background:#fb7185"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="tab-content" id="tab-dashboard">
+  <div class="dashboard">
+    <div class="dash-grid">
+      <div class="dash-card">
+        <div class="dash-title">Agent Roster</div>
+        <div class="agent-row-d" id="dash-claw"><img src="data/portraits/claw.png" class="ap"><div class="ai"><div class="an">Claw</div><div class="at" id="d-claw">Orchestrating team</div></div><span class="badge ba">Active</span></div>
+        <div class="agent-row-d" id="dash-forge"><img src="data/portraits/forge.png" class="ap"><div class="ai"><div class="an">Forge</div><div class="at" id="d-forge">Building module</div></div><span class="badge ba">Active</span></div>
+        <div class="agent-row-d" id="dash-jamie"><img src="data/portraits/jamie.png" class="ap"><div class="ai"><div class="an">Jamie</div><div class="at" id="d-jamie">Debugging patch</div></div><span class="badge ba">Active</span></div>
+        <div class="agent-row-d" id="dash-juice"><img src="data/portraits/juice.png" class="ap"><div class="ai"><div class="an">Juice</div><div class="at" id="d-juice">Analyzing projections</div></div><span class="badge bt">Thinking</span></div>
+        <div class="agent-row-d" id="dash-scout"><img src="data/portraits/scout.png" class="ap"><div class="ai"><div class="an">Scout</div><div class="at" id="d-scout">Gathering data</div></div><span class="badge bt">Thinking</span></div>
+        <div class="agent-row-d" id="dash-demi"><img src="data/portraits/demi.png" class="ap"><div class="ai"><div class="an">Demi</div><div class="at" id="d-demi">Designing visuals</div></div><span class="badge ba">Active</span></div>
+        <div class="agent-row-d" id="dash-rex"><img src="data/portraits/rex.png" class="ap"><div class="ai"><div class="an">Rex</div><div class="at" id="d-rex">Standing by</div></div><span class="badge bi">Idle</span></div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-title">Activity Feed</div>
+        <div id="dash-feed"><div style="font-size:12px;color:rgba(232,224,216,0.4);padding:8px 0">Waiting for live data...</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function switchTab(id,btn){document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');btn.classList.add('active');}
+function updateClock(){const n=new Date();const h=String(n.getHours()).padStart(2,'0');const m=String(n.getMinutes()).padStart(2,'0');document.getElementById('clock').textContent=h+':'+m+' PDT';}
+setInterval(updateClock,1000);updateClock();
+
+function applyAgentData(agents) {
+  const active = agents.filter(a => a.status === 'active');
+  const pct = agents.length ? Math.round((active.length/agents.length)*100) : 0;
+  document.getElementById('s-eff').textContent = pct + '%';
+  document.getElementById('s-proj').textContent = active.length;
+
+  agents.forEach(a => {
+    const id = a.id;
+    const isActive = a.status === 'active';
+    const isIdle = a.status === 'idle';
+    const dotClass = isActive ? 'on' : isIdle ? 'think' : 'off';
+
+    // Office tooltips
+    const tipEl = document.getElementById('tip-' + id);
+    if (tipEl) {
+      const taskEl = tipEl.querySelector('[id$="-task"]');
+      const statusEl = tipEl.querySelector('[id$="-status"]');
+      const dotEl = tipEl.querySelector('.sdot');
+      const progEl = tipEl.querySelector('.tip-fill');
+      if (taskEl) taskEl.textContent = a.task;
+      if (statusEl) statusEl.textContent = isActive ? 'Active' : isIdle ? 'Idle' : 'Offline';
+      if (dotEl) dotEl.className = 'sdot ' + dotClass;
+      // Show/fade tooltip based on status
+      tipEl.style.opacity = isActive ? '1' : isIdle ? '0.6' : '0.3';
+      if (progEl && isActive) progEl.style.width = '60%';
+      else if (progEl) progEl.style.width = '0%';
+    }
+
+    // Dashboard badges
+    const rowEl = document.getElementById('dash-' + id);
+    if (rowEl) {
+      rowEl.querySelector('.at').textContent = a.task;
+      const badge = rowEl.querySelector('.badge');
+      if (badge) {
+        badge.className = 'badge ' + (isActive ? 'ba' : isIdle ? 'bt' : 'bi');
+        badge.textContent = isActive ? 'Active' : isIdle ? 'Idle' : 'Offline';
+      }
+    }
+  });
+}
+
+function loadData() {
+  fetch('http://localhost:8090/data')
+    .then(r => r.json())
+    .then(d => {
+      // Update costs
+      const cost = (d.costs?.today || 0).toFixed(2);
+      document.getElementById('s-cost').textContent = '$' + cost;
+
+      // Next cron deadline
+      const crons = (d.crons || []).filter(c => c.enabled && c.nextRun);
+      if (crons.length) {
+        const next = crons.sort((a,b) => a.nextRun - b.nextRun)[0];
+        const dt = new Date(next.nextRun);
+        const h = String(dt.getHours()).padStart(2,'0');
+        const m = String(dt.getMinutes()).padStart(2,'0');
+        document.getElementById('s-dl').textContent = h + ':' + m;
+      }
+
+      applyAgentData(d.agents || []);
+    })
+    .catch(() => {});
+}
+
+loadData();
+setInterval(loadData, 30000);
+
+// SSE for real-time updates
+const sse = new EventSource('http://localhost:8090/stream');
+sse.onmessage = function(e) {
+  try {
+    const msg = JSON.parse(e.data);
+    if (msg.status?.agents) applyAgentData(msg.status.agents);
+  } catch(err) {}
+};
+</script>
+
+</body>
+</html>
