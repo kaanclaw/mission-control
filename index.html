@@ -1218,51 +1218,298 @@
 
       <!-- ═══ TAB: OFFICE VIEW ═══ -->
       <div class="tab-pane active" id="tab-office">
-        <div class="office-container">
-          <div class="office-perspective">
-            <div class="office-grid" id="office-grid">
-              <div class="office-floor"></div>
+<!-- Mission Control Office View - v6 Illustrated -->
+<style>
+  /* Office View Styles */
+  .office-container {
+    position: relative;
+    width: 100%;
+    min-height: 600px;
+    background: #121010;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(249,115,22,0.04) 0px, transparent 1px, transparent 40px),
+      repeating-linear-gradient(90deg, rgba(249,115,22,0.04) 0px, transparent 1px, transparent 40px);
+    border-radius: 12px;
+    overflow: hidden;
+    padding: 24px;
+  }
+  .office-container::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(18,16,16,0.8) 100%);
+    pointer-events: none;
+  }
+  .office-floor {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 20px;
+    max-width: 900px;
+    margin: 0 auto;
+    z-index: 1;
+  }
+  .dept-card {
+    background: #2a2420;
+    border: 1px solid rgba(249,115,22,0.25);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    transition: all 0.3s ease;
+  }
+  .dept-card:hover {
+    border-color: rgba(249,115,22,0.5);
+    box-shadow: 0 0 30px rgba(249,115,22,0.12);
+  }
+  .dept-card.active {
+    box-shadow: 0 0 25px rgba(249,115,22,0.15);
+    border-color: rgba(249,115,22,0.4);
+  }
+  .dept-card.central {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 280px;
+    border-color: rgba(6,182,212,0.4);
+    box-shadow: 0 0 40px rgba(6,182,212,0.1);
+  }
+  .dept-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(249,115,22,0.6);
+    margin-bottom: 16px;
+  }
+  .dept-card.central .dept-label {
+    color: rgba(6,182,212,0.7);
+  }
+  .agent-row {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .agent-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    position: relative;
+  }
+  .agent-portrait {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid rgba(249,115,22,0.4);
+    transition: all 0.3s ease;
+  }
+  .agent-portrait:hover {
+    transform: scale(1.08);
+    border-color: rgba(249,115,22,0.8);
+    box-shadow: 0 0 20px rgba(249,115,22,0.3);
+  }
+  .agent-portrait.central-agent {
+    width: 100px;
+    height: 100px;
+    border-color: rgba(6,182,212,0.5);
+    box-shadow: 0 0 30px rgba(6,182,212,0.15);
+  }
+  .agent-portrait.central-agent:hover {
+    border-color: rgba(6,182,212,0.8);
+    box-shadow: 0 0 40px rgba(6,182,212,0.3);
+  }
+  .agent-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: #e8e0d8;
+  }
+  .agent-role {
+    font-size: 10px;
+    color: rgba(232,224,216,0.5);
+  }
+  /* Status dot */
+  .status-dot-office {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    border: 2px solid #2a2420;
+  }
+  .status-dot-office.green { background: #22c55e; box-shadow: 0 0 6px #22c55e; }
+  .status-dot-office.amber { background: #f59e0b; box-shadow: 0 0 6px #f59e0b; }
+  .status-dot-office.gray { background: #6b7280; }
+  /* Floating tooltip */
+  .agent-tooltip {
+    position: absolute;
+    top: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1a1714;
+    border: 1px solid rgba(249,115,22,0.3);
+    border-radius: 8px;
+    padding: 8px 12px;
+    min-width: 160px;
+    text-align: center;
+    animation: tooltipFloat 3s ease-in-out infinite;
+    z-index: 10;
+    pointer-events: none;
+  }
+  .agent-tooltip::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%) rotate(45deg);
+    width: 10px;
+    height: 10px;
+    background: #1a1714;
+    border-right: 1px solid rgba(249,115,22,0.3);
+    border-bottom: 1px solid rgba(249,115,22,0.3);
+  }
+  .tooltip-task {
+    font-size: 11px;
+    color: #e8e0d8;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
+  }
+  .tooltip-progress {
+    height: 3px;
+    background: rgba(249,115,22,0.15);
+    border-radius: 2px;
+    margin-top: 6px;
+    overflow: hidden;
+  }
+  .tooltip-progress-fill {
+    height: 100%;
+    background: #f97316;
+    border-radius: 2px;
+    transition: width 0.5s ease;
+  }
+  @keyframes tooltipFloat {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(-4px); }
+  }
+  /* Connecting lines from Claw to departments */
+  .connection-lines {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .connection-lines svg {
+    width: 100%;
+    height: 100%;
+  }
+  .connection-line {
+    stroke: rgba(249,115,22,0.12);
+    stroke-width: 1;
+    stroke-dasharray: 4 4;
+    fill: none;
+  }
+</style>
 
-              <!-- Connection lines -->
-              <svg class="dept-connections" viewBox="0 0 700 700" preserveAspectRatio="none">
-                <line x1="350" y1="350" x2="140" y2="120"/>
-                <line x1="350" y1="350" x2="560" y2="120"/>
-                <line x1="350" y1="350" x2="120" y2="580"/>
-                <line x1="350" y1="350" x2="560" y2="580"/>
-              </svg>
-
-              <!-- Central Command — Claw -->
-              <div class="dept-zone dept-central-command" id="dept-hub">
-                <div class="dept-zone-label">Central Command</div>
-                <div class="dept-agents" id="dept-hub-agents"></div>
-              </div>
-
-              <!-- Build Lab — Forge + Jamie -->
-              <div class="dept-zone dept-build-lab" id="dept-engineering">
-                <div class="dept-zone-label">Build Lab</div>
-                <div class="dept-agents" id="dept-engineering-agents"></div>
-              </div>
-
-              <!-- Creative Studio — Demi -->
-              <div class="dept-zone dept-creative-studio" id="dept-creative">
-                <div class="dept-zone-label">Creative Studio</div>
-                <div class="dept-agents" id="dept-creative-agents"></div>
-              </div>
-
-              <!-- Finance — Juice -->
-              <div class="dept-zone dept-finance" id="dept-ops">
-                <div class="dept-zone-label">Finance</div>
-                <div class="dept-agents" id="dept-ops-agents"></div>
-              </div>
-
-              <!-- Research Hub — Scout + Rex -->
-              <div class="dept-zone dept-research-hub" id="dept-research">
-                <div class="dept-zone-label">Research Hub</div>
-                <div class="dept-agents" id="dept-research-agents"></div>
-              </div>
-            </div>
+<div class="office-container">
+  <div class="office-floor" id="office-floor">
+    <!-- Build Lab -->
+    <div class="dept-card active" id="dept-buildlab">
+      <div class="dept-label">🔨 Build Lab</div>
+      <div class="agent-row">
+        <div class="agent-node">
+          <div class="agent-tooltip" id="tooltip-forge">
+            <div class="tooltip-task">EasyClaw phased output</div>
+            <div class="tooltip-progress"><div class="tooltip-progress-fill" style="width:78%"></div></div>
           </div>
+          <img src="data/portraits/forge.png" class="agent-portrait" style="border-color:rgba(168,85,247,0.5)">
+          <span class="status-dot-office green"></span>
+          <span class="agent-name">Forge</span>
+          <span class="agent-role">Builder</span>
         </div>
+        <div class="agent-node">
+          <img src="data/portraits/jamie.png" class="agent-portrait" style="border-color:rgba(59,130,246,0.5)">
+          <span class="status-dot-office green"></span>
+          <span class="agent-name">Jamie</span>
+          <span class="agent-role">Builder</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Central Command -->
+    <div class="dept-card central active">
+      <div class="dept-label">⚡ Central Command</div>
+      <div class="agent-node">
+        <div class="agent-tooltip" id="tooltip-claw">
+          <div class="tooltip-task">Orchestrating team</div>
+          <div class="tooltip-progress"><div class="tooltip-progress-fill" style="width:100%"></div></div>
+        </div>
+        <img src="data/portraits/claw.png" class="agent-portrait central-agent">
+        <span class="status-dot-office green"></span>
+        <span class="agent-name">Claw</span>
+        <span class="agent-role">Orchestrator</span>
+      </div>
+    </div>
+
+    <!-- Creative Studio -->
+    <div class="dept-card" id="dept-creative">
+      <div class="dept-label">🎨 Creative Studio</div>
+      <div class="agent-row">
+        <div class="agent-node">
+          <img src="data/portraits/demi.png" class="agent-portrait" style="border-color:rgba(251,113,133,0.5)">
+          <span class="status-dot-office gray"></span>
+          <span class="agent-name">Demi</span>
+          <span class="agent-role">Creative</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Finance -->
+    <div class="dept-card active" id="dept-finance">
+      <div class="dept-label">💰 Finance</div>
+      <div class="agent-row">
+        <div class="agent-node">
+          <div class="agent-tooltip" id="tooltip-juice">
+            <div class="tooltip-task">Daily market analysis</div>
+            <div class="tooltip-progress"><div class="tooltip-progress-fill" style="width:45%"></div></div>
+          </div>
+          <img src="data/portraits/juice.png" class="agent-portrait" style="border-color:rgba(245,158,11,0.5)">
+          <span class="status-dot-office amber"></span>
+          <span class="agent-name">Juice</span>
+          <span class="agent-role">Analyst</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Research Hub -->
+    <div class="dept-card" id="dept-research">
+      <div class="dept-label">🔭 Research Hub</div>
+      <div class="agent-row">
+        <div class="agent-node">
+          <img src="data/portraits/scout.png" class="agent-portrait" style="border-color:rgba(34,197,94,0.5)">
+          <span class="status-dot-office gray"></span>
+          <span class="agent-name">Scout</span>
+          <span class="agent-role">Researcher</span>
+        </div>
+        <div class="agent-node">
+          <img src="data/portraits/rex.png" class="agent-portrait" style="border-color:rgba(249,115,22,0.5)">
+          <span class="status-dot-office gray"></span>
+          <span class="agent-name">Rex</span>
+          <span class="agent-role">Builder</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
       </div>
 
       <!-- ═══ TAB: DASHBOARD VIEW (all existing content) ═══ -->
@@ -1283,7 +1530,7 @@
             </div>
             <div id="agent-roster">
               <div class="agent-row">
-                <div class="agent-avatar coral">&#x1F99E;</div>
+                <img src="data/portraits/claw.png" class="agent-avatar" style="width:42px;height:42px;border-radius:50%;object-fit:cover;">
                 <div class="agent-info">
                   <div class="agent-name-row">
                     <span class="agent-name">Claw</span>
