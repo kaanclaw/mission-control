@@ -1,14 +1,14 @@
 {
-  "updatedAt": "2026-03-31T23:42:40.629Z",
+  "updatedAt": "2026-04-01T00:12:40.297Z",
   "today": {
-    "date": "2026-03-31",
+    "date": "2026-04-01",
     "costUsd": 1186.6753388499992,
     "totalTokens": 218350,
     "inputTokens": 7,
     "outputTokens": 1018
   },
   "thisMonth": {
-    "month": "2026-03",
+    "month": "2026-04",
     "costUsd": 1186.6753388499992,
     "totalTokens": 218350
   },
